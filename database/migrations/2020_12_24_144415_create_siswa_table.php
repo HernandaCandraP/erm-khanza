@@ -18,10 +18,13 @@ class CreateSiswaTable extends Migration
             $table->char('nis', 22);
             $table->char('nama_siswa', 50);
             $table->smallInteger('id_kelas')->unsigned();
-            $table->foreign('id_kelas')->references('id_kelas')->on('kelas')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_kelas')->references('id_kelas')->on('kelas')->onDelete('restrict')->onUpdate('restrict');
             $table->enum('jenis_kelamin', ['Laki-laki','Perempuan']);
             $table->char('alamat', 100);
             $table->char('no_telp', 13);
+            $table->char('level', 10);
+            $table->char('username', 50)->unique();
+            $table->char('password', 100);
             $table->timestamps();
         });
     }

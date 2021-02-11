@@ -20,6 +20,9 @@ class CreateGuruTable extends Migration
             $table->enum('jenis_kelamin', ['Laki-laki','Perempuan']);
             $table->char('alamat', 100);
             $table->char('no_telp', 13);
+            $table->enum('level', ['Guru','Admin']);
+            $table->char('username', 50)->unique();
+            $table->char('password', 100);
             $table->timestamps();
         });
     }

@@ -16,7 +16,25 @@
 // });
 Route::get('/', 'TextMiningController@index')->name('welcome');
 
-Auth::routes();
+// Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/guru', 'HomeController@index')->name('guru');
+Route::get('/404', function () {
+    return view('404');
+});
+
+// login
+Route::get('/login', 'LoginController@index')->name('login');
+Route::post('/postlogin', 'LoginController@postlogin')->name('postlogin');
+Route::get('/logout', 'LoginController@logout')->name('logout');
+
+// login siswa
+Route::group(['middleware' => 'auth:siswa'], function () {
+    Route::get('/siswa', 'SiswaController@index')->name('homesiswa');
+});
+
+// login guru dan admin
+Route::group(['middleware' => 'auth:guru'], function () {
+        Route::get('/admin', 'GuruController@admin')->name('homeadmin')->middleware('is_admin');
+        Route::get('/guru', 'GuruController@index')->name('homeguru');
+});
