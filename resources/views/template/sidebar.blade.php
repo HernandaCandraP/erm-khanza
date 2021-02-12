@@ -90,25 +90,25 @@
           @if(Str::length(Auth::guard('guru')->user()) > 0)
           @if(Auth::guard('guru')->user()->level == "Admin")
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
+            <a href="{{route('homeadmin')}}" class="nav-link {{ Request::is('admin') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Home</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeadmin/guru')}}" class="nav-link {{ Request::is('admin/guru') ? 'active' : '' }}">
               <i class="nav-icon far fa-image"></i>
               <p>Guru</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeadmin/siswa')}}" class="nav-link {{ Request::is('admin/siswa') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>Siswa</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeadmin/kelas')}}" class="nav-link {{ Request::is('admin/kelas') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>Kelas</p>
             </a>
