@@ -17,8 +17,8 @@ class CreateMapelkelasTable extends Migration
             $table->smallIncrements('id_mapelkelas');
             $table->smallInteger('id_detail')->unsigned();
             $table->smallInteger('id_kelas')->unsigned();
-            $table->foreign('id_detail')->references('id_detail')->on('detailmapel')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('id_kelas')->references('id_kelas')->on('kelas')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreign('id_detail')->references('id_detail')->on('detailmapel')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_kelas')->references('id_kelas')->on('kelas')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
