@@ -29,19 +29,30 @@
                     <th>No.</th>
                     <th>Nama Kelas</th>
                     <th>Keterangan</th>
+                    @if(Auth::guard('guru')->user()->level == "Admin")
                     <th>Aksi&emsp;&ensp;</th>
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
                 @foreach ($kelas as $key)
                 <tr>
                     <th scope="row"> {{$no++}}. </th>
-                    <td>{{$key->nama_kelas}}</td>
+                    <td>{{$key->nama_kelas}} &ensp;
+                      @if(Auth::guard('guru')->user()->level == "Admin")
+                        <a href="{{url('admin/kelas/detail')}}/{{$key->id_kelas}}" class="btn btn-success btn-sm"><i class="fas fa-search"></i>detail</a>
+                      @endif
+                      @if(Auth::guard('guru')->user()->level == "Guru")
+                        <a href="{{url('guru/kelas/detail')}}/{{$key->id_kelas}}" class="btn btn-success btn-sm"><i class="fas fa-search"></i>detail</a>
+                      @endif
+                    </td>
                     <td>{{$key->keterangan}}</td>
+                    @if(Auth::guard('guru')->user()->level == "Admin")
                     <td>
                       <a href="{{url('admin/kelas/edit')}}/{{$key->id_kelas}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                       <a href="{{url('admin/kelas/hapus')}}/{{$key->id_kelas}}" class="btn btn-danger btn-sm" onclick="return confirm('Menghapus data akan berpengaruh pada perhitungan, memungkinkan terjadi perubahan data !!')"><i class="fas fa-trash"></i></a>
                     </td>
+                    @endif
                 </tr> 
                 @endforeach
                   

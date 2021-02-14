@@ -53,27 +53,27 @@
           @if(Str::length(Auth::guard('guru')->user()) > 0)
           @if(Auth::guard('guru')->user()->level == "Guru")
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Home</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeguru/detailmapel')}}" class="nav-link {{ Request::is('guru/detailmapel') ? 'active' : '' }}">
               <i class="nav-icon far fa-image"></i>
               <p>Kategori Soal</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+          <a href="{{route('homeguru/kelas')}}" class="nav-link {{ Request::is('guru/kelas') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>Kelas</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeguru/siswa')}}" class="nav-link {{ Request::is('guru/siswa') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
-              <p>Mahasiswa</p>
+              <p>Siswa</p>
             </a>
           </li>
           <li class="nav-item">
@@ -114,7 +114,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeadmin/mapel')}}" class="nav-link {{ Request::is('admin/mapel') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>Mata Pelajaran</p>
             </a>

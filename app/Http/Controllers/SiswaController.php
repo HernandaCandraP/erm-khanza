@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Siswa;
+use App\Kelas;
 
 class SiswaController extends Controller
 {
@@ -14,8 +16,13 @@ class SiswaController extends Controller
 
     public function tampilsiswa(){
         $no = 1;
-        $siswa = Siswa::all();
-        return view('admin/siswa', ['siswa' => $siswa, 'no' => $no]);
+        $kelas = Kelas::all();
+        $siswa = DB::table('siswa')->join('kelas', 'siswa.id_kelas', '=', 'kelas.id_kelas')->select('siswa.*', 'kelas.nama_kelas')->get();
+        return view('admin/siswa', [
+            'siswa' => $siswa, 
+            'kelas' => $kelas,
+            'no' => $no
+        ]);
     }
 
     public function create(Request $request)
@@ -39,8 +46,9 @@ class SiswaController extends Controller
     public function edit($id)
     {
         $siswa = Siswa::find($id);
+        $kelas = Kelas::all();
 
-        return view('admin/siswa_edit', ['siswa'=>$siswa]);
+        return view('admin/siswa_edit', ['siswa'=>$siswa, 'kelas'=>$kelas]);
     }
 
     public function update(Request $request, $id)
@@ -53,7 +61,7 @@ class SiswaController extends Controller
         $data->jenis_kelamin = $request->jenis_kelamin;
         $data->alamat = $request->alamat;
         $data->no_telp = $request->no_telp;
-        $data->level = $request->level;
+        $data->level = 'Siswa';
         $data->username = $request->username;
         // $data->password = bcrypt($request->password);
 

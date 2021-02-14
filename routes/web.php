@@ -57,7 +57,23 @@ Route::group(['middleware' => 'auth:guru'], function () {
     Route::get('/admin/kelas/edit/{id}', 'KelasController@edit')->name('homeadmin/kelas/edit')->middleware('is_admin');
     Route::put('/admin/kelas/update/{id}', 'KelasController@update')->name('homeadmin/kelas/update')->middleware('is_admin');
     Route::get('/admin/kelas/hapus/{id}', 'KelasController@delete')->name('homeadmin/kelas/hapus')->middleware('is_admin');
+    Route::get('/admin/kelas/detail/{id}', 'KelasController@detail')->name('homeadmin/kelas/detail')->middleware('is_admin');
 
+    // admin/mapel
+    Route::get('/admin/mapel', 'MapelController@tampilmapel')->name('homeadmin/mapel')->middleware('is_admin');
+    Route::post('/admin/mapel/tambah', 'MapelController@create')->name('homeadmin/mapel/tambah')->middleware('is_admin');
+    Route::get('/admin/mapel/edit/{id}', 'MapelController@edit')->name('homeadmin/mapel/edit')->middleware('is_admin');
+    Route::put('/admin/mapel/update/{id}', 'MapelController@update')->name('homeadmin/mapel/update')->middleware('is_admin');
+    Route::get('/admin/mapel/hapus/{id}', 'MapelController@delete')->name('homeadmin/mapel/hapus')->middleware('is_admin');
     
+    // guru
     Route::get('/guru', 'GuruController@index')->name('homeguru');
+
+    // guru/Detail Mapel
+    Route::get('/guru/detailmapel', 'DetailMapelController@detailmapel')->name('homeguru/detailmapel');
+
+    // guru/kelas & siswa
+    Route::get('/guru/kelas', 'KelasController@tampilkelas')->name('homeguru/kelas');
+    Route::get('/guru/kelas/detail/{id}', 'KelasController@detail')->name('homeguru/kelas/detail');
+    Route::get('/guru/siswa', 'SiswaController@tampilsiswa')->name('homeguru/siswa');
 });

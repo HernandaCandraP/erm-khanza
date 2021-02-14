@@ -18,7 +18,9 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="float-left">Data Siswa</h3>
+                @if(Auth::guard('guru')->user()->level == "Admin")
                 <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal-lg"><i class="fas fa-plus"></i> Tambah Data</button>
+                @endif
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -33,7 +35,9 @@
                     <th>Jenis Kelamin</th>
                     <th>Alamat</th>
                     <th>No. Telp</th>
+                    @if(Auth::guard('guru')->user()->level == "Admin")
                     <th>Aksi&emsp;&ensp;</th>
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
@@ -43,14 +47,16 @@
                     <td>{{$key->nis}}</td>
                     <td>{{$key->username}}</td>
                     <td>{{$key->nama_siswa}}</td>
-                    <td>{{$key->id_kelas}}</td>
+                    <td>{{$key->nama_kelas}}</td>
                     <td>{{$key->jenis_kelamin}}</td>
                     <td>{{$key->alamat}}</td>
                     <td>{{$key->no_telp}}</td>
+                    @if(Auth::guard('guru')->user()->level == "Admin")
                     <td>
                       <a href="{{url('admin/siswa/edit')}}/{{$key->id_siswa}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                       <a href="{{url('admin/siswa/hapus')}}/{{$key->id_siswa}}" class="btn btn-danger btn-sm" onclick="return confirm('Menghapus data akan berpengaruh pada perhitungan, memungkinkan terjadi perubahan data !!')"><i class="fas fa-trash"></i></a>
                     </td>
+                    @endif
                 </tr> 
                 @endforeach
                   
@@ -117,7 +123,14 @@
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Kelas</label>
             <div class="col-sm-9">
-              <input type="text" name="id_kelas" class="form-control" placeholder="Kelas" required>
+              <div class="form-group">
+                  <select class="form-control select2" name="id_kelas" id="id_kelas" required>
+                    <option value="null" disabled selected>== Pilih Kelas ==</option>
+                    @foreach ($kelas as $key)
+                      <option value="{{ $key->id_kelas }}"> {{$key->nama_kelas}} </option>
+                    @endforeach
+                  </select>
+                </div>
             </div>
           </div>
           <div class="form-group row">

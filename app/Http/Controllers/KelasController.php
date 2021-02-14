@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use App\Kelas;
+use App\Siswa;
 
 class KelasController extends Controller
 {
@@ -12,6 +13,14 @@ class KelasController extends Controller
         $no = 1;
         $kelas = Kelas::all();
         return view('admin/kelas', ['kelas' => $kelas, 'no' => $no]);
+    }
+
+    public function detail($id)
+    {
+        $no = 1;
+        $kelas = Kelas::find($id);
+        $siswa = Siswa::where('id_kelas', $id)->get();
+        return view('admin/kelas_detail', ['kelas'=>$kelas, 'siswa'=>$siswa, 'no'=>$no]);
     }
 
     public function create(Request $request)
