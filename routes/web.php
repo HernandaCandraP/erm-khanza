@@ -77,11 +77,11 @@ Route::group(['middleware' => 'auth:guru'], function () {
     Route::get('/guru/detailmapel/hapus/{id}', 'DetailMapelController@delete')->name('homeguru/detailmapel/hapus');
 
     // guru/soal
-    Route::get('/guru/soal', 'SoalController@tampilsoal')->name('homeguru/soal');
-    Route::post('/guru/soal/tambah', 'SoalController@create')->name('homeguru/soal/tambah');
+    Route::get('/guru/soal/{id}', 'SoalController@tampilsoal')->name('homeguru/soal');
+    Route::post('/guru/soal/tambah/{id}', 'SoalController@create')->name('homeguru/soal/tambah');
     Route::get('/guru/soal/edit/{id}', 'SoalController@edit')->name('homeguru/soal/edit');
     Route::put('/guru/soal/update/{id}', 'SoalController@update')->name('homeguru/soal/update');
-    Route::get('/guru/soal/hapus/{id}', 'SoalController@delete')->name('homeguru/soal/hapus');
+    Route::get('/guru/soal/hapus/{id}/{id_detail}', 'SoalController@delete')->name('homeguru/soal/hapus');
 
     // guru/kelas & siswa
     Route::get('/guru/kelas', 'KelasController@tampilkelas')->name('homeguru/kelas');
