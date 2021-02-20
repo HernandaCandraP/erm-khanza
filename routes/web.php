@@ -31,6 +31,10 @@ Route::get('/logout', 'LoginController@logout')->name('logout');
 // login siswa
 Route::group(['middleware' => 'auth:siswa'], function () {
     Route::get('/siswa', 'SiswaController@index')->name('homesiswa');
+
+    Route::get('/siswa/detailmapel', 'DetailMapelController@detailmapelsiswa')->name('homesiswa/detailmapel');
+    Route::get('/siswa/keterangan/{id}', 'DetailMapelController@keterangan')->name('homesiswa/keterangan');
+    Route::post('/siswa/jawaban/{id}', 'SoalController@jawabsoal')->name('homesiswa/jawaban');
 });
 
 // login guru dan admin

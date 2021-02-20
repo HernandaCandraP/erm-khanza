@@ -38,8 +38,8 @@
                 @foreach ($soal as $key)
                 <tr>
                     <th scope="row"> {{$no++}}. </th>
-                    <td><textarea rows="5" cols="20" disabled>{{$key->soal}}</textarea></td>
-                    <td><textarea rows="5" cols="40" disabled>{{$key->jawaban}}</textarea></td>
+                    <td><textarea rows="5" cols="20" class="form-control" disabled>{{$key->soal}}</textarea></td>
+                    <td><textarea rows="5" cols="40" class="form-control" disabled>{{$key->jawaban}}</textarea></td>
                     <td>{{$key->nama_guru}}</td>
                     <td>
                       <a href="{{url('guru/soal/edit')}}/{{$key->id_soal}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>

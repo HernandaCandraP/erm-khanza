@@ -35,6 +35,22 @@ class SoalController extends Controller
         ]);
     }
 
+    public function jawabsoal(Request $request, $id)
+    {
+        $no = 1;
+        $soal = Soal::where('id_detail', $id)->get();
+
+        return view('siswa/jawaban', [
+            'soal' => $soal, 
+            'no' => $no
+        ]);
+    }
+
+    public function jawaban(Request $request, $id_detail, $id_soal)
+    {
+        $no = 1;
+    }
+
     public function create(Request $request, $id)
     {
         $data = new Soal;

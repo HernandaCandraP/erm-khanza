@@ -8,6 +8,7 @@ use App\DetailMapel;
 use App\Mapel;
 use App\Kelas;
 use App\MapelKelas;
+use Auth;
 
 class DetailMapelController extends Controller
 {
@@ -23,6 +24,30 @@ class DetailMapelController extends Controller
             'kls' => $kls,
             'mapel' => $mapel,
             'no' => $no
+        ]);
+    }
+
+    public function detailmapelsiswa(){
+        $no = 1;
+        $kelassiswa = Auth::guard('siswa')->user()->id_kelas;
+        
+        $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')
+                ->join('mapelkelas', 'detailmapel.id_detail', '=', 'mapelkelas.id_detail')
+                ->where('mapelkelas.id_kelas', $kelassiswa)
+                ->select('detailmapel.*', 'mapel.nama_mapel')->get();
+
+        return view('siswa/detail_mapel', [
+            'detailmapel' => $detailmapel, 
+            'no' => $no
+        ]);
+    }
+
+    public function keterangan($id)
+    {
+        $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')->select('detailmapel.*', 'mapel.nama_mapel')->find($id);
+
+        return view('siswa/keterangan', [
+            'detailmapel'=>$detailmapel,
         ]);
     }
 

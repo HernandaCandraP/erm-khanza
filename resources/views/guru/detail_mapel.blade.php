@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
     @include('template.head')
-    <link rel="stylesheet" href="{{asset('tampilan/plugins/select2/css/select2.min.css')}}">
-    <link rel="stylesheet" href="{{asset('tampilan/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -153,9 +151,7 @@
   <!-- /.modal-dialog -->
 </div>
 
-@include('template.script')
-<!-- Select2 -->
-<script src="{{asset('tampilan/plugins/select2/js/select2.full.min.js')}}"></script>
+@include('template.script_table')
 <script>
   $(function () {
     //Initialize Select2 Elements

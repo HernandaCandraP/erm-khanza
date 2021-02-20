@@ -7,19 +7,6 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="{{asset('tampilan/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          @if( Str::length(Auth::guard('siswa')->user()) > 0)
-          <a href="#" class="d-block">{{ Auth::guard('siswa')->user()->nama_siswa}}</a>
-          @elseif( Str::length(Auth::guard('guru')->user()) > 0)
-          <a href="#" class="d-block">{{ Auth::guard('guru')->user()->nip}}</a>
-          @endif
-        </div>
-      </div>
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
@@ -28,13 +15,13 @@
           @if(Str::length(Auth::guard('siswa')->user()) > 0)
           @if(Auth::guard('siswa')->user()->level == "Siswa")
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
+            <a href="{{route('homesiswa')}}" class="nav-link {{ Request::is('siswa') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Home</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{route('homesiswa/detailmapel')}}" class="nav-link {{ Request::is('siswa/detailmapel') ? 'active' : '' }}">
               <i class="nav-icon far fa-image"></i>
               <p>Kategori Soal</p>
             </a>
@@ -53,7 +40,7 @@
           @if(Str::length(Auth::guard('guru')->user()) > 0)
           @if(Auth::guard('guru')->user()->level == "Guru")
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link">
+            <a href="{{route('homeguru')}}" class="nav-link {{ Request::is('guru') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Home</p>
             </a>
