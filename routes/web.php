@@ -34,7 +34,9 @@ Route::group(['middleware' => 'auth:siswa'], function () {
 
     Route::get('/siswa/detailmapel', 'DetailMapelController@detailmapelsiswa')->name('homesiswa/detailmapel');
     Route::get('/siswa/keterangan/{id}', 'DetailMapelController@keterangan')->name('homesiswa/keterangan');
-    Route::post('/siswa/jawaban/{id}', 'SoalController@jawabsoal')->name('homesiswa/jawaban');
+    Route::post('/siswa/simpanwaktu/{id}', 'SoalController@simpanwaktu')->name('homesiswa/simpanwaktu');
+    Route::get('/siswa/soal/{id_detail}/{id_soal}', 'SoalController@soalsiswa')->name('homesiswa/soal');
+    Route::post('/siswa/jawaban/{id_detail}/{id_soal}', 'SoalController@jawabansiswa')->name('homesiswa/jawaban');
 });
 
 // login guru dan admin

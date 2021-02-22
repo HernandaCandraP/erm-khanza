@@ -19,9 +19,9 @@ class CreateJawabanTable extends Migration
             $table->foreign('id_siswa')->references('id_siswa')->on('siswa')->onDelete('restrict')->onUpdate('restrict');
             $table->smallInteger('id_soal')->unsigned();
             $table->foreign('id_soal')->references('id_soal')->on('soal')->onDelete('restrict')->onUpdate('restrict');
-            $table->text('jawaban_siswa');
+            $table->text('jawaban_siswa')->nullable();
             $table->smallInteger('nilai_cosine');
-            $table->smallInteger('nilai_jaccrad');
+            $table->smallInteger('nilai_jaccard');
             $table->timestamps();
         });
     }

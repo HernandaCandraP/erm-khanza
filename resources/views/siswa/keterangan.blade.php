@@ -21,7 +21,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-              <form action="{{url('siswa/jawaban')}}/{{$detailmapel->id_detail}}" method="post" class="form-horizontal">
+              <form action="{{url('siswa/simpanwaktu')}}/{{$detailmapel->id_detail}}" method="post" class="form-horizontal">
                 {{ csrf_field() }}
                 <div class="modal-body">
                   <div class="card-body">
