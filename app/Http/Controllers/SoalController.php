@@ -60,18 +60,30 @@ class SoalController extends Controller
 
     public function soalsiswa($id_detail, $id_soal)
     {
+        // get id_detail & id_soal untuk menyimpan jawaban dari siswa
         $tampilsoal = Soal::where('id_detail', $id_detail)->where('id_soal', $id_soal)->first();
-        // $getsoal = Soal::select('id_soal', 'id_detail', 'soal', 'jawaban')->get();
+        // untuk menampikan nomer soal apakah sudah dikerjakan / belum
         $getsoal = Soal::leftjoin('jawaban', 'soal.id_soal', '=', 'jawaban.id_soal')->select('soal.*', 'jawaban.jawaban_siswa')->get();
 
         // cek apakah jawaban sudah terisi?
         $id_siswa = Auth::guard('siswa')->user()->id_siswa;
         $jawaban = Jawaban::where('id_siswa', $id_siswa)->where('id_soal', $id_soal)->first();
+
+        // mengambil waktu test
+        $start_time = DetailSiswa::where('id_siswa', $id_siswa)->where('id_detail', $id_detail)->first()->created_at;
+
+        // mengambil waktu akhir test
+        $end_time = DetailMapel::where('id_detail', $id_detail)->first()->waktu_test;
+
+        $detik =(strtotime($end_time) - strtotime('00:00:00'));
+        $end_time = date("Y-m-d H:i:s", strtotime($start_time)+$detik);
+        // print(((date("H", $end))) .'<br>');
         
         return view('siswa/jawaban', [
             'tampilsoal' => $tampilsoal, 
             'getsoal' => $getsoal, 
-            'jawaban' => $jawaban
+            'jawaban' => $jawaban,
+            'end_time' => $end_time
         ]);
     }
 
@@ -104,7 +116,14 @@ class SoalController extends Controller
             $data->nilai_jaccard = 10;
             $data->save();
         }
-        return redirect()->to('siswa/soal/'.$id_detail. '/'.$request->redirect_id_soal);
+
+        if($request->redirect_id_soal != null){
+            return redirect()->to('siswa/soal/'.$id_detail. '/'.$request->redirect_id_soal);
+        }
+        // untuk redirect ketika waktu habis atau ketika klik simpan
+        if($request->timeout == 'timeout' || $request->simpan == 'simpan'){
+            return redirect()->to('siswa/detailmapel');
+        }
     }
 
     public function create(Request $request, $id)

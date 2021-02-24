@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\DetailMapel;
+use App\DetailSiswa;
+use App\Soal;
 use App\Mapel;
 use App\Kelas;
 use App\MapelKelas;
@@ -28,18 +30,27 @@ class DetailMapelController extends Controller
     }
 
     public function detailmapelsiswa(){
-        $no = 1;
         $kelassiswa = Auth::guard('siswa')->user()->id_kelas;
         
         $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')
                 ->join('mapelkelas', 'detailmapel.id_detail', '=', 'mapelkelas.id_detail')
                 ->where('mapelkelas.id_kelas', $kelassiswa)
-                ->select('detailmapel.*', 'mapel.nama_mapel')->get();
+                ->leftjoin('detailsiswa', 'detailmapel.id_detail', '=', 'detailsiswa.id_detail')
+                ->select('detailmapel.*', 'mapel.nama_mapel', 'detailsiswa.id_siswa')->get();
 
         return view('siswa/detail_mapel', [
             'detailmapel' => $detailmapel, 
-            'no' => $no
         ]);
+    }
+
+    public function lanjutkan($id_detail)
+    {
+        $id_siswa = Auth::guard('siswa')->user()->id_siswa;
+
+        // get id_soal first
+        $id_soal = Soal::where('id_detail', $id_detail)->first()->id_soal;
+
+        return redirect()->to('siswa/soal/'.$id_detail. '/'.$id_soal);
     }
 
     public function keterangan($id)

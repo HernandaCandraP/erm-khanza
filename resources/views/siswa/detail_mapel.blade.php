@@ -34,16 +34,21 @@
                   </tr>
                   </thead>
                   <tbody>
-                @foreach ($detailmapel as $key)
+                @foreach ($detailmapel as $no =>$key)
                 <tr>
-                    <th scope="row"> {{$no++}}. </th>
+                    <th scope="row"> {{$no+1}}. </th>
                     <td>{{$key->nama_mapel}}</td>
                     <td>{{$key->waktu_mulai}}</td>
                     <td>{{$key->waktu_selesai}}</td>
                     <td>{{$key->waktu_test}}</td>
                     <td>{{$key->keterangan}}</td>
                     <td>
+                    <!-- membuat kondisi apakah siswa sudah pernah mengerjakan soal tsb -->
+                    @if($key->id_siswa === Auth::guard('siswa')->user()->id_siswa)
+                      <a href="{{url('siswa/lanjutkan')}}/{{$key->id_detail}}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i>Lanjutkan</a>
+                    @else
                       <a href="{{url('siswa/keterangan')}}/{{$key->id_detail}}" class="btn btn-success btn-sm"><i class="fas fa-edit"></i>Mulai</a>
+                    @endif
                     </td>
                 </tr> 
                 @endforeach
