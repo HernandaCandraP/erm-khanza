@@ -40,6 +40,8 @@ class SoalController extends Controller
     public function simpanwaktu(Request $request, $id)
     {
         $id_siswa = Auth::guard('siswa')->user()->id_siswa;
+        date_default_timezone_set('Asia/Jakarta'); # add your city to set local time zone
+		$now = date('Y-m-d H:i:s');
 
         // cek apakah ada data yang disimpan pd tabel detailsiswa dengan id_detail dan id_siswa yg sama
         $cek_detail = DetailSiswa::where('id_detail', $request->id_detail)->where('id_siswa', $id_siswa)->first();
@@ -48,9 +50,11 @@ class SoalController extends Controller
             $data = new DetailSiswa;
             $data->id_detail = $request->id_detail;
             $data->id_siswa = $id_siswa;
+            $data->is_end = 0;
+            $data->created_at = $now;
 
             $data->save();
-            print("simpan");
+            // print("simpan");
         }
         // get id_soal first
         $id_soal = Soal::where('id_detail', $request->id_detail)->first()->id_soal;
@@ -60,14 +64,28 @@ class SoalController extends Controller
 
     public function soalsiswa($id_detail, $id_soal)
     {
+        $id_siswa = Auth::guard('siswa')->user()->id_siswa;
+
+        // get nama mapel
+        $nama_mapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')->select('mapel.nama_mapel')->where('id_detail', $id_detail)->first();
+
         // get id_detail & id_soal untuk menyimpan jawaban dari siswa
         $tampilsoal = Soal::where('id_detail', $id_detail)->where('id_soal', $id_soal)->first();
         // untuk menampikan nomer soal apakah sudah dikerjakan / belum
-        $getsoal = Soal::leftjoin('jawaban', 'soal.id_soal', '=', 'jawaban.id_soal')->select('soal.*', 'jawaban.jawaban_siswa')->get();
+        $getsoal = Soal::leftjoin('jawaban', function($join){
+            $join->on('soal.id_soal', '=', 'jawaban.id_soal')
+            ->where('jawaban.id_siswa', Auth::guard('siswa')->user()->id_siswa);
+        })
+        ->select('soal.id_soal', 'jawaban.jawaban_siswa','jawaban.id_siswa')->where('id_detail', $id_detail)->get();
 
         // cek apakah jawaban sudah terisi?
-        $id_siswa = Auth::guard('siswa')->user()->id_siswa;
         $jawaban = Jawaban::where('id_siswa', $id_siswa)->where('id_soal', $id_soal)->first();
+
+        // cek  ketika soal sudah diselesaikan maka link akan disable
+        $cek_is_end = DetailSiswa::where('id_siswa', $id_siswa)->where('id_detail', $id_detail)->first();
+        if($cek_is_end->is_end){
+            return redirect('/404');
+        }
 
         // mengambil waktu test
         $start_time = DetailSiswa::where('id_siswa', $id_siswa)->where('id_detail', $id_detail)->first()->created_at;
@@ -83,7 +101,8 @@ class SoalController extends Controller
             'tampilsoal' => $tampilsoal, 
             'getsoal' => $getsoal, 
             'jawaban' => $jawaban,
-            'end_time' => $end_time
+            'end_time' => $end_time,
+            'nama_mapel' =>$nama_mapel
         ]);
     }
 
@@ -93,7 +112,7 @@ class SoalController extends Controller
 
         //cek apakah sudah ada data id_soal dan id_siswa yang sudah disimpan
         $cek_jawaban = Jawaban::where('id_siswa', $id_siswa)->where('id_soal', $id_soal)->first();
-        print($cek_jawaban .'<br>');
+
         if($cek_jawaban != null){
             // cek apakah jawaban sebelumnya sama dengan jawaban yang terbaru, jika tidak sama lalukan proses update
             if($cek_jawaban->jawaban_siswa != $request->jawaban_siswa){
@@ -122,6 +141,9 @@ class SoalController extends Controller
         }
         // untuk redirect ketika waktu habis atau ketika klik simpan
         if($request->timeout == 'timeout' || $request->simpan == 'simpan'){
+            // mengubah tabel is_end ketika mengekhiri ujian / ujian berakhir
+            $simpan = DetailSiswa::where('id_siswa', $id_siswa)->where('id_detail', $id_detail)->update(array('is_end' => 1));
+
             return redirect()->to('siswa/detailmapel');
         }
     }

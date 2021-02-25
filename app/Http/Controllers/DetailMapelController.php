@@ -35,8 +35,11 @@ class DetailMapelController extends Controller
         $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')
                 ->join('mapelkelas', 'detailmapel.id_detail', '=', 'mapelkelas.id_detail')
                 ->where('mapelkelas.id_kelas', $kelassiswa)
-                ->leftjoin('detailsiswa', 'detailmapel.id_detail', '=', 'detailsiswa.id_detail')
-                ->select('detailmapel.*', 'mapel.nama_mapel', 'detailsiswa.id_siswa')->get();
+                ->leftJoin('detailsiswa', function($join){
+                    $join->on('detailmapel.id_detail', '=', 'detailsiswa.id_detail')
+                    ->where('detailsiswa.id_siswa', Auth::guard('siswa')->user()->id_siswa);
+                })
+                ->select('detailmapel.*', 'mapel.nama_mapel', 'detailsiswa.id_siswa', 'detailsiswa.is_end')->get();
 
         return view('siswa/detail_mapel', [
             'detailmapel' => $detailmapel, 

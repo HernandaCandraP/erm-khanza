@@ -14,6 +14,6 @@ class DetailSiswa extends Authenticatable
     protected $primaryKey = "id_detailsiswa";
     
     protected $fillable = [
-        'id_detail', 'id_siswa', 'mulai',
+        'id_detail', 'id_siswa', 'is_end',
     ];
 }

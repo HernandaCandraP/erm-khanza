@@ -19,7 +19,9 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="float-left">Data Kelas</h3>
+                @if(Auth::guard('guru')->user()->level == "Admin")
                 <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal-lg"><i class="fas fa-plus"></i> Tambah Data</button>
+                @endif
               </div>
               <!-- /.card-header -->
               <div class="card-body">

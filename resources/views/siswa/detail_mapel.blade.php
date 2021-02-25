@@ -44,7 +44,9 @@
                     <td>{{$key->keterangan}}</td>
                     <td>
                     <!-- membuat kondisi apakah siswa sudah pernah mengerjakan soal tsb -->
-                    @if($key->id_siswa === Auth::guard('siswa')->user()->id_siswa)
+                    @if($key->is_end > 0)
+                      <b class="text-success">cek nilai</b>
+                    @elseif($key->id_siswa === Auth::guard('siswa')->user()->id_siswa)
                       <a href="{{url('siswa/lanjutkan')}}/{{$key->id_detail}}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i>Lanjutkan</a>
                     @else
                       <a href="{{url('siswa/keterangan')}}/{{$key->id_detail}}" class="btn btn-success btn-sm"><i class="fas fa-edit"></i>Mulai</a>
@@ -75,6 +77,6 @@
   <aside class="control-sidebar control-sidebar-dark"></aside>
 </div>
 
-@include('template.script')
+@include('template.script_table')
 </body>
 </html>

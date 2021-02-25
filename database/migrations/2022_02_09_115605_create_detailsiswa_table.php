@@ -17,6 +17,7 @@ class CreateDetailSiswaTable extends Migration
             $table->smallIncrements('id_detailsiswa');
             $table->smallInteger('id_detail')->unsigned();
             $table->smallInteger('id_siswa')->unsigned();
+            $table->boolean('is_end')->default(0)->change();
             $table->foreign('id_detail')->references('id_detail')->on('detailmapel')->onDelete('restrict')->onUpdate('restrict');
             $table->foreign('id_siswa')->references('id_siswa')->on('siswa')->onDelete('restrict')->onUpdate('restrict');
             $table->timestamps();

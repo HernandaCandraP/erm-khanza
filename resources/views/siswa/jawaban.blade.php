@@ -3,21 +3,46 @@
 <head>
     @include('template.head')
 </head>
-<body class="hold-transition sidebar-mini">
-<div class="wrapper">
-  @include('template.navbar')
-  @include('template.sidebar')
+<body class="">
+<!-- <div class="wrapper"> -->
+<nav class="navbar navbar-expand navbar-light">
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+        <!-- Notifications Dropdown Menu -->
+        <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-user">
+                @if( Str::length(Auth::guard('siswa')->user()) > 0)
+                    {{ Auth::guard('siswa')->user()->username}}
+                @elseif( Str::length(Auth::guard('guru')->user()) > 0)
+                    {{ Auth::guard('guru')->user()->username}}
+                @endif
+            </i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item float-left">
+              Detail Profile <i class="fas fa-info float-right mr-2"></i> 
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="{{route('logout')}}" class="dropdown-item float-left">
+                Logout <i class="fa fa-sign-out-alt float-right mr-2"></i> 
+            </a>
+        </div>
+        </li>
+    </ul>
+</nav>
 
-  <div class="content-wrapper">
+  <!-- <div class="content-wrapper"> -->
     <section class="content-header"></section>
     <!-- Main content -->
-    <section class="content">
+    <section class="content ">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h4 class="float-left">Ujian Mata Palajaran ....</h4>
+                <h4 class="float-left">Ujian Mata Palajaran {{$nama_mapel->nama_mapel}}</h4>
                 
                 <h4 class="float-right" id='countdown'></h4>
                 <h4 class="float-right" >Sisa Waktu:&ensp;</h4>
@@ -42,7 +67,7 @@
                           <div class="col-3">
                             <!-- kondisi untuk menampilkan soal yang dipilih -->
                             @if($value->id_soal == $tampilsoal->id_soal)
-                              <!-- mengambil id_detail dan id_soal untuk fungsi pidah soal lainnya -->
+                              <!-- mengambil id_detail dan id_soal untuk fungsi pindah soal lainnya -->
                               <button type="submit" class="btn btn-primary" name="redirect_id_soal" value="{{ $value->id_soal }}">{{$key+1}}</button>
                             @elseif($value->jawaban_siswa == null)
                               <button type="submit" class="btn btn-default" name="redirect_id_soal" value="{{ $value->id_soal }}">{{$key+1}}</button>
@@ -72,13 +97,15 @@
       <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-  </div>
-  <footer class="main-footer">
-  @include('template.footer')
+  <!-- </div> -->
+  <footer>
+    <div class="float-right d-none d-sm-inline">
+      SMP Negeri 1 Durenan&emsp;
+    </div>
+    <strong>&emsp;Copyright &copy; 2021 <a href="https://github.com/HernandaCandraP/">Hernanda Candra P</a>.</strong> All rights reserved.
   </footer>
-
   <aside class="control-sidebar control-sidebar-dark"></aside>
-</div>
+<!-- </div> -->
 
 @include('template.script')
 <script>
