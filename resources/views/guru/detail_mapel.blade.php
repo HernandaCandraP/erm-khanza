@@ -39,7 +39,10 @@
                 @foreach ($detailmapel as $key)
                 <tr>
                     <th scope="row"> {{$no++}}. </th>
-                    <td>{{$key->nama_mapel}} <br> <a href="{{url('guru/soal')}}/{{$key->id_detail}}" class="btn btn-success btn-sm">Cek Soal</a></td>
+                    <td>{{$key->nama_mapel}} <br> 
+                      <a href="{{url('guru/soal')}}/{{$key->id_detail}}" class="btn btn-success btn-sm">Cek Soal</a>
+                      <a href="{{url('guru/penilaian')}}/{{$key->id_detail}}" class="btn btn-warning btn-sm">Periksa Ujian</a>
+                    </td>
                     <td>
                       @foreach($key->kelas as $kelas)
                         <b class="btn btn-info btn-sm">{{$kelas->nama_kelas}}</b>

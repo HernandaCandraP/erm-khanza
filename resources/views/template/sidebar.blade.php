@@ -26,12 +26,6 @@
               <p>Kategori Soal</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>Hasil Nilai</p>
-            </a>
-          </li>
           @endif
           @endif
           <!-- End Siswa -->
@@ -110,11 +104,10 @@
           @endif
           <!-- End Guru -->
   
-
-
+          <br>
           <li class="nav-item">
-            <a href="{{route('logout')}}" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+            <a href="{{route('logout')}}" class="nav-link btn btn-sm btn-danger">
+              <i class="nav-icon fas fa-power-off"></i>
               <p>
                 Logout
                 <!-- <span class="right badge badge-danger">New</span> -->

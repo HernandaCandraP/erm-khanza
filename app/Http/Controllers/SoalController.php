@@ -72,9 +72,9 @@ class SoalController extends Controller
         // get id_detail & id_soal untuk menyimpan jawaban dari siswa
         $tampilsoal = Soal::where('id_detail', $id_detail)->where('id_soal', $id_soal)->first();
         // untuk menampikan nomer soal apakah sudah dikerjakan / belum
-        $getsoal = Soal::leftjoin('jawaban', function($join){
+        $getsoal = Soal::leftjoin('jawaban', function($join) use($id_siswa){
             $join->on('soal.id_soal', '=', 'jawaban.id_soal')
-            ->where('jawaban.id_siswa', Auth::guard('siswa')->user()->id_siswa);
+            ->where('jawaban.id_siswa', $id_siswa);
         })
         ->select('soal.id_soal', 'jawaban.jawaban_siswa','jawaban.id_siswa')->where('id_detail', $id_detail)->get();
 
@@ -148,6 +148,19 @@ class SoalController extends Controller
         }
     }
 
+    public function ceknilai($id_detail)
+    {
+        $tampilnilai = Soal::leftjoin('jawaban', function($join){
+            $join->on('soal.id_soal', '=', 'jawaban.id_soal')
+            ->where('jawaban.id_siswa', Auth::guard('siswa')->user()->id_siswa);
+        })
+        ->select('soal.soal', 'jawaban.*')->where('id_detail', $id_detail)->get();
+
+        return view('siswa/cek_nilai', [
+            'tampilnilai'=>$tampilnilai
+        ]);
+    }
+    
     public function create(Request $request, $id)
     {
         $data = new Soal;

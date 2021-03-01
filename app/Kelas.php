@@ -16,4 +16,11 @@ class Kelas extends Authenticatable
     protected $fillable = [
         'nama_kelas', 'keterangan',
     ];
+
+    public function getsiswa(){
+        return $this->hasMany(
+            'App\Siswa',
+            'id_kelas'
+        );
+    }
 }

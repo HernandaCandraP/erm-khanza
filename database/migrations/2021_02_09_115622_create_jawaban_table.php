@@ -20,8 +20,9 @@ class CreateJawabanTable extends Migration
             $table->smallInteger('id_soal')->unsigned();
             $table->foreign('id_soal')->references('id_soal')->on('soal')->onDelete('restrict')->onUpdate('restrict');
             $table->text('jawaban_siswa')->nullable();
-            $table->smallInteger('nilai_cosine');
-            $table->smallInteger('nilai_jaccard');
+            $table->float('nilai_cosine');
+            $table->float('nilai_jaccard');
+            $table->float('nilai_guru')->nullable();
             $table->timestamps();
         });
     }

@@ -16,6 +16,13 @@ class Siswa extends Authenticatable
     protected $fillable = [
         'nis', 'nama_siswa', 'jenis_kelamin', 'alamat', 'no_telp', 'level', 'username', 
     ];
+
+    public function getjawaban(){
+        return $this->hasMany(
+            'App\Jawaban',
+            'id_siswa'
+        );
+    }
     
     /**
      * The attributes that should be hidden for arrays.
