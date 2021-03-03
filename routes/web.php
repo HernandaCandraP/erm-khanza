@@ -23,6 +23,11 @@ Route::get('/404', function () {
     return view('404');
 });
 
+// fallback roue when not correct link
+Route::fallback(function(){
+    return view('404');
+});
+
 // login
 Route::get('/login', 'LoginController@index')->name('login');
 Route::post('/postlogin', 'LoginController@postlogin')->name('postlogin');
@@ -42,38 +47,41 @@ Route::group(['middleware' => 'auth:siswa'], function () {
 });
 
 // login guru dan admin
-Route::group(['middleware' => 'auth:guru'], function () {
-    Route::get('/admin', 'GuruController@admin')->name('homeadmin')->middleware('is_admin');
+Route::group(['middleware' => ['auth:guru','is_admin']], function () {
+    Route::get('/admin', 'GuruController@admin')->name('homeadmin');
 
     // admin/guru
-    Route::get('/admin/guru', 'GuruController@tampilguru')->name('homeadmin/guru')->middleware('is_admin');
-    Route::post('/admin/guru/tambah', 'GuruController@create')->name('homeadmin/guru/tambah')->middleware('is_admin');
-    Route::get('/admin/guru/edit/{id}', 'GuruController@edit')->name('homeadmin/guru/edit')->middleware('is_admin');
-    Route::put('/admin/guru/update/{id}', 'GuruController@update')->name('homeadmin/guru/update')->middleware('is_admin');
-    Route::get('/admin/guru/hapus/{id}', 'GuruController@delete')->name('homeadmin/guru/hapus')->middleware('is_admin');
+    Route::get('/admin/guru', 'GuruController@tampilguru')->name('homeadmin/guru');
+    Route::post('/admin/guru/tambah', 'GuruController@create')->name('homeadmin/guru/tambah');
+    Route::get('/admin/guru/edit/{id}', 'GuruController@edit')->name('homeadmin/guru/edit');
+    Route::put('/admin/guru/update/{id}', 'GuruController@update')->name('homeadmin/guru/update');
+    Route::get('/admin/guru/hapus/{id}', 'GuruController@delete')->name('homeadmin/guru/hapus');
 
     // admin/siswa
-    Route::get('/admin/siswa', 'SiswaController@tampilsiswa')->name('homeadmin/siswa')->middleware('is_admin');
-    Route::post('/admin/siswa/tambah', 'SiswaController@create')->name('homeadmin/siswa/tambah')->middleware('is_admin');
-    Route::get('/admin/siswa/edit/{id}', 'SiswaController@edit')->name('homeadmin/siswa/edit')->middleware('is_admin');
-    Route::put('/admin/siswa/update/{id}', 'SiswaController@update')->name('homeadmin/siswa/update')->middleware('is_admin');
-    Route::get('/admin/siswa/hapus/{id}', 'SiswaController@delete')->name('homeadmin/siswa/hapus')->middleware('is_admin');
+    Route::get('/admin/siswa', 'SiswaController@tampilsiswa')->name('homeadmin/siswa');
+    Route::post('/admin/siswa/tambah', 'SiswaController@create')->name('homeadmin/siswa/tambah');
+    Route::get('/admin/siswa/edit/{id}', 'SiswaController@edit')->name('homeadmin/siswa/edit');
+    Route::put('/admin/siswa/update/{id}', 'SiswaController@update')->name('homeadmin/siswa/update');
+    Route::get('/admin/siswa/hapus/{id}', 'SiswaController@delete')->name('homeadmin/siswa/hapus');
     
     // admin/kelas
-    Route::get('/admin/kelas', 'KelasController@tampilkelas')->name('homeadmin/kelas')->middleware('is_admin');
-    Route::post('/admin/kelas/tambah', 'KelasController@create')->name('homeadmin/kelas/tambah')->middleware('is_admin');
-    Route::get('/admin/kelas/edit/{id}', 'KelasController@edit')->name('homeadmin/kelas/edit')->middleware('is_admin');
-    Route::put('/admin/kelas/update/{id}', 'KelasController@update')->name('homeadmin/kelas/update')->middleware('is_admin');
-    Route::get('/admin/kelas/hapus/{id}', 'KelasController@delete')->name('homeadmin/kelas/hapus')->middleware('is_admin');
-    Route::get('/admin/kelas/detail/{id}', 'KelasController@detail')->name('homeadmin/kelas/detail')->middleware('is_admin');
+    Route::get('/admin/kelas', 'KelasController@tampilkelas')->name('homeadmin/kelas');
+    Route::post('/admin/kelas/tambah', 'KelasController@create')->name('homeadmin/kelas/tambah');
+    Route::get('/admin/kelas/edit/{id}', 'KelasController@edit')->name('homeadmin/kelas/edit');
+    Route::put('/admin/kelas/update/{id}', 'KelasController@update')->name('homeadmin/kelas/update');
+    Route::get('/admin/kelas/hapus/{id}', 'KelasController@delete')->name('homeadmin/kelas/hapus');
+    Route::get('/admin/kelas/detail/{id}', 'KelasController@detail')->name('homeadmin/kelas/detail');
 
     // admin/mapel
-    Route::get('/admin/mapel', 'MapelController@tampilmapel')->name('homeadmin/mapel')->middleware('is_admin');
-    Route::post('/admin/mapel/tambah', 'MapelController@create')->name('homeadmin/mapel/tambah')->middleware('is_admin');
-    Route::get('/admin/mapel/edit/{id}', 'MapelController@edit')->name('homeadmin/mapel/edit')->middleware('is_admin');
-    Route::put('/admin/mapel/update/{id}', 'MapelController@update')->name('homeadmin/mapel/update')->middleware('is_admin');
-    Route::get('/admin/mapel/hapus/{id}', 'MapelController@delete')->name('homeadmin/mapel/hapus')->middleware('is_admin');
-    
+    Route::get('/admin/mapel', 'MapelController@tampilmapel')->name('homeadmin/mapel');
+    Route::post('/admin/mapel/tambah', 'MapelController@create')->name('homeadmin/mapel/tambah');
+    Route::get('/admin/mapel/edit/{id}', 'MapelController@edit')->name('homeadmin/mapel/edit');
+    Route::put('/admin/mapel/update/{id}', 'MapelController@update')->name('homeadmin/mapel/update');
+    Route::get('/admin/mapel/hapus/{id}', 'MapelController@delete')->name('homeadmin/mapel/hapus');
+});
+
+// login guru
+Route::group(['middleware' => ['auth:guru','is_guru']], function () { 
     // guru
     Route::get('/guru', 'GuruController@index')->name('homeguru');
 
@@ -97,6 +105,7 @@ Route::group(['middleware' => 'auth:guru'], function () {
     Route::get('/guru/siswa', 'SiswaController@tampilsiswa')->name('homeguru/siswa');
 
     // guru/penilaian ujian
-    Route::get('/guru/penilaian/{id}', 'DetailMapelController@penilaianguru')->name('homeguru/penilaian');
-    Route::get('/guru/penilaian/edit/{id_detail}/{id_siswa}', 'DetailMapelController@penilaianedit')->name('homeguru/penilaian/edit');
+    Route::get('/guru/penilaian/{id}', 'PenilaianController@penilaianguru')->name('homeguru/penilaian');
+    Route::get('/guru/penilaian/edit/{id_detail}/{id_siswa}', 'PenilaianController@penilaianedit')->name('homeguru/penilaian/edit');
+    Route::post('/guru/penilaian/update', 'PenilaianController@penilaianupdate')->name('homeguru/penilaian/update');
 });

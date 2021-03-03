@@ -6,15 +6,16 @@
         </li>
     </ul>
 
+    @if(Auth::guard('siswa')->check() != null || Auth::guard('guru')->check() != null)
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
             <i class="far fa-bell">
-                @if( Str::length(Auth::guard('siswa')->user()) > 0)
+                @if( Auth::guard('siswa')->check() != null)
                     {{ Auth::guard('siswa')->user()->username}}
-                @elseif( Str::length(Auth::guard('guru')->user()) > 0)
+                @elseif( Auth::guard('guru')->check() != null)
                     {{ Auth::guard('guru')->user()->username}}
                 @endif
             </i>
@@ -31,4 +32,5 @@
         </div>
         </li>
     </ul>
+    @endif
 </nav>

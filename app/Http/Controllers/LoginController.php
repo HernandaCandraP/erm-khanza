@@ -9,6 +9,15 @@ class LoginController extends Controller
 {
     public function index()
     {
+        if(Auth::guard('siswa')->check() != null){
+            return redirect('siswa');
+        }else if (Auth::guard('guru')->check() != null){
+            if(Auth::guard('guru')->user()->level == "Guru"){
+                return redirect('guru');
+            }else if(Auth::guard('guru')->user()->level == "Admin"){
+                return redirect('admin');
+            }
+        }
         return view('login');
     }
 

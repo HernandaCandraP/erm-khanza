@@ -57,12 +57,6 @@
               <p>Siswa</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>Lihat Nilai</p>
-            </a>
-          </li>
           @endif
           @endif
           <!-- End Guru -->
@@ -105,6 +99,7 @@
           <!-- End Guru -->
   
           <br>
+          @if(Auth::guard('siswa')->check() != null || Auth::guard('guru')->check() != null)
           <li class="nav-item">
             <a href="{{route('logout')}}" class="nav-link btn btn-sm btn-danger">
               <i class="nav-icon fas fa-power-off"></i>
@@ -114,6 +109,24 @@
               </p>
             </a>
           </li>
+          @else
+          <li class="nav-item">
+            <a href="{{route('welcome')}}" class="nav-link text-light">
+              <i class="nav-icon fa fa-home"></i>
+              <p>
+                Menu Utama
+              </p>
+            </a>
+          </li><br>
+          <li class="nav-item">
+            <a href="{{route('login')}}" class="nav-link btn btn-sm btn-info text-light">
+              <i class="nav-icon fa fa-sign-in-alt"></i>
+              <p>
+                Login
+              </p>
+            </a>
+          </li>
+          @endif
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
