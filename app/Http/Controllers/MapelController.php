@@ -16,13 +16,18 @@ class MapelController extends Controller
 
     public function create(Request $request)
     {
+        $validate = $request->validate([
+            'nama_mapel' => ['required', 'unique:mapel,nama_mapel', 'max:50'],
+            'keterangan' => ['max:50']
+        ]);
         $data = new Mapel;
 
         $data->nama_mapel = $request->nama_mapel;
         $data->keterangan = $request->keterangan;
         
         $data->save();
-        return redirect()->route('homeadmin/mapel');
+        $request->session()->flash('success', 'Berhasil Menambahkan Mata Pelajaran '.$request->nama_mapel);
+        return redirect()->back();
     }
 
     public function edit($id)
@@ -34,20 +39,34 @@ class MapelController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validate = $request->validate([
+            'nama_mapel' => ['required', 'unique:mapel,nama_mapel,'.$id.',id_mapel', 'max:50'],
+            'keterangan' => ['max:50']
+        ]);
+
         $data = Mapel::find($id);
 
         $data->nama_mapel = $request->nama_mapel;
         $data->keterangan = $request->keterangan;
 
         $data->save();
+        $request->session()->flash('success', 'Mata Pelajaran ' .$data->nama_mapel. ' Berhasil Diedit');
         return redirect()->route('homeadmin/mapel');
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
         $data = Mapel::find($id);
+        
+        // cek apakah ada relasi ke tabel lain
+        if($data->getdetailmapel()->exists()){
+            $request->session()->flash('error', 'Mata Pelajaran ' .$data->nama_mapel. ' Tidak Dapat Dihapus');
+            return redirect()->back();
+        }
+
         $data->delete();
+        $request->session()->flash('warning', 'Mata Pelajaran ' .$data->nama_mapel. ' Berhasil Dihapus');
         return redirect()->route('homeadmin/mapel');
     }
 }

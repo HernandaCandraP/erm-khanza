@@ -16,4 +16,11 @@ class Mapel extends Authenticatable
     protected $fillable = [
         'nama_mapel', 'keterangan',
     ];
+
+    public function getdetailmapel(){
+        return $this->hasMany(
+            'App\DetailMapel',
+            'id_mapel'
+        );
+    }
 }

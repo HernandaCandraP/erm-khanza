@@ -30,13 +30,15 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Mata Pelajaran</label>
                       <div class="col-sm-9">
-                        <input type="text" name="nama_mapel" class="form-control" placeholder="Mata Pelajaean" value="{{ $mapel->nama_mapel }}" required>
+                        <input type="text" name="nama_mapel" class="form-control" placeholder="Mata Pelajaean" value="{{old('nama_mapel', $mapel->nama_mapel) }}" required>
+                        @error('nama_mapel')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Keterangan</label>
                       <div class="col-sm-9">
-                        <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" value="{{ $mapel->keterangan }}">
+                        <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" value="{{old('keterangan', $mapel->keterangan) }}">
+                        @error('keterangan')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                   </div>

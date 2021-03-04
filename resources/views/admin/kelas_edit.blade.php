@@ -30,13 +30,15 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Nama Kelas</label>
                       <div class="col-sm-9">
-                        <input type="text" name="nama_kelas" class="form-control" placeholder="Nama Kelas" value="{{ $kelas->nama_kelas }}" required>
+                        <input type="text" name="nama_kelas" class="form-control" placeholder="Nama Kelas" value="{{old('nama_kelas', $kelas->nama_kelas) }}" autocomplete="off">
+                        @error('nama_kelas')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Keterangan</label>
                       <div class="col-sm-9">
-                        <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" value="{{ $kelas->keterangan }}">
+                        <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" value="{{old('keterangan', $kelas->keterangan) }}" autocomplete="off">
+                        @error('keterangan')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                   </div>

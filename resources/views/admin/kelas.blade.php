@@ -25,6 +25,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+              @include('template.alert')
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -97,13 +98,15 @@
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Nama Kelas</label>
             <div class="col-sm-9">
-              <input type="text" name="nama_kelas" class="form-control" placeholder="Nama Kelas" required>
+              <input type="text" name="nama_kelas" class="form-control" autocomplete="off" placeholder="Nama Kelas" value="{{ old('nama_kelas') }}">
+              @error('nama_kelas')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Keterangan</label>
             <div class="col-sm-9">
-              <input type="text" name="keterangan" class="form-control" placeholder="Keterangan">
+              <input type="text" name="keterangan" class="form-control" autocomplete="off" placeholder="Keterangan" value="{{ old('keterangan') }}">
+              @error('keterangan')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
         </div>
@@ -121,5 +124,10 @@
 </div>
 
 @include('template.script_table')
+<script>
+  @if($errors->any() != null)
+    $('#modal-lg').modal('show');
+  @endif
+</script>
 </body>
 </html>
