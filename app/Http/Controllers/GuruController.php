@@ -19,13 +19,21 @@ class GuruController extends Controller
     }
 
     public function tampilguru(){
-        $no = 1;
         $guru = Guru::all();
-        return view('admin/guru', ['guru' => $guru, 'no' => $no]);
+        return view('admin/guru', ['guru' => $guru]);
     }
 
     public function create(Request $request)
     {
+        $validate = $request->validate([
+            'nip' => ['required', 'unique:guru,nip', 'max:22'],
+            'nama_guru' => ['required', 'max:50'],
+            'jenis_kelamin' => ['required'],
+            'alamat' => ['max:100'],
+            'no_telp' => ['max:13'],
+            'level' => ['required']
+        ]);
+
         $data = new Guru;
 
         $data->nip = $request->nip;
@@ -34,10 +42,11 @@ class GuruController extends Controller
         $data->alamat = $request->alamat;
         $data->no_telp = $request->no_telp;
         $data->level = $request->level;
-        $data->username = $request->username;
-        $data->password = bcrypt($request->password);
+        $data->username = $request->nip;
+        $data->password = bcrypt($request->nip);
         
         $data->save();
+        $request->session()->flash('success', 'Berhasil Menambahkan Guru Baru: '.$request->nama_guru);
         return redirect()->route('homeadmin/guru');
     }
 
@@ -50,6 +59,16 @@ class GuruController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validate = $request->validate([
+            'nip' => ['required', 'unique:guru,nip,'.$id.',id_guru', 'max:22'],
+            'nama_guru' => ['required', 'max:50'],
+            'jenis_kelamin' => ['required'],
+            'username' => ['required', 'max:50'],
+            'alamat' => ['max:100'],
+            'no_telp' => ['max:13'],
+            'level' => ['required']
+        ]);
+
         $data = Guru::find($id);
 
         $data->nip = $request->nip;
@@ -59,17 +78,33 @@ class GuruController extends Controller
         $data->no_telp = $request->no_telp;
         $data->level = $request->level;
         $data->username = $request->username;
-        // $data->password = bcrypt($request->password);
 
         $data->save();
+        $request->session()->flash('success', 'Guru: ' .$data->nama_guru. ' Berhasil Diedit');
         return redirect()->route('homeadmin/guru');
     }
 
-
-    public function delete($id)
+    public function reset(Request $request, $id)
     {
         $data = Guru::find($id);
-        $data->delete();
-        return redirect()->route('homeadmin/guru');
+        $data->password = bcrypt($data->nip);
+        
+        $data->save();
+        $request->session()->flash('success', 'Berhasil Reset Password untuk Guru ' .$data->nama_guru);
+        return redirect()->back();
+    }
+
+    public function delete(Request $request, $id)
+    {
+        $data = Guru::find($id);
+        // cek apakah ada relasi ke tabel lain
+        try{
+            $data->delete();
+            $request->session()->flash('warning', 'Guru: ' .$data->nama_guru. ' Berhasil Dihapus');
+            return redirect()->back();
+        } catch (\Exception $e){
+            $request->session()->flash('error', 'Guru: ' .$data->nama_guru. ' Tidak Dapat Dihapus');
+            return redirect()->back();
+        }
     }
 }

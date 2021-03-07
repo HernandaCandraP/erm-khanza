@@ -34,9 +34,9 @@
                   </tr>
                   </thead>
                   <tbody>
-                @foreach ($siswa as $key)
+                @foreach ($siswa as $no => $key)
                 <tr>
-                    <th scope="row"> {{$no++}}. </th>
+                    <th scope="row"> {{$no+1}}. </th>
                     <td>{{$key->nis}}</td>
                     <td>{{$key->username}}</td>
                     <td>{{$key->nama_siswa}}</td>

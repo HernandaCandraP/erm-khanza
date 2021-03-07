@@ -23,6 +23,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                @include('template.alert')
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -38,9 +39,9 @@
                   </tr>
                   </thead>
                   <tbody>
-                @foreach ($guru as $key)
+                @foreach ($guru as $no => $key)
                 <tr>
-                    <th scope="row"> {{$no++}}. </th>
+                    <th scope="row"> {{$no+1}}. </th>
                     <td>{{$key->nip}}</td>
                     <td>{{$key->username}}</td>
                     <td>{{$key->nama_guru}}</td>
@@ -50,7 +51,8 @@
                     <td>{{$key->level}}</td>
                     <td>
                       <a href="{{url('admin/guru/edit')}}/{{$key->id_guru}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                      <a href="{{url('admin/guru/hapus')}}/{{$key->id_guru}}" class="btn btn-danger btn-sm" onclick="return confirm('Menghapus data akan berpengaruh pada perhitungan, memungkinkan terjadi perubahan data !!')"><i class="fas fa-trash"></i></a>
+                      <a href="{{url('admin/guru/hapus')}}/{{$key->id_guru}}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus guru bernama {{$key->nama_guru}}')"><i class="fas fa-trash"></i></a>
+                      <a href="{{url('admin/guru/reset')}}/{{$key->id_guru}}" class="btn btn-warning btn-sm" onclick="return confirm('Apakah yakin ingin reset password guru: {{$key->nama_guru}}')"><i class="fas fa-history"> Reset Password</i></a>
                     </td>
                 </tr> 
                 @endforeach
@@ -93,65 +95,59 @@
       <div class="modal-body">
         <div class="card-body">
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">NIP</label>
+            <label class="col-sm-3 col-form-label">NIP<b class="text-danger">*</b></label>
             <div class="col-sm-9">
-              <input type="text" name="nip" class="form-control" placeholder="NIP" required>
+              <input type="text" name="nip" class="form-control" autocomplete="off" placeholder="NIP" value="{{ old('nip') }}">
+              @error('nip')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Username</label>
+            <label class="col-sm-3 col-form-label">Nama Guru<b class="text-danger">*</b></label>
             <div class="col-sm-9">
-              <input type="text" name="username" class="form-control" placeholder="Username" required>
+              <input type="text" name="nama_guru" class="form-control" autocomplete="off" placeholder="Nama Guru" value="{{ old('nama_guru') }}">
+              @error('nama_guru')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Password</label>
-            <div class="col-sm-9">
-              <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Nama Guru</label>
-            <div class="col-sm-9">
-              <input type="text" name="nama_guru" class="form-control" placeholder="Nama Guru" required>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Jenis Kelamin</label>
+            <label class="col-sm-3 col-form-label">Jenis Kelamin<b class="text-danger">*</b></label>
             <div class="col-sm-9">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Laki-laki" required>
+                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Laki-laki" {{old('jenis_kelamin')== 'Laki-laki' ? 'checked':''}}>
                   <label class="form-check-label">Laki-Laki</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Perempuan" required>
+                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Perempuan" {{old('jenis_kelamin')== 'Perempuan' ? 'checked':''}}>
                   <label class="form-check-label">Perempuan</label>
                 </div>
+                @error('jenis_kelamin')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Alamat</label>
             <div class="col-sm-9">
-              <input type="text" name="alamat" class="form-control" placeholder="Alamat" required>
+              <input type="text" name="alamat" class="form-control" autocomplete="off" placeholder="Alamat" value="{{ old('alamat') }}">
+              @error('alamat')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">No. Telp</label>
             <div class="col-sm-9">
-              <input type="text" name="no_telp" class="form-control" placeholder="No. Telp" required>
+              <input type="number" name="no_telp" class="form-control" autocomplete="off" placeholder="No. Telp" value="{{ old('no_telp') }}">
+              @error('no_telp')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Level</label>
+            <label class="col-sm-3 col-form-label">Level<b class="text-danger">*</b></label>
             <div class="col-sm-9">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="level" value="Guru" required>
+                  <input class="form-check-input" type="radio" name="level" value="Guru" {{old('level')== 'Guru' ? 'checked':''}}>
                   <label class="form-check-label">Guru</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="level" value="Admin" required>
+                  <input class="form-check-input" type="radio" name="level" value="Admin" {{old('level')== 'Admin' ? 'checked':''}}>
                   <label class="form-check-label">Admin</label>
                 </div>
+                @error('level')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
         </div>
@@ -169,5 +165,10 @@
 </div>
 
 @include('template.script_table')
+<script>
+  @if($errors->any() != null)
+    $('#modal-lg').modal('show');
+  @endif
+</script>
 </body>
 </html>

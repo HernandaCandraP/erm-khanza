@@ -34,14 +34,14 @@
                   </tr>
                   </thead>
                   <tbody>
-                @foreach ($mapel as $key)
+                @foreach ($mapel as $no => $key)
                 <tr>
-                    <th scope="row"> {{$no++}}. </th>
+                    <th scope="row"> {{$no+1}}. </th>
                     <td>{{$key->nama_mapel}}</td>
                     <td>{{$key->keterangan}}</td>
                     <td>
                       <a href="{{url('admin/mapel/edit')}}/{{$key->id_mapel}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                      <a href="{{url('admin/mapel/hapus')}}/{{$key->id_mapel}}" class="btn btn-danger btn-sm" onclick="return confirm('Menghapus data akan berpengaruh pada perhitungan, memungkinkan terjadi perubahan data !!')"><i class="fas fa-trash"></i></a>
+                      <a href="{{url('admin/mapel/hapus')}}/{{$key->id_mapel}}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus Mata Pelajaran {{$key->nama_mapel}} ?')"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr> 
                 @endforeach
@@ -83,7 +83,7 @@
       <div class="modal-body">
         <div class="card-body">
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Nama Mapel</label>
+            <label class="col-sm-3 col-form-label">Nama Mapel<b class="text-danger">*</b></label>
             <div class="col-sm-9">
               <input type="text" name="nama_mapel" class="form-control" autocomplete="off" placeholder="Nama Mapel" value="{{ old('nama_mapel') }}">
               @error('nama_mapel')<p class="text-danger">{{$message}}</p>@enderror

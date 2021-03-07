@@ -12,7 +12,7 @@
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-            <i class="far fa-bell">
+            <i class="fas fa-user-circle">
                 @if( Auth::guard('siswa')->check() != null)
                     {{ Auth::guard('siswa')->user()->username}}
                 @elseif( Auth::guard('guru')->check() != null)
@@ -23,11 +23,11 @@
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item">
-                <i class="fas fa-envelope mr-2"></i> Detail Profile
+                <i class="fas fa-info-circle mr-2"></i> Detail Profile
             </a>
             <div class="dropdown-divider"></div>
             <a href="{{route('logout')}}" class="dropdown-item">
-                <i class="fas fa-users mr-2"></i> Logout
+                <i class="fas fa-power-off mr-2"></i> Logout
             </a>
         </div>
         </li>

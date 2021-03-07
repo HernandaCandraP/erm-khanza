@@ -20,8 +20,8 @@ class CreateSiswaTable extends Migration
             $table->smallInteger('id_kelas')->unsigned();
             $table->foreign('id_kelas')->references('id_kelas')->on('kelas')->onDelete('restrict')->onUpdate('restrict');
             $table->enum('jenis_kelamin', ['Laki-laki','Perempuan']);
-            $table->char('alamat', 100);
-            $table->char('no_telp', 13);
+            $table->char('alamat', 100)->nullable();
+            $table->char('no_telp', 13)->nullable();
             $table->char('level', 10);
             $table->char('username', 50)->unique();
             $table->char('password', 100);

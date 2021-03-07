@@ -92,7 +92,7 @@ return [
     ],
     'not_in' => 'The selected :attribute is invalid.',
     'not_regex' => 'Field :attribute format is invalid.',
-    'numeric' => 'Field :attribute must berupa angka.',
+    'numeric' => 'Field :attribute harus berupa angka.',
     'password' => 'The password tidak sesuai.',
     'present' => 'Field :attribute field must be present.',
     'regex' => 'Field :attribute format tidak valid.',

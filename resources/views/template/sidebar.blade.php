@@ -16,7 +16,7 @@
           @if(Auth::guard('siswa')->user()->level == "Siswa")
           <li class="nav-item menu-open">
             <a href="{{route('homesiswa')}}" class="nav-link {{ Request::is('siswa') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-home"></i>
               <p>Home</p>
             </a>
           </li>
@@ -35,13 +35,13 @@
           @if(Auth::guard('guru')->user()->level == "Guru")
           <li class="nav-item menu-open">
             <a href="{{route('homeguru')}}" class="nav-link {{ Request::is('guru') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-home"></i>
               <p>Home</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{{route('homeguru/detailmapel')}}" class="nav-link {{ Request::is('guru/detailmapel') ? 'active' : '' }}">
-              <i class="nav-icon far fa-image"></i>
+              <i class="nav-icon far fa-file"></i>
               <p>Kategori Soal</p>
             </a>
           </li>
@@ -66,7 +66,7 @@
           @if(Auth::guard('guru')->user()->level == "Admin")
           <li class="nav-item menu-open">
             <a href="{{route('homeadmin')}}" class="nav-link {{ Request::is('admin') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-home"></i>
               <p>Home</p>
             </a>
           </li>

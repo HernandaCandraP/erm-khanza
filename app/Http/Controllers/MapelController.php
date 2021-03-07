@@ -9,9 +9,8 @@ use App\Mapel;
 class MapelController extends Controller
 {
     public function tampilmapel(){
-        $no = 1;
         $mapel = Mapel::all();
-        return view('admin/mapel', ['mapel' => $mapel, 'no' => $no]);
+        return view('admin/mapel', ['mapel' => $mapel]);
     }
 
     public function create(Request $request)
@@ -58,15 +57,13 @@ class MapelController extends Controller
     public function delete(Request $request, $id)
     {
         $data = Mapel::find($id);
-        
-        // cek apakah ada relasi ke tabel lain
-        if($data->getdetailmapel()->exists()){
+        try{
+            $data->delete();
+            $request->session()->flash('warning', 'Mata Pelajaran ' .$data->nama_mapel. ' Berhasil Dihapus');
+            return redirect()->back();
+        } catch (\Exception $e){
             $request->session()->flash('error', 'Mata Pelajaran ' .$data->nama_mapel. ' Tidak Dapat Dihapus');
             return redirect()->back();
         }
-
-        $data->delete();
-        $request->session()->flash('warning', 'Mata Pelajaran ' .$data->nama_mapel. ' Berhasil Dihapus');
-        return redirect()->route('homeadmin/mapel');
     }
 }

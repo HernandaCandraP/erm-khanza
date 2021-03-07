@@ -28,7 +28,7 @@
                 <div class="modal-body">
                   <div class="card-body">
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Nama Kelas</label>
+                      <label class="col-sm-3 col-form-label">Nama Kelas<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
                         <input type="text" name="nama_kelas" class="form-control" placeholder="Nama Kelas" value="{{old('nama_kelas', $kelas->nama_kelas) }}" autocomplete="off">
                         @error('nama_kelas')<p class="text-danger">{{$message}}</p>@enderror
@@ -44,7 +44,7 @@
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between float-right">
-                  <button type="submit" class="btn btn-primary">Tambah Data</button>
+                  <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
                 </form>
               </div>

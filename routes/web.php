@@ -56,6 +56,7 @@ Route::group(['middleware' => ['auth:guru','is_admin']], function () {
     Route::get('/admin/guru/edit/{id}', 'GuruController@edit')->name('homeadmin/guru/edit');
     Route::put('/admin/guru/update/{id}', 'GuruController@update')->name('homeadmin/guru/update');
     Route::get('/admin/guru/hapus/{id}', 'GuruController@delete')->name('homeadmin/guru/hapus');
+    Route::get('/admin/guru/reset/{id}', 'GuruController@reset')->name('homeadmin/siswa/reset');
 
     // admin/siswa
     Route::get('/admin/siswa', 'SiswaController@tampilsiswa')->name('homeadmin/siswa');
@@ -63,6 +64,7 @@ Route::group(['middleware' => ['auth:guru','is_admin']], function () {
     Route::get('/admin/siswa/edit/{id}', 'SiswaController@edit')->name('homeadmin/siswa/edit');
     Route::put('/admin/siswa/update/{id}', 'SiswaController@update')->name('homeadmin/siswa/update');
     Route::get('/admin/siswa/hapus/{id}', 'SiswaController@delete')->name('homeadmin/siswa/hapus');
+    Route::get('/admin/siswa/reset/{id}', 'SiswaController@reset')->name('homeadmin/siswa/reset');
     
     // admin/kelas
     Route::get('/admin/kelas', 'KelasController@tampilkelas')->name('homeadmin/kelas');

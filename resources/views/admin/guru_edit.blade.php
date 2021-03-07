@@ -28,71 +28,72 @@
                 <div class="modal-body">
                   <div class="card-body">
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">NIP</label>
+                      <label class="col-sm-3 col-form-label">NIP<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
-                        <input type="text" name="nip" class="form-control" placeholder="NIP" value="{{ $guru->nip }}" required>
+                        <input type="text" name="nip" class="form-control" autocomplete="off" placeholder="NIP" value="{{ old('nip', $guru->nip) }}">
+                        @error('nip')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Username</label>
+                      <label class="col-sm-3 col-form-label">Username<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
-                        <input type="text" name="username" class="form-control" placeholder="Username" value="{{ $guru->username }}" required>
+                        <input type="text" name="username" class="form-control" autocomplete="off" placeholder="Username" value="{{ old('username', $guru->username) }}">
+                        @error('username')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Password</label>
+                      <label class="col-sm-3 col-form-label">Nama Guru<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
-                        <input type="text" name="password" class="form-control" placeholder="Password" value="{{ $guru->password }}" disabled>
+                        <input type="text" name="nama_guru" class="form-control" autocomplete="off" placeholder="Nama Guru" value="{{ old('nama_guru', $guru->nama_guru) }}">
+                        @error('nama_guru')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Nama Guru</label>
-                      <div class="col-sm-9">
-                        <input type="text" name="nama_guru" class="form-control" placeholder="Nama Guru" value="{{ $guru->nama_guru }}" required>
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Jenis Kelamin</label>
+                      <label class="col-sm-3 col-form-label">Jenis Kelamin<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="jenis_kelamin" value="Laki-laki" required {{ ($guru->jenis_kelamin=="Laki-laki")? "checked" : "" }} >
+                            <input class="form-check-input" type="radio" name="jenis_kelamin" value="Laki-laki" {{ old('jenis_kelamin', $guru->jenis_kelamin) =="Laki-laki" ? "checked" : "" }} >
                             <label class="form-check-label">Laki-Laki</label>
                           </div>
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="jenis_kelamin" value="Perempuan" required {{ ($guru->jenis_kelamin=="Perempuan")? "checked" : "" }}>
+                            <input class="form-check-input" type="radio" name="jenis_kelamin" value="Perempuan" {{ old('jenis_kelamin', $guru->jenis_kelamin) =="Perempuan" ? "checked" : "" }}>
                             <label class="form-check-label">Perempuan</label>
                           </div>
+                          @error('jenis_kelamin')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Alamat</label>
                       <div class="col-sm-9">
-                        <input type="text" name="alamat" class="form-control" placeholder="Alamat" value="{{ $guru->alamat }}" required>
+                        <input type="text" name="alamat" class="form-control" autocomplete="off" placeholder="Alamat" value="{{ old('alamat', $guru->alamat) }}">
+                        @error('alamat')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">No. Telp</label>
+                      <label class="col-sm-3 col-form-label">No. Telp<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
-                        <input type="text" name="no_telp" class="form-control" placeholder="No. Telp" value="{{ $guru->no_telp }}" required>
+                        <input type="number" name="no_telp" class="form-control" autocomplete="off" placeholder="No. Telp" value="{{ old('no_telp', $guru->no_telp) }}">
+                        @error('no_telp')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Level</label>
+                      <label class="col-sm-3 col-form-label">Level<b class="text-danger">*</b></label>
                       <div class="col-sm-9">
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="level" value="Guru" required {{ ($guru->level=="Guru")? "checked" : "" }}>
+                            <input class="form-check-input" type="radio" name="level" value="Guru" {{ old('level', $guru->level) =="Guru" ? "checked" : "" }}>
                             <label class="form-check-label">Guru</label>
                           </div>
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="level" value="Admin" required {{ ($guru->level=="Admin")? "checked" : "" }}>
+                            <input class="form-check-input" type="radio" name="level" value="Admin" {{ old('level', $guru->level) =="Admin" ? "checked" : "" }}>
                             <label class="form-check-label">Admin</label>
                           </div>
+                          @error('level')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between float-right">
-                  <button type="submit" class="btn btn-primary">Tambah Data</button>
+                  <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
                 </form>
               </div>

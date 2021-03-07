@@ -18,8 +18,8 @@ class CreateGuruTable extends Migration
             $table->char('nip', 22);
             $table->char('nama_guru', 50);
             $table->enum('jenis_kelamin', ['Laki-laki','Perempuan']);
-            $table->char('alamat', 100);
-            $table->char('no_telp', 13);
+            $table->char('alamat', 100)->nullable();
+            $table->char('no_telp', 13)->nullable();
             $table->enum('level', ['Guru','Admin']);
             $table->char('username', 50)->unique();
             $table->char('password', 100);

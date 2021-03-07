@@ -38,9 +38,9 @@
                   </tr>
                   </thead>
                   <tbody>
-                @foreach ($kelas as $key)
+                @foreach ($kelas as $no => $key)
                 <tr>
-                    <th scope="row"> {{$no++}}. </th>
+                    <th scope="row"> {{$no+1}}. </th>
                     <td>{{$key->nama_kelas}} &ensp;
                       @if(Auth::guard('guru')->user()->level == "Admin")
                         <a href="{{url('admin/kelas/detail')}}/{{$key->id_kelas}}" class="btn btn-success btn-sm"><i class="fas fa-search"></i>detail</a>
@@ -53,7 +53,7 @@
                     @if(Auth::guard('guru')->user()->level == "Admin")
                     <td>
                       <a href="{{url('admin/kelas/edit')}}/{{$key->id_kelas}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                      <a href="{{url('admin/kelas/hapus')}}/{{$key->id_kelas}}" class="btn btn-danger btn-sm" onclick="return confirm('Menghapus data akan berpengaruh pada perhitungan, memungkinkan terjadi perubahan data !!')"><i class="fas fa-trash"></i></a>
+                      <a href="{{url('admin/kelas/hapus')}}/{{$key->id_kelas}}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus Kelas {{$key->nama_kelas}} ?')"><i class="fas fa-trash"></i></a>
                     </td>
                     @endif
                 </tr> 
@@ -96,7 +96,7 @@
       <div class="modal-body">
         <div class="card-body">
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Nama Kelas</label>
+            <label class="col-sm-3 col-form-label">Nama Kelas<b class="text-danger">*</b></label>
             <div class="col-sm-9">
               <input type="text" name="nama_kelas" class="form-control" autocomplete="off" placeholder="Nama Kelas" value="{{ old('nama_kelas') }}">
               @error('nama_kelas')<p class="text-danger">{{$message}}</p>@enderror

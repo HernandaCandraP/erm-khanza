@@ -13,17 +13,18 @@
     </div>
     <div class="card-body">
       <p class="login-box-msg">login to start ujian esai otomatis</p>
-
+      @error('msg')<p class="text-danger">{{$message}}</p>@enderror
       <form action="{{route('postlogin')}}" method="post">
       {{ csrf_field() }}
         <div class="input-group mb-3">
-          <input type="text" class="form-control" name="username" placeholder="Username">
+          <input type="text" class="form-control" name="username" placeholder="Username" value="{{ old('username') }}">
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+              <span class="fas fa-user"></span>
             </div>
           </div>
         </div>
+        @error('username')<p class="text-danger">{{$message}}</p>@enderror
         <div class="input-group mb-3">
           <input type="password" class="form-control" name="password" placeholder="Password">
           <div class="input-group-append">
@@ -32,27 +33,16 @@
             </div>
           </div>
         </div>
+        @error('password')<p class="text-danger">{{$message}}</p>@enderror
         <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember">
-                Remember Me
-              </label>
-            </div>
+          <div class="col-7">
           </div>
-          <!-- /.col -->
-          <div class="col-4">
+          <div class="col-5">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
           </div>
-          <!-- /.col -->
         </div>
       </form>
       <!-- /.social-auth-links -->
-
-      <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p>
     </div>
     <!-- /.card-body -->
   </div>

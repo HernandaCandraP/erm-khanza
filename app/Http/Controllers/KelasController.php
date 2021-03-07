@@ -10,17 +10,15 @@ use App\Siswa;
 class KelasController extends Controller
 {
     public function tampilkelas(){
-        $no = 1;
         $kelas = Kelas::all();
-        return view('admin/kelas', ['kelas' => $kelas, 'no' => $no]);
+        return view('admin/kelas', ['kelas' => $kelas]);
     }
 
     public function detail($id)
     {
-        $no = 1;
         $kelas = Kelas::find($id);
         $siswa = Siswa::where('id_kelas', $id)->get();
-        return view('admin/kelas_detail', ['kelas'=>$kelas, 'siswa'=>$siswa, 'no'=>$no]);
+        return view('admin/kelas_detail', ['kelas'=>$kelas, 'siswa'=>$siswa]);
     }
 
     public function create(Request $request)
@@ -68,15 +66,14 @@ class KelasController extends Controller
     public function delete(Request $request, $id)
     {
         $data = Kelas::find($id);
-
         // cek apakah ada relasi ke tabel lain
-        if($data->getsiswa()->exists()){
+        try{
+            $data->delete();
+            $request->session()->flash('warning', 'Kelas ' .$data->nama_kelas. ' Berhasil Dihapus');
+            return redirect()->back();
+        } catch (\Exception $e){
             $request->session()->flash('error', 'Kelas ' .$data->nama_kelas. ' Tidak Dapat Dihapus');
             return redirect()->back();
         }
-
-        $data->delete();
-        $request->session()->flash('warning', 'Kelas ' .$data->nama_kelas. ' Berhasil Dihapus');
-        return redirect()->route('homeadmin/kelas');
     }
 }

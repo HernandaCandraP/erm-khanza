@@ -24,6 +24,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+              @include('template.alert')
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -41,9 +42,9 @@
                   </tr>
                   </thead>
                   <tbody>
-                @foreach ($siswa as $key)
+                @foreach ($siswa as $no => $key)
                 <tr>
-                    <th scope="row"> {{$no++}}. </th>
+                    <th scope="row"> {{$no+1}}. </th>
                     <td>{{$key->nis}}</td>
                     <td>{{$key->username}}</td>
                     <td>{{$key->nama_siswa}}</td>
@@ -54,7 +55,8 @@
                     @if(Auth::guard('guru')->user()->level == "Admin")
                     <td>
                       <a href="{{url('admin/siswa/edit')}}/{{$key->id_siswa}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                      <a href="{{url('admin/siswa/hapus')}}/{{$key->id_siswa}}" class="btn btn-danger btn-sm" onclick="return confirm('Menghapus data akan berpengaruh pada perhitungan, memungkinkan terjadi perubahan data !!')"><i class="fas fa-trash"></i></a>
+                      <a href="{{url('admin/siswa/hapus')}}/{{$key->id_siswa}}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus siswa bernama {{$key->nama_siswa}}')"><i class="fas fa-trash"></i></a>
+                      <a href="{{url('admin/siswa/reset')}}/{{$key->id_siswa}}" class="btn btn-warning btn-sm" onclick="return confirm('Apakah yakin ingin reset password siswa: {{$key->nama_siswa}}')"><i class="fas fa-history"> Reset Password</i></a>
                     </td>
                     @endif
                 </tr> 
@@ -97,65 +99,59 @@
       <div class="modal-body">
         <div class="card-body">
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">NIS</label>
+            <label class="col-sm-3 col-form-label">NIS<b class="text-danger">*</b></label>
             <div class="col-sm-9">
-              <input type="text" name="nis" class="form-control" placeholder="NIS" required>
+              <input type="text" name="nis" class="form-control" autocomplete="off" placeholder="NIS" value="{{ old('nis') }}">
+              @error('nis')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Username</label>
+            <label class="col-sm-3 col-form-label">Nama Siswa<b class="text-danger">*</b></label>
             <div class="col-sm-9">
-              <input type="text" name="username" class="form-control" placeholder="Username" required>
+              <input type="text" name="nama_siswa" class="form-control" autocomplete="off" placeholder="Nama Siswa" value="{{ old('nama_siswa') }}">
+              @error('nama_siswa')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Password</label>
-            <div class="col-sm-9">
-              <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Nama Siswa</label>
-            <div class="col-sm-9">
-              <input type="text" name="nama_siswa" class="form-control" placeholder="Nama Siswa" required>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Kelas</label>
+            <label class="col-sm-3 col-form-label">Kelas<b class="text-danger">*</b></label>
             <div class="col-sm-9">
               <div class="form-group">
-                  <select class="form-control select2" name="id_kelas" id="id_kelas" required>
-                    <option value="null" disabled selected>== Pilih Kelas ==</option>
-                    @foreach ($kelas as $key)
-                      <option value="{{ $key->id_kelas }}"> {{$key->nama_kelas}} </option>
-                    @endforeach
-                  </select>
-                </div>
+                <select class="form-control select2" name="id_kelas" id="id_kelas">
+                  <option value="null" disabled selected>== Pilih Kelas ==</option>
+                  @foreach ($kelas as $key)
+                    <option value="{{ $key->id_kelas }}" {{ (collect(old('id_kelas'))->contains($key->id_kelas)) ? 'selected':''}}> {{$key->nama_kelas}} </option>
+                  @endforeach
+                </select>
+              </div>
+              @error('id_kelas')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Jenis Kelamin</label>
+            <label class="col-sm-3 col-form-label">Jenis Kelamin<b class="text-danger">*</b></label>
             <div class="col-sm-9">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Laki-laki" required>
+                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Laki-laki" {{old('jenis_kelamin')== 'Laki-laki' ? 'checked':''}}>
                   <label class="form-check-label">Laki-Laki</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Perempuan" required>
+                  <input class="form-check-input" type="radio" name="jenis_kelamin" value="Perempuan" {{old('jenis_kelamin')== 'Perempuan' ? 'checked':''}}>
                   <label class="form-check-label">Perempuan</label>
                 </div>
+                @error('jenis_kelamin')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Alamat</label>
             <div class="col-sm-9">
-              <input type="text" name="alamat" class="form-control" placeholder="Alamat" required>
+              <input type="text" name="alamat" class="form-control" autocomplete="off" placeholder="Alamat" value="{{ old('alamat') }}">
+              @error('alamat')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">No. Telp</label>
             <div class="col-sm-9">
-              <input type="text" name="no_telp" class="form-control" placeholder="No. Telp" required>
+              <input type="number" name="no_telp" class="form-control" autocomplete="off" placeholder="No. Telp"  value="{{ old('no_telp') }}">
+              @error('no_telp')<p class="text-danger">{{$message}}</p>@enderror
             </div>
           </div>
         </div>
@@ -173,5 +169,10 @@
 </div>
 
 @include('template.script_table')
+<script>
+  @if($errors->any() != null)
+    $('#modal-lg').modal('show');
+  @endif
+</script>
 </body>
 </html>

@@ -26,6 +26,11 @@ class LoginController extends Controller
         // if(Auth::attempt($request->only('username', 'password'))){
         //     return redirect('siswa');
         // }
+        $validate = $request->validate([
+            'username' => ['required'],
+            'password' => ['required']
+        ]);
+
         if(Auth::guard('siswa')->attempt(['username' => $request->username, 'password' => $request->password])){
             return redirect('siswa');
         }
@@ -37,7 +42,7 @@ class LoginController extends Controller
                 return redirect('admin');
             }
         }
-        return redirect('login');
+        return redirect()->back()->withErrors(['msg' =>['Username dan password tidak cocok']]);
     }
 
     public function logout(Request $request){
