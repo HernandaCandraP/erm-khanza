@@ -20,8 +20,7 @@ class CreateSoalTable extends Migration
             $table->text('soal');
             $table->text('jawaban');
             $table->text('stemming');
-            $table->smallInteger('id_guru')->unsigned();
-            $table->foreign('id_guru')->references('id_guru')->on('guru')->onDelete('restrict')->onUpdate('restrict');
+            $table->text('image')->unsigned();
             $table->timestamps();
         });
     }

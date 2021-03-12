@@ -36,6 +36,7 @@ Route::get('/logout', 'LoginController@logout')->name('logout');
 // login siswa
 Route::group(['middleware' => 'auth:siswa'], function () {
     Route::get('/siswa', 'SiswaController@index')->name('homesiswa');
+    Route::get('/siswa/profile', 'SiswaController@profile')->name('homesiswa/profile');
 
     Route::get('/siswa/detailmapel', 'DetailMapelController@detailmapelsiswa')->name('homesiswa/detailmapel');
     Route::get('/siswa/keterangan/{id}', 'DetailMapelController@keterangan')->name('homesiswa/keterangan');
@@ -49,6 +50,8 @@ Route::group(['middleware' => 'auth:siswa'], function () {
 // login guru dan admin
 Route::group(['middleware' => ['auth:guru','is_admin']], function () {
     Route::get('/admin', 'GuruController@admin')->name('homeadmin');
+    Route::get('/admin/profile', 'GuruController@profile')->name('homeadmin/profile');
+    Route::get('/admin/profile/update', 'GuruController@updateprofile')->name('homeadmin/profile/update');
 
     // admin/guru
     Route::get('/admin/guru', 'GuruController@tampilguru')->name('homeadmin/guru');
@@ -86,6 +89,8 @@ Route::group(['middleware' => ['auth:guru','is_admin']], function () {
 Route::group(['middleware' => ['auth:guru','is_guru']], function () { 
     // guru
     Route::get('/guru', 'GuruController@index')->name('homeguru');
+    Route::get('/guru/profile', 'GuruController@profile')->name('homeguru/profile');
+    Route::get('/guru/profile/update', 'GuruController@updateprofile')->name('homeguru/profile/update');
 
     // guru/Detail Mapel
     Route::get('/guru/detailmapel', 'DetailMapelController@detailmapel')->name('homeguru/detailmapel');
@@ -110,4 +115,7 @@ Route::group(['middleware' => ['auth:guru','is_guru']], function () {
     Route::get('/guru/penilaian/{id}', 'PenilaianController@penilaianguru')->name('homeguru/penilaian');
     Route::get('/guru/penilaian/edit/{id_detail}/{id_siswa}', 'PenilaianController@penilaianedit')->name('homeguru/penilaian/edit');
     Route::post('/guru/penilaian/update', 'PenilaianController@penilaianupdate')->name('homeguru/penilaian/update');
+
+    // image
+    Route::get('/guru/deleteimage/{id_soal}', 'SoalController@deleteimage')->name('homeguru/deleteimage');
 });

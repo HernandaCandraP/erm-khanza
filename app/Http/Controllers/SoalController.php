@@ -9,13 +9,14 @@ use App\Jawaban;
 use App\DetailMapel;
 use App\DetailSiswa;
 use Auth;
+use File;
 
 class SoalController extends Controller
 {
     public function tampilsoal($id){
         $no = 1;
         $kelas = '';
-        $soal = Soal::join('guru', 'soal.id_guru', '=', 'guru.id_guru')->select('soal.*', 'guru.nama_guru')->where('id_detail',$id)->get();
+        $soal = Soal::where('id_detail',$id)->get();
         $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')->select('detailmapel.*', 'mapel.nama_mapel')->where('id_detail', $id)->first();
 
         $countkelas = $detailmapel->kelas->count()-1;
@@ -25,7 +26,13 @@ class SoalController extends Controller
             }elseif($key < $countkelas){
                 $kelas .= $value->nama_kelas . ', ';
             }elseif($key == $countkelas ){
-                $kelas .= ' dan ' .$value->nama_kelas;
+                if($countkelas ==0){
+                    $kelas = $value->nama_kelas;
+                }elseif($countkelas == 1) {
+                    $kelas .= ' dan ' .$value->nama_kelas;
+                }else{
+                    $kelas .= ', dan ' .$value->nama_kelas;
+                }
             }
         }
 
@@ -163,16 +170,27 @@ class SoalController extends Controller
     
     public function create(Request $request, $id)
     {
+        $validate = $request->validate([
+            'image' => ['mimes:jpeg,png,jpg','max:2048'],
+            'soal' => ['required'],
+            'jawaban' => ['required'],
+        ]);
+
         $data = new Soal;
-        $id_guru = Auth::guard('guru')->user()->id_guru;
 
         $data->id_detail = $id;
         $data->soal = $request->soal;
         $data->jawaban = $request->jawaban;
         $data->stemming = '-';
-        $data->id_guru = $id_guru;
-        
+
+        if($files = $request->file('image')){
+            $destinationPath = 'image/';  //upload path
+            $profileImage = date('YmdHis'). "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath, $profileImage);
+            $data->image = $profileImage; //save image
+        }
         $data->save();
+        $request->session()->flash('success', 'Soal berhasil ditambahkan');
         return redirect()->to('guru/soal/'.$id);
     }
 
@@ -185,17 +203,49 @@ class SoalController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validate = $request->validate([
+            'image' => ['mimes:jpeg,png,jpg','max:2048'],
+            'soal' => ['required'],
+            'jawaban' => ['required'],
+        ]);
+        
         $data = Soal::find($id);
-        $id_guru = Auth::guard('guru')->user()->id_guru;
 
         $data->id_detail = $request->id_detail;
         $data->soal = $request->soal;
         $data->jawaban = $request->jawaban;
         $data->stemming = '-';
-        $data->id_guru = $id_guru;
+
+        if($files = $request->file('image')){
+            $imagePath = public_path("image/" .$data->image);
+            if (File::exists($imagePath)){
+                File::delete($imagePath);
+            }
+            $destinationPath = 'image/';  //upload path
+            $profileImage = date('YmdHis'). "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath, $profileImage);
+            $data->image = $profileImage; //save image
+        }
 
         $data->save();
+        $request->session()->flash('success', 'Soal berhasil diedit');
         return redirect()->to('guru/soal/'.$request->id_detail);
+    }
+
+    public function deleteimage(Request $request, $id_soal)
+    {
+        $data = Soal::find($id_soal);
+        // menghapus image pada filder
+        $imagePath = public_path("image/" .$data->image);
+        if (File::exists($imagePath)){
+            File::delete($imagePath);
+        }
+
+        // menghapus image pada database
+        $data->image = "";
+        $data->save();
+        $request->session()->flash('success', 'Gambar berhasil dihapus');
+        return redirect()->back();
     }
 
 

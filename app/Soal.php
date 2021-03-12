@@ -14,6 +14,6 @@ class Soal extends Authenticatable
     protected $primaryKey = "id_soal";
     
     protected $fillable = [
-        'id_detail','soal', 'jawaban', 'stemming', 'id_guru'
+        'id_detail','soal', 'jawaban', 'stemming', 'image'
     ];
 }

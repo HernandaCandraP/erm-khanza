@@ -29,18 +29,19 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Mata Pelajaran</label>
                       <div class="col-sm-9">
-                        <select class="form-control " name="id_mapel" id="id_mapel" required>
+                        <select class="form-control " name="id_mapel" id="id_mapel">
                           <option value="null" disabled>== Pilih Mata Pelajaran ==</option>
                           @foreach ($mapel as $key)
-                            <option value="{{ $key->id_mapel }}" {{$detailmapel->id_mapel == $key->id_mapel ? "selected" : "" }}>{{$key->nama_mapel}} </option>
+                            <option value="{{ $key->id_mapel }}" {{(collect(old('id_mapel'))->contains($key->id_mapel)) ? 'selected':'' }}>{{$key->nama_mapel}} </option>
                           @endforeach
                         </select>
+                        @error('id_mapel')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Kelas</label>
                       <div class="col-sm-9 select2-purple">
-                        <select class="select2 form-control" multiple="multiple" name="id_kelas[]" id="id_kelas" data-placeholder="Pilih Kelas" data-dropdown-css-class="select2-purple" required>
+                        <select class="select2 form-control" multiple="multiple" name="id_kelas[]" id="id_kelas" data-placeholder="Pilih Kelas" data-dropdown-css-class="select2-purple">
                           @foreach ($kls as $key)
                             <option  
                               @foreach ($detailmapel->kelas as $kelas) {
@@ -50,36 +51,42 @@
                             </option>
                           @endforeach
                         </select>
+                        @error('id_kelas')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Waktu Mulai</label>
                       <div class="col-sm-9">
-                        <input type="datetime-local" name="waktu_mulai" class="form-control" placeholder="Waktu Mulai" value="{{ date('Y-m-d\TH:i', strtotime( $detailmapel->waktu_mulai)) }}" required>
+                        <input type="datetime-local" name="waktu_mulai" class="form-control" placeholder="Waktu Mulai" value="{{ old('waktu_mulai')?? date('Y-m-d\TH:i', strtotime( $detailmapel->waktu_mulai)) }}">
+                        @error('waktu_mulai')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Waktu Selesai</label>
                       <div class="col-sm-9">
-                        <input type="datetime-local" name="waktu_selesai" class="form-control" placeholder="Waktu Selesai" value="{{ date('Y-m-d\TH:i', strtotime( $detailmapel->waktu_selesai)) }}" required>
+                        <input type="datetime-local" name="waktu_selesai" class="form-control" placeholder="Waktu Selesai" value="{{ old('waktu_selesai')?? date('Y-m-d\TH:i', strtotime( $detailmapel->waktu_selesai)) }}">
+                        @error('waktu_selesai')<p class="text-danger">{{$message}}</p>@enderror
+                        @error('waktu-selesai')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Waktu Test</label>
                       <div class="col-sm-9">
-                        <input type="time" name="waktu_test" class="form-control" placeholder="Waktu Test" value="{{ $detailmapel->waktu_test }}" required>
+                        <input type="time" name="waktu_test" class="form-control" placeholder="Waktu Test" value="{{ $detailmapel->waktu_test }}">
+                        @error('waktu_test')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Keterangan</label>
                       <div class="col-sm-9">
-                        <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" value="{{ $detailmapel->keterangan }}" required>
+                        <input type="text" name="keterangan" class="form-control" autocomplete="off" placeholder="Keterangan" value="{{old('keterangan', $detailmapel->keterangan) }}">
+                        @error('keterangan')<p class="text-danger">{{$message}}</p>@enderror
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="modal-footer justify-content-between float-right">
-                  <button type="submit" class="btn btn-primary">Tambah Data</button>
+                  <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
                 </form>
               </div>

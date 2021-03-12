@@ -15,8 +15,6 @@ use Auth;
 class DetailMapelController extends Controller
 {
     public function detailmapel(){
-        $no = 1;
-        
         $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')->select('detailmapel.*', 'mapel.nama_mapel')->get();
         $mapel = Mapel::all();
         $kls = Kelas::all();
@@ -25,7 +23,6 @@ class DetailMapelController extends Controller
             'detailmapel' => $detailmapel, 
             'kls' => $kls,
             'mapel' => $mapel,
-            'no' => $no
         ]);
     }
 
@@ -67,6 +64,26 @@ class DetailMapelController extends Controller
 
     public function create(Request $request)
     {
+        // konversi ke integer
+        if($request->waktu_selesai != null){
+            $request['waktu-selesai'] = strtotime($request->waktu_selesai);
+            $request['start'] = strtotime($request->waktu_mulai);
+        }
+        else{
+            $request['waktu-selesai'] = 1;
+            $request['start'] = 0;
+        }
+
+        $validate = $request->validate([
+            'id_mapel' => ['required'],
+            'id_kelas' => ['required'],
+            'waktu_mulai' => ['required'],
+            'waktu_selesai' => ['required'],
+            'waktu-selesai' => ['gt:start'],
+            'waktu_test' => ['required'],
+            'keterangan' => ['max:50'],
+        ]);
+        
         $data = new DetailMapel;
 
         $data->id_mapel = $request->id_mapel;
@@ -91,7 +108,10 @@ class DetailMapelController extends Controller
             $simpankelas->save();
         }
 
-        return redirect()->route('homeguru/detailmapel');
+        // get nama_mapel
+        $namamapel = Mapel::where('id_mapel', $request->id_mapel)->first();
+        $request->session()->flash('success', 'Berhasil Menambahkan Ujian '.$namamapel->nama_mapel);
+        return redirect()->back();
     }
 
     public function edit($id)
@@ -110,6 +130,26 @@ class DetailMapelController extends Controller
 
     public function update(Request $request, $id)
     {
+        // konversi ke integer
+        if($request->waktu_selesai != null){
+            $request['waktu-selesai'] = strtotime($request->waktu_selesai);
+            $request['start'] = strtotime($request->waktu_mulai);
+        }
+        else{
+            $request['waktu-selesai'] = 1;
+            $request['start'] = 0;
+        }
+
+        $validate = $request->validate([
+            'id_mapel' => ['required'],
+            'id_kelas' => ['required'],
+            'waktu_mulai' => ['required'],
+            'waktu_selesai' => ['required'],
+            'waktu-selesai' => ['gt:start'],
+            'waktu_test' => ['required'],
+            'keterangan' => ['max:50'],
+        ]);
+
         $data = DetailMapel::find($id);
 
         $data->id_mapel = $request->id_mapel;
@@ -137,14 +177,26 @@ class DetailMapelController extends Controller
             $not_in->delete();
         }
         
+        // get nama_mapel
+        $namamapel = Mapel::where('id_mapel', $request->id_mapel)->first();
+        $request->session()->flash('success', 'Ujian Mata Pelajaran ' .$namamapel->nama_mapel. ' Berhasil Diedit');
         return redirect()->route('homeguru/detailmapel');
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
         $data = DetailMapel::find($id);
-        $data->delete();
-        return redirect()->route('homeguru/detailmapel');
+
+        $namamapel = Mapel::where('id_mapel', $data->id_mapel)->first();
+        // cek apakah ada relasi ke tabel lain
+        try{
+            $data->delete();
+            $request->session()->flash('warning', 'Ujian: ' .$namamapel->nama_mapel. ' Berhasil Dihapus');
+            return redirect()->back();
+        } catch (\Exception $e){
+            $request->session()->flash('error', 'Ujian: ' .$namamapel->nama_mapel. ' Tidak Dapat Dihapus');
+            return redirect()->back();
+        }
     }
 }

@@ -17,7 +17,7 @@ class CreateDetailmapelTable extends Migration
             $table->smallIncrements('id_detail');
             $table->smallInteger('id_mapel')->unsigned();
             $table->foreign('id_mapel')->references('id_mapel')->on('mapel')->onDelete('restrict')->onUpdate('restrict');
-            $table->char('keterangan', 50);
+            $table->char('keterangan', 50)->nullable();
             $table->datetime('waktu_mulai');
             $table->datetime('waktu_selesai');
             $table->time('waktu_test', 0);

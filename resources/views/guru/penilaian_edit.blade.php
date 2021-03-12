@@ -61,9 +61,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <div class="card-body">
                 <div class="row">
                   <div class="col-lg-9">
-                    <h5 class="card-title">{{$no+1}}. {{$value->soal}}</h5>
-                    <!-- <textarea class="form-control" name="jawaban_siswa" rows="5" placeholder="jawaban">soal</textarea> -->
-                    <textarea class="form-control" style="background: #ffff" name="jawaban_siswa" rows="5" placeholder="jawaban kosong" disabled>{{$value->jawaban_siswa}}</textarea><br>
+                    <h6 class="float-left" style="padding-top:8px">{{$no+1}}.</h6>
+                    @if($value->image != null)
+                    <img style="border:1px solid; margin-top:8px; margin-left:10px;" src="{{asset('image/'. $value->image)}}" class="img-fluid" width="300px" /><br>
+                    @endif
+                    <div style="background-color:transparent; border:none; padding-left:20px; text-align:justify; height:auto" class="form-control">@nl2br($value->soal)</div>
+                    <div style="background-color:transparent; text-align:justify; height:auto" class="form-control">{{$value->jawaban_siswa == null ? 'Jawaban Kosong' : ''}} @nl2br($value->jawaban_siswa)</div>
                   </div>
                   <div class="col-lg-3 data-row">
                     <a class="btn bg-primary">

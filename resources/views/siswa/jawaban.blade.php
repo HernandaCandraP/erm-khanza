@@ -11,7 +11,7 @@
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-            <i class="far fa-user">
+        <i class="fas fa-user-circle">
                 @if( Str::length(Auth::guard('siswa')->user()) > 0)
                     {{ Auth::guard('siswa')->user()->username}}
                 @elseif( Str::length(Auth::guard('guru')->user()) > 0)
@@ -21,12 +21,8 @@
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item float-left">
-              Detail Profile <i class="fas fa-info float-right mr-2"></i> 
-            </a>
-            <div class="dropdown-divider"></div>
             <a href="{{route('logout')}}" class="dropdown-item float-left">
-                Logout <i class="fa fa-sign-out-alt float-right mr-2"></i> 
+              <i class="fas fa-power-off mr-2"></i> Logout
             </a>
         </div>
         </li>
@@ -54,8 +50,12 @@
                 {{ csrf_field() }}
                   <div class="form-group row">
                     <div class="col-sm-9">
-                      <textarea class="form-control" rows="5" disabled>{{$tampilsoal->soal}}</textarea><br>
-                        <textarea class="form-control" name="jawaban_siswa" rows="5" placeholder="jawaban">{{$jawaban['jawaban_siswa']}}</textarea><br>
+                      @if($tampilsoal->image != null)
+                      <img style="border:1px solid;" src="{{asset('image/'. $tampilsoal->image)}}" class="img-fluid" width="300px" /><br>
+                      @endif
+                      <div style="background-color:transparent; border:none; text-align:justify; height:auto" class="form-control">@nl2br($tampilsoal->soal)</div><br>
+                      <b>Jawaban:</b>
+                      <textarea class="form-control" name="jawaban_siswa" rows="5" placeholder="jawaban">{{$jawaban['jawaban_siswa']}}</textarea><br>
                     </div>
                     <div class="col-sm-3">
                       <div class="card card-success">
@@ -74,7 +74,7 @@
                             @else
                               <button type="submit" class="btn btn-secondary" name="redirect_id_soal" value="{{ $value->id_soal }}">{{$key+1}}</button>
                             @endif
-                            <br></br>
+                            <br><br>
                           </div>
                         @endforeach
                         <button class="btn btn-danger form-control" name="simpan" value="simpan"onclick="return confirm('Apakah anda yakin ingin menyelasaikan ujian ini?')">Akhiri Ujian</button>

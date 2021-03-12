@@ -45,7 +45,7 @@ return [
     'file' => 'Field :attribute harus berupa file.',
     'filled' => 'Field :attribute field must have a value.',
     'gt' => [
-        'numeric' => 'Field :attribute must be greater than :value.',
+        'numeric' => 'Field :attribute harus lebih lama dari waktu mulai.',
         'file' => 'Field :attribute must be greater than :value kilobytes.',
         'string' => 'Field :attribute must be greater than :value characters.',
         'array' => 'Field :attribute must have more than :value items.',

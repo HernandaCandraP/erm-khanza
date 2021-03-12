@@ -19,7 +19,7 @@
             <div class="card">
               <div class="card-header">
                 <h5>Perikasa Hasil Penilaian</h5>
-                <h6>Mata Pelajaran {{$namamapel->nama_mapel}} (keterangan)</h6> 
+                <h6>Mata Pelajaran {{$namamapel->nama_mapel}} ({{$namamapel->waktu_mulai}} - {{$namamapel->waktu_selesai}})</h6> 
               </div>
               <!-- /.card-header -->
               <div class="card-body">
