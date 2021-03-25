@@ -10,6 +10,7 @@ use App\DetailMapel;
 use App\DetailSiswa;
 use Auth;
 use File;
+use App\Classes\TextMining;
 
 class SoalController extends Controller
 {
@@ -112,64 +113,11 @@ class SoalController extends Controller
             'nama_mapel' =>$nama_mapel
         ]);
     }
-
-    public function jawabansiswa(Request $request, $id_detail, $id_soal)
-    {
-        $id_siswa = Auth::guard('siswa')->user()->id_siswa;
-
-        //cek apakah sudah ada data id_soal dan id_siswa yang sudah disimpan
-        $cek_jawaban = Jawaban::where('id_siswa', $id_siswa)->where('id_soal', $id_soal)->first();
-
-        if($cek_jawaban != null){
-            // cek apakah jawaban sebelumnya sama dengan jawaban yang terbaru, jika tidak sama lalukan proses update
-            if($cek_jawaban->jawaban_siswa != $request->jawaban_siswa){
-                // jika jawaban diubah, lakukan proses update
-                $jawaban = Jawaban::find($cek_jawaban->id_jawaban);
-                $jawaban->id_siswa = $id_siswa;
-                $jawaban->id_soal = $id_soal;
-                $jawaban->jawaban_siswa = $request->jawaban_siswa;
-                $jawaban->nilai_cosine = 10;
-                $jawaban->nilai_jaccard = 10;
-                $jawaban->save();
-            }
-        }else{
-            // jika belum ada data yang tersimpan, lakukan proses simpan
-            $data = new Jawaban;
-            $data->id_siswa = $id_siswa;
-            $data->id_soal = $id_soal;
-            $data->jawaban_siswa = $request->jawaban_siswa;
-            $data->nilai_cosine = 10;
-            $data->nilai_jaccard = 10;
-            $data->save();
-        }
-
-        if($request->redirect_id_soal != null){
-            return redirect()->to('siswa/soal/'.$id_detail. '/'.$request->redirect_id_soal);
-        }
-        // untuk redirect ketika waktu habis atau ketika klik simpan
-        if($request->timeout == 'timeout' || $request->simpan == 'simpan'){
-            // mengubah tabel is_end ketika mengekhiri ujian / ujian berakhir
-            $simpan = DetailSiswa::where('id_siswa', $id_siswa)->where('id_detail', $id_detail)->update(array('is_end' => 1));
-
-            return redirect()->to('siswa/detailmapel');
-        }
-    }
-
-    public function ceknilai($id_detail)
-    {
-        $tampilnilai = Soal::leftjoin('jawaban', function($join){
-            $join->on('soal.id_soal', '=', 'jawaban.id_soal')
-            ->where('jawaban.id_siswa', Auth::guard('siswa')->user()->id_siswa);
-        })
-        ->select('soal.soal', 'jawaban.*')->where('id_detail', $id_detail)->get();
-
-        return view('siswa/cek_nilai', [
-            'tampilnilai'=>$tampilnilai
-        ]);
-    }
     
     public function create(Request $request, $id)
     {
+        $mining = new TextMining(); //memanggil fungsi textmining
+
         $validate = $request->validate([
             'image' => ['mimes:jpeg,png,jpg','max:2048'],
             'soal' => ['required'],
@@ -181,7 +129,7 @@ class SoalController extends Controller
         $data->id_detail = $id;
         $data->soal = $request->soal;
         $data->jawaban = $request->jawaban;
-        $data->stemming = '-';
+        $data->stemming = $mining->textMining($request->jawaban); //memasukkan text mining ke db
 
         if($files = $request->file('image')){
             $destinationPath = 'image/';  //upload path
@@ -208,13 +156,16 @@ class SoalController extends Controller
             'soal' => ['required'],
             'jawaban' => ['required'],
         ]);
-        
+     
+        $mining = new TextMining(); //memanggil fungsi textmining
         $data = Soal::find($id);
 
+        if($data->jawaban != $request->jawaban){ //ketika jawaban tidak sama dgn sebelunya (untuk menguranggi proses di db)
+            $data->stemming = $mining->textMining($request->jawaban); //memasukkan text mining ke db
+        }
         $data->id_detail = $request->id_detail;
         $data->soal = $request->soal;
         $data->jawaban = $request->jawaban;
-        $data->stemming = '-';
 
         if($files = $request->file('image')){
             $imagePath = public_path("image/" .$data->image);

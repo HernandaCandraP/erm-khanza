@@ -5,17 +5,37 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Guru;
+use App\Siswa;
+use App\Kelas;
+use App\Mapel;
+use App\DetailMapel;
+
+use Auth;
 
 class GuruController extends Controller
 {
     public function index(){
-        // $guru = Guru::all();
-        // return view('guru', ['guru' => $guru]);
-        return view('guru/home');
+        $detailmapel = DetailMapel::count();
+        $totalsiswa = Siswa::count();
+        $totalkelas = Kelas::count();
+        $totalmapel = Mapel::count();
+        return view('guru/home', [
+            'detailmapel' => $detailmapel, 
+            'totalkelas' => $totalkelas, 
+            'totalsiswa' => $totalsiswa, 
+            'totalmapel' => $totalmapel]);
     }
 
     public function admin(){
-        return view('admin/home');
+        $totalguru = Guru::count();
+        $totalsiswa = Siswa::count();
+        $totalkelas = Kelas::count();
+        $totalmapel = Mapel::count();
+        return view('admin/home', [
+            'totalguru' => $totalguru, 
+            'totalkelas' => $totalkelas, 
+            'totalsiswa' => $totalsiswa, 
+            'totalmapel' => $totalmapel]);
     }
 
     public function tampilguru(){

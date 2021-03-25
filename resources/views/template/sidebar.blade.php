@@ -22,7 +22,7 @@
           </li>
           <li class="nav-item">
             <a href="{{route('homesiswa/detailmapel')}}" class="nav-link {{ Request::is('siswa/detailmapel') ? 'active' : '' }}">
-              <i class="nav-icon far fa-image"></i>
+              <i class="nav-icon fa fa-book"></i>
               <p>Kategori Soal</p>
             </a>
           </li>
@@ -41,19 +41,19 @@
           </li>
           <li class="nav-item">
             <a href="{{route('homeguru/detailmapel')}}" class="nav-link {{ Request::is('guru/detailmapel') ? 'active' : '' }}">
-              <i class="nav-icon far fa-file"></i>
+              <i class="nav-icon fa fa-book"></i>
               <p>Kategori Soal</p>
             </a>
           </li>
           <li class="nav-item">
           <a href="{{route('homeguru/kelas')}}" class="nav-link {{ Request::is('guru/kelas') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-building"></i>
               <p>Kelas</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{{route('homeguru/siswa')}}" class="nav-link {{ Request::is('guru/siswa') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-users"></i>
               <p>Siswa</p>
             </a>
           </li>
@@ -72,25 +72,25 @@
           </li>
           <li class="nav-item">
             <a href="{{route('homeadmin/guru')}}" class="nav-link {{ Request::is('admin/guru') ? 'active' : '' }}">
-              <i class="nav-icon far fa-image"></i>
+              <i class="nav-icon fas fa-chalkboard-teacher"></i>
               <p>Guru</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{{route('homeadmin/siswa')}}" class="nav-link {{ Request::is('admin/siswa') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-users"></i>
               <p>Siswa</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{{route('homeadmin/kelas')}}" class="nav-link {{ Request::is('admin/kelas') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-building"></i>
               <p>Kelas</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{{route('homeadmin/mapel')}}" class="nav-link {{ Request::is('admin/mapel') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-book"></i>
               <p>Mata Pelajaran</p>
             </a>
           </li>

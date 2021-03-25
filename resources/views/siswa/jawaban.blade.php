@@ -40,8 +40,7 @@
               <div class="card-header">
                 <h4 class="float-left">Ujian Mata Palajaran {{$nama_mapel->nama_mapel}}</h4>
                 
-                <h4 class="float-right" id='countdown'></h4>
-                <h4 class="float-right" >Sisa Waktu:&ensp;</h4>
+                
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -50,17 +49,18 @@
                 {{ csrf_field() }}
                   <div class="form-group row">
                     <div class="col-sm-9">
+                      <span class="float-left" id="viewnumber"></span>
                       @if($tampilsoal->image != null)
-                      <img style="border:1px solid;" src="{{asset('image/'. $tampilsoal->image)}}" class="img-fluid" width="300px" /><br>
+                      <img style="border:1px solid; margin:7px 0px 0px 10px;" src="{{asset('image/'. $tampilsoal->image)}}" class="img-fluid" width="400px" /><br>
                       @endif
-                      <div style="background-color:transparent; border:none; text-align:justify; height:auto" class="form-control">@nl2br($tampilsoal->soal)</div><br>
+                      <div style="background-color:transparent; border:none; text-align:justify; height:auto; margin:-5px 0px 0px 10px;" class="form-control">@nl2br($tampilsoal->soal)</div><br>
                       <b>Jawaban:</b>
                       <textarea class="form-control" name="jawaban_siswa" rows="5" placeholder="jawaban">{{$jawaban['jawaban_siswa']}}</textarea><br>
                     </div>
                     <div class="col-sm-3">
                       <div class="card card-success">
                         <div class="card-header">
-                          <h3 class="card-title">Different Width</h3>
+                        <h4 class="card-title float-right">Sisa Waktu:&ensp; <span id='countdown'></span></h4>
                         </div>
                         <div class="card-body row text-center">
                         @foreach ($getsoal as $key => $value)
@@ -69,6 +69,7 @@
                             @if($value->id_soal == $tampilsoal->id_soal)
                               <!-- mengambil id_detail dan id_soal untuk fungsi pindah soal lainnya -->
                               <button type="submit" class="btn btn-primary" name="redirect_id_soal" value="{{ $value->id_soal }}">{{$key+1}}</button>
+                              <input id="getnumber" value="{{ $key+1 }}" hidden>
                             @elseif($value->jawaban_siswa == null)
                               <button type="submit" class="btn btn-default" name="redirect_id_soal" value="{{ $value->id_soal }}">{{$key+1}}</button>
                             @else
@@ -139,6 +140,10 @@ var x = setInterval(function() {
     return;
   }
 }, 1000);
+
+// get number
+var val = document.getElementById("getnumber").getAttribute('value');
+document.getElementById("viewnumber").innerHTML = val + ".";
 </script>
 
 </body>

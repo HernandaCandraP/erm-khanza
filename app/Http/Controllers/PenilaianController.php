@@ -9,6 +9,11 @@ use App\Soal;
 use App\Mapel;
 use App\Kelas;
 use App\Jawaban;
+use Auth;
+use App\Classes\TextMining;
+use App\Classes\NaziefAndriani;
+use App\Classes\CosineSimilarity;
+use App\Classes\JaccardSimilarity;
 
 class PenilaianController extends Controller
 {
@@ -65,5 +70,69 @@ class PenilaianController extends Controller
 
         $data->save();
         return redirect()->back();
+    }
+
+    public function jawabansiswa(Request $request, $id_detail, $id_soal)
+    {
+        // panggil fungsi textmining
+        $mining = new TextMining();
+        $jaccard = new JaccardSimilarity();
+        $cosine = new CosineSimilarity();
+
+        $katakunci= Soal::find($id_soal); // ambil kunci jawaban
+
+        $id_siswa = Auth::guard('siswa')->user()->id_siswa;
+
+        //cek apakah sudah ada data id_soal dan id_siswa yang sudah disimpan
+        $cek_jawaban = Jawaban::where('id_siswa', $id_siswa)->where('id_soal', $id_soal)->first();
+
+        if($cek_jawaban != null){
+            // cek apakah jawaban sebelumnya sama dengan jawaban yang terbaru, jika tidak sama lalukan proses update
+            if($cek_jawaban->jawaban_siswa != $request->jawaban_siswa){
+                // jika jawaban diubah, lakukan proses update
+                $jawaban = Jawaban::find($cek_jawaban->id_jawaban);
+                $jawaban->id_siswa = $id_siswa;
+                $jawaban->id_soal = $id_soal;
+                $jawaban->jawaban_siswa = $request->jawaban_siswa;
+                $jawaban->nilai_cosine = $cosine->prosesCosine($katakunci->jawaban, $request->jawaban_siswa);
+                $jawaban->nilai_jaccard = $jaccard->prosesJaccard($katakunci->jawaban, $request->jawaban_siswa);
+
+                $jawaban->save();
+            }
+        }else{
+            // jika belum ada data yang tersimpan, lakukan proses simpan
+            $data = new Jawaban;
+            $data->id_siswa = $id_siswa;
+            $data->id_soal = $id_soal;
+            $data->jawaban_siswa = $request->jawaban_siswa;
+            $data->nilai_cosine = $cosine->prosesCosine($katakunci->jawaban, $request->jawaban_siswa);
+            $data->nilai_jaccard = $jaccard->prosesJaccard($katakunci->jawaban, $request->jawaban_siswa);
+
+            $data->save();
+        }
+
+        if($request->redirect_id_soal != null){
+            return redirect()->to('siswa/soal/'.$id_detail. '/'.$request->redirect_id_soal);
+        }
+        // untuk redirect ketika waktu habis atau ketika klik simpan
+        if($request->timeout == 'timeout' || $request->simpan == 'simpan'){
+            // mengubah tabel is_end ketika mengekhiri ujian / ujian berakhir
+            $simpan = DetailSiswa::where('id_siswa', $id_siswa)->where('id_detail', $id_detail)->update(array('is_end' => 1));
+
+            return redirect()->to('siswa/detailmapel');
+        }
+    }
+
+    public function ceknilai($id_detail)
+    {
+        $tampilnilai = Soal::leftjoin('jawaban', function($join){
+            $join->on('soal.id_soal', '=', 'jawaban.id_soal')
+            ->where('jawaban.id_siswa', Auth::guard('siswa')->user()->id_siswa);
+        })
+        ->select('soal.soal', 'soal.image', 'jawaban.*')->where('id_detail', $id_detail)->get();
+
+        return view('siswa/cek_nilai', [
+            'tampilnilai'=>$tampilnilai
+        ]);
     }
 }

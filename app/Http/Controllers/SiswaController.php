@@ -6,12 +6,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Siswa;
 use App\Kelas;
+use App\DetailSiswa;
+use App\Jawaban;
+use Auth;
 
 class SiswaController extends Controller
 {
-    public function index()
-    {
-        return view('siswa/home');
+    public function index(){
+        $id_siswa = Auth::guard('siswa')->user()->id_siswa;
+        $ujian_diselesaikan = DetailSiswa::where('id_siswa', $id_siswa)->where('is_end', 1)->count();
+        $ujian_belum_dikerjakan = DetailSiswa::where('id_siswa', $id_siswa)->where('is_end', 0)->count();
+        
+        $nilai_cosine = Jawaban::where('id_siswa', $id_siswa)->select('nilai_cosine')->average('nilai_cosine');
+        $nilai_jaccard = Jawaban::where('id_siswa', $id_siswa)->select('nilai_jaccard')->average('nilai_jaccard');
+        $nilai_guru = Jawaban::where('id_siswa', $id_siswa)->select('nilai_guru')->average('nilai_guru');
+
+        return view('siswa/home', [
+            'ujian_diselesaikan' => $ujian_diselesaikan,
+            'ujian_belum_dikerjakan' => $ujian_belum_dikerjakan,
+            'nilai_cosine' => $nilai_cosine,
+            'nilai_jaccard' => $nilai_jaccard,
+            'nilai_guru' => $nilai_guru
+        ]);
     }
 
     public function tampilsiswa(){
