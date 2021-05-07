@@ -14,12 +14,6 @@
           <!-- Siswa -->
           @if(Str::length(Auth::guard('siswa')->user()) > 0)
           @if(Auth::guard('siswa')->user()->level == "Siswa")
-          <li class="nav-item menu-open">
-            <a href="{{route('homesiswa')}}" class="nav-link {{ Request::is('siswa') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-home"></i>
-              <p>Home</p>
-            </a>
-          </li>
           <li class="nav-item">
             <a href="{{route('homesiswa/detailmapel')}}" class="nav-link {{ Request::is('siswa/detailmapel') ? 'active' : '' }}">
               <i class="nav-icon fa fa-book"></i>

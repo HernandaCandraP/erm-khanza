@@ -32,7 +32,7 @@
                         <select class="form-control " name="id_mapel" id="id_mapel">
                           <option value="null" disabled>== Pilih Mata Pelajaran ==</option>
                           @foreach ($mapel as $key)
-                            <option value="{{ $key->id_mapel }}" {{(collect(old('id_mapel'))->contains($key->id_mapel)) ? 'selected':'' }}>{{$key->nama_mapel}} </option>
+                            <option value="{{ $key->id_mapel }}" {{ old('id_mapel', $detailmapel->id_mapel) == $key->id_mapel ? 'selected':'' }}>{{$key->nama_mapel}} </option>
                           @endforeach
                         </select>
                         @error('id_mapel')<p class="text-danger">{{$message}}</p>@enderror

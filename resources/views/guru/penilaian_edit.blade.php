@@ -120,7 +120,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </div>
               <div class="form-group">
                 <label for="modal_input_nilai">Nilai</label>
-                <input type="text" name="modal_input_nilai" class="form-control" id="modal_input_nilai" autocomplete="off" required autofocus>
+                <input type="number" min="0" max="100" name="modal_input_nilai" class="form-control" id="modal_input_nilai" autocomplete="off" required autofocus>
               </div>
             </div>
             <div class="modal-footer justify-content-between">

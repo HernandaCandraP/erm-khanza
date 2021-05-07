@@ -55,7 +55,7 @@
                         <select class="form-control select2" name="id_kelas" id="id_kelas">
                           <option value="null" disabled>== Pilih Kelas ==</option>
                           @foreach ($kelas as $key)
-                            <option value="{{ $key->id_kelas }}" {{ (collect(old('id_kelas'))->contains($key->id_kelas)) ? 'selected':''}}> {{$key->nama_kelas}} </option>
+                            <option value="{{ $key->id_kelas }}" {{ old('id_kelas', $siswa->id_kelas) == $key->id_kelas ? 'selected':''}}> {{$key->nama_kelas}} </option>
                           @endforeach
                         </select>
                         @error('kelas')<p class="text-danger">{{$message}}</p>@enderror

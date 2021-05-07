@@ -9,6 +9,7 @@ use App\Kelas;
 use App\DetailSiswa;
 use App\Jawaban;
 use Auth;
+use App\Rules\MatchOldPasswordSiswa;
 
 class SiswaController extends Controller
 {
@@ -37,6 +38,27 @@ class SiswaController extends Controller
             'siswa' => $siswa, 
             'kelas' => $kelas,
         ]);
+    }
+
+    public function profile(){
+        $siswa = Auth::guard('siswa')->user();
+        return view('siswa/profile_detail', ['siswa' => $siswa]);
+    }
+
+    public function gantipassword(Request $request){
+        $validate = $request->validate([
+            'password_lama' => ['required', 'min:5', 'max:20', new MatchOldPasswordSiswa],
+            'password_baru' => ['required' , 'min:5', 'max:20'],
+            'ulangi_password_baru' => ['required', 'min:5', 'same:password_baru', 'max:20'],
+        ]);
+
+        // proses ubah password
+        $data = Siswa::find(auth()->guard('siswa')->user()->id_siswa);
+        $data->password = bcrypt($request->password_baru);
+        $data->save();
+
+        $request->session()->flash('success', 'Password Berhasil Diganti');
+        return redirect()->back();
     }
 
     public function create(Request $request)

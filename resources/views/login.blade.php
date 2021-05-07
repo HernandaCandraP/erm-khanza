@@ -17,7 +17,7 @@
       <form action="{{route('postlogin')}}" method="post">
       {{ csrf_field() }}
         <div class="input-group mb-3">
-          <input type="text" class="form-control" name="username" placeholder="Username" value="{{ old('username') }}">
+          <input type="text" class="form-control" name="username" autocomplete="off" placeholder="Username" value="{{ old('username') }}">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>

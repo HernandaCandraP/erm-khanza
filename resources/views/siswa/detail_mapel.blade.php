@@ -42,9 +42,10 @@
                     <td>{{$key->waktu_selesai}}</td>
                     <td>{{$key->waktu_test}}</td>
                     <td>{{$key->keterangan}}</td>
+                    <!-- {{strtotime($key->waktu_mulai)}} -->
                     <td>
                     <!-- membuat kondisi apakah siswa sudah pernah mengerjakan soal tsb -->
-                    @if($key->is_end > 0)
+                    @if($key->is_end > 0 || ((strtotime($key->waktu_mulai) < $now) && (strtotime($key->waktu_selesai) > $now ) ) )
                       <a href="{{url('siswa/ceknilai')}}/{{$key->id_detail}}" class="btn bg-indigo btn-sm">cek nilai</a>
                     @elseif($key->id_siswa === Auth::guard('siswa')->user()->id_siswa)
                       <a href="{{url('siswa/lanjutkan')}}/{{$key->id_detail}}" class="btn btn-info btn-sm"><i class="fas fa-edit"></i>Lanjutkan</a>

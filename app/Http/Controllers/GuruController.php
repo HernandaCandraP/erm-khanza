@@ -9,6 +9,7 @@ use App\Siswa;
 use App\Kelas;
 use App\Mapel;
 use App\DetailMapel;
+use App\Rules\MatchOldPasswordGuru;
 
 use Auth;
 
@@ -41,6 +42,27 @@ class GuruController extends Controller
     public function tampilguru(){
         $guru = Guru::all();
         return view('admin/guru', ['guru' => $guru]);
+    }
+
+    public function profile(){
+        $guru = Auth::guard('guru')->user();
+        return view('admin/profile_detail', ['guru' => $guru]);
+    }
+
+    public function gantipassword(Request $request){
+        $validate = $request->validate([
+            'password_lama' => ['required', 'min:5', 'max:20', new MatchOldPasswordGuru],
+            'password_baru' => ['required' , 'min:5', 'max:20'],
+            'ulangi_password_baru' => ['required', 'min:5', 'same:password_baru', 'max:20'],
+        ]);
+
+        // proses ubah password
+        $data = Guru::find(auth()->guard('guru')->user()->id_guru);
+        $data->password = bcrypt($request->password_baru);
+        $data->save();
+
+        $request->session()->flash('success', 'Password Berhasil Diganti');
+        return redirect()->back();
     }
 
     public function create(Request $request)

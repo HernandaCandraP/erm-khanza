@@ -9,6 +9,7 @@ use App\Soal;
 use App\Mapel;
 use App\Kelas;
 use App\Jawaban;
+use App\DetailSiswa;
 use Auth;
 use App\Classes\TextMining;
 use App\Classes\NaziefAndriani;
@@ -94,8 +95,9 @@ class PenilaianController extends Controller
                 $jawaban->id_siswa = $id_siswa;
                 $jawaban->id_soal = $id_soal;
                 $jawaban->jawaban_siswa = $request->jawaban_siswa;
-                $jawaban->nilai_cosine = $cosine->prosesCosine($katakunci->jawaban, $request->jawaban_siswa);
-                $jawaban->nilai_jaccard = $jaccard->prosesJaccard($katakunci->jawaban, $request->jawaban_siswa);
+                $jawaban->stemming_jawaban_siswa = $mining->textMining($request->jawaban_siswa);
+                $jawaban->nilai_cosine = $cosine->prosesCosine($katakunci->stemming, $jawaban->stemming_jawaban_siswa);
+                $jawaban->nilai_jaccard = $jaccard->prosesJaccard($katakunci->stemming, $jawaban->stemming_jawaban_siswa);
 
                 $jawaban->save();
             }
@@ -105,8 +107,9 @@ class PenilaianController extends Controller
             $data->id_siswa = $id_siswa;
             $data->id_soal = $id_soal;
             $data->jawaban_siswa = $request->jawaban_siswa;
-            $data->nilai_cosine = $cosine->prosesCosine($katakunci->jawaban, $request->jawaban_siswa);
-            $data->nilai_jaccard = $jaccard->prosesJaccard($katakunci->jawaban, $request->jawaban_siswa);
+            $data->stemming_jawaban_siswa = $mining->textMining($request->jawaban_siswa);
+            $data->nilai_cosine = $cosine->prosesCosine($katakunci->stemming, $data->stemming_jawaban_siswa);
+            $data->nilai_jaccard = $jaccard->prosesJaccard($katakunci->stemming, $data->stemming_jawaban_siswa);
 
             $data->save();
         }

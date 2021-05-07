@@ -14,6 +14,6 @@ class Jawaban extends Authenticatable
     protected $primaryKey = "id_jawaban";
     
     protected $fillable = [
-        'id_siswa','id_soal', 'jawaban_siswa', 'nilai_cosine', 'nilai_jaccard'
+        'id_siswa','id_soal', 'jawaban_siswa', 'stemming_jawaban_siswa', 'nilai_cosine', 'nilai_jaccard'
     ];
 }

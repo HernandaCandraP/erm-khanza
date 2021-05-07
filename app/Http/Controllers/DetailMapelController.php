@@ -28,6 +28,8 @@ class DetailMapelController extends Controller
 
     public function detailmapelsiswa(){
         $user = Auth::guard('siswa')->user();
+        date_default_timezone_set('Asia/Jakarta'); # add your city to set local time zone
+		$now = date('Y-m-d H:i:s');
         
         $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')
                 ->join('mapelkelas', 'detailmapel.id_detail', '=', 'mapelkelas.id_detail')
@@ -40,6 +42,7 @@ class DetailMapelController extends Controller
 
         return view('siswa/detail_mapel', [
             'detailmapel' => $detailmapel, 
+            'now' => $now,
         ]);
     }
 

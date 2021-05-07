@@ -35,8 +35,9 @@ Route::get('/logout', 'LoginController@logout')->name('logout');
 
 // login siswa
 Route::group(['middleware' => 'auth:siswa'], function () {
-    Route::get('/siswa', 'SiswaController@index')->name('homesiswa');
+    Route::get('/siswa', 'DetailMapelController@detailmapelsiswa')->name('homesiswa');
     Route::get('/siswa/profile', 'SiswaController@profile')->name('homesiswa/profile');
+    Route::post('/siswa/profile/password', 'SiswaController@gantipassword')->name('homesiswa/profile/password');
 
     Route::get('/siswa/detailmapel', 'DetailMapelController@detailmapelsiswa')->name('homesiswa/detailmapel');
     Route::get('/siswa/keterangan/{id}', 'DetailMapelController@keterangan')->name('homesiswa/keterangan');
@@ -51,7 +52,7 @@ Route::group(['middleware' => 'auth:siswa'], function () {
 Route::group(['middleware' => ['auth:guru','is_admin']], function () {
     Route::get('/admin', 'GuruController@admin')->name('homeadmin');
     Route::get('/admin/profile', 'GuruController@profile')->name('homeadmin/profile');
-    Route::get('/admin/profile/update', 'GuruController@updateprofile')->name('homeadmin/profile/update');
+    Route::post('/admin/profile/password', 'GuruController@gantipassword')->name('homeadmin/profile/password');
 
     // admin/guru
     Route::get('/admin/guru', 'GuruController@tampilguru')->name('homeadmin/guru');
@@ -90,7 +91,7 @@ Route::group(['middleware' => ['auth:guru','is_guru']], function () {
     // guru
     Route::get('/guru', 'GuruController@index')->name('homeguru');
     Route::get('/guru/profile', 'GuruController@profile')->name('homeguru/profile');
-    Route::get('/guru/profile/update', 'GuruController@updateprofile')->name('homeguru/profile/update');
+    Route::post('/guru/profile/password', 'GuruController@gantipassword')->name('homeguru/profile/password');
 
     // guru/Detail Mapel
     Route::get('/guru/detailmapel', 'DetailMapelController@detailmapel')->name('homeguru/detailmapel');
