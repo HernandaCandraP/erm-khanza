@@ -70,29 +70,37 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
-                  <div class="col-4 col-md-4">
+                  <div class="col-3 col-md-3">
                     <h5 class="text-center" style="line-height:120px">Cosine Similarity</h5>
                   </div>
-                  <div class="col-4 col-md-4 text-center">
-                    <input type="text" class="knob" value="30.97" data-width="120" data-height="120" data-fgColor="#4835FF" disabled readonly>
+                  <div class="col-3 col-md-3 text-center">
+                  <input type="text" class="knob" value="{{$pengujian_cosine['accuracy']}}" data-width="120" data-height="120" data-fgColor="#3835FF" disabled readonly>
+                    <div class="knob-label">Accuracy</div>
+                  </div>
+                  <div class="col-3 col-md-3 text-center">
+                    <input type="text" class="knob" value="{{$pengujian_cosine['precision']}}" data-width="120" data-height="120" data-fgColor="#00a65a" disabled readonly>
                     <div class="knob-label">Precision</div>
                   </div>
-                  <div class="col-4 col-md-4 text-center">
-                  <input type="text" class="knob" value="30" data-width="120" data-height="120" data-fgColor="#00a65a" disabled readonly>
+                  <div class="col-3 col-md-3 text-center">
+                  <input type="text" class="knob" value="{{$pengujian_cosine['recall']}}" data-width="120" data-height="120" data-fgColor="#FFB600" disabled readonly>
                     <div class="knob-label">Recall</div>
                   </div>
                 </div><hr>
                 <!-- /.row -->
                 <div class="row">
-                  <div class="col-4 col-md-4">
+                  <div class="col-3 col-md-3">
                     <h5 class="text-center" style="line-height:120px">Jaccard Similarity</h5>
                   </div>
-                  <div class="col-4 col-md-4 text-center">
-                    <input type="text" class="knob" value="30.97" data-width="120" data-height="120" data-fgColor="#4835FF" disabled readonly>
+                  <div class="col-3 col-md-3 text-center">
+                  <input type="text" class="knob" value="{{$pengujian_jaccard['accuracy']}}" data-width="120" data-height="120" data-fgColor="#3835FF" disabled readonly>
+                    <div class="knob-label">Accuracy</div>
+                  </div>
+                  <div class="col-3 col-md-3 text-center">
+                    <input type="text" class="knob" value="{{$pengujian_jaccard['precision']}}" data-width="120" data-height="120" data-fgColor="#00a65a" disabled readonly>
                     <div class="knob-label">Precision</div>
                   </div>
-                  <div class="col-4 col-md-4 text-center">
-                  <input type="text" class="knob" value="30" data-width="120" data-height="120" data-fgColor="#00a65a" disabled readonly>
+                  <div class="col-3 col-md-3 text-center">
+                  <input type="text" class="knob" value="{{$pengujian_jaccard['recall']}}" data-width="120" data-height="120" data-fgColor="#FFB600" disabled readonly>
                     <div class="knob-label">Recall</div>
                   </div>
                 </div>

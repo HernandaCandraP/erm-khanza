@@ -10,7 +10,7 @@ use App\Siswa;
 class KelasController extends Controller
 {
     public function tampilkelas(){
-        $kelas = Kelas::all();
+        $kelas = Kelas::orderBy('nama_kelas')->get();
         return view('admin/kelas', ['kelas' => $kelas]);
     }
 

@@ -9,7 +9,7 @@ use App\Mapel;
 class MapelController extends Controller
 {
     public function tampilmapel(){
-        $mapel = Mapel::all();
+        $mapel = Mapel::orderBy('nama_mapel')->get();
         return view('admin/mapel', ['mapel' => $mapel]);
     }
 

@@ -14,7 +14,8 @@
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::get('/', 'TextMiningController@index')->name('welcome');
+// Route::get('/', 'TextMiningController@index')->name('welcome');
+Route::get('/', 'LoginController@index')->name('login');
 
 // Auth::routes();
 
@@ -64,6 +65,7 @@ Route::group(['middleware' => ['auth:guru','is_admin']], function () {
 
     // admin/siswa
     Route::get('/admin/siswa', 'SiswaController@tampilsiswa')->name('homeadmin/siswa');
+    Route::get('/admin/siswa/cetak', 'SiswaController@siswacetak')->name('homeadmin/siswa/cetak');
     Route::post('/admin/siswa/tambah', 'SiswaController@create')->name('homeadmin/siswa/tambah');
     Route::get('/admin/siswa/edit/{id}', 'SiswaController@edit')->name('homeadmin/siswa/edit');
     Route::put('/admin/siswa/update/{id}', 'SiswaController@update')->name('homeadmin/siswa/update');
@@ -111,11 +113,13 @@ Route::group(['middleware' => ['auth:guru','is_guru']], function () {
     Route::get('/guru/kelas', 'KelasController@tampilkelas')->name('homeguru/kelas');
     Route::get('/guru/kelas/detail/{id}', 'KelasController@detail')->name('homeguru/kelas/detail');
     Route::get('/guru/siswa', 'SiswaController@tampilsiswa')->name('homeguru/siswa');
+    Route::get('/guru/siswa/cetak', 'SiswaController@siswacetak')->name('homeadmin/siswa/cetak');
 
     // guru/penilaian ujian
     Route::get('/guru/penilaian/{id}', 'PenilaianController@penilaianguru')->name('homeguru/penilaian');
     Route::get('/guru/penilaian/edit/{id_detail}/{id_siswa}', 'PenilaianController@penilaianedit')->name('homeguru/penilaian/edit');
     Route::post('/guru/penilaian/update', 'PenilaianController@penilaianupdate')->name('homeguru/penilaian/update');
+    Route::get('/guru/penilaian/{id}/cetak', 'PenilaianController@cetakpenilaian')->name('homeguru/penilaian/cetak');
 
     // image
     Route::get('/guru/deleteimage/{id_soal}', 'SoalController@deleteimage')->name('homeguru/deleteimage');

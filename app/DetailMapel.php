@@ -22,6 +22,6 @@ class DetailMapel extends Authenticatable
             'App\Kelas',
             'mapelkelas',
             'id_detail' , 'id_kelas'
-        );
+        )->orderBy('nama_kelas');
     }
 }

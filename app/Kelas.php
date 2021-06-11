@@ -21,6 +21,6 @@ class Kelas extends Authenticatable
         return $this->hasMany(
             'App\Siswa',
             'id_kelas'
-        );
+        )->orderBy('nama_siswa');
     }
 }

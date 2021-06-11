@@ -23,27 +23,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Perhitungan Cosine</span>
-                <span class="info-box-number">{{$tampilnilai->sum('nilai_cosine')/$tampilnilai->count('nilai_cosine')}}</span>
+                <span class="info-box-number">{{number_format($tampilnilai->sum('nilai_cosine')/$tampilnilai->count('nilai_cosine'), 0, '.', '')}}</span>
               </div>
             </div>
           </div>
           <!-- /.col -->
           <div class="col-6 col-sm-6 col-md-4">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-cog"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Perhitungan Jaccard</span>
-                <span class="info-box-number">{{$tampilnilai->sum('nilai_jaccard')/$tampilnilai->count('nilai_jaccard')}}</span>
+                <span class="info-box-number">{{number_format($tampilnilai->sum('nilai_jaccard')/$tampilnilai->count('nilai_jaccard'), 0, '.', '')}}</span>
               </div>
             </div>
           </div>
           <!-- /.col -->
           <div class="col-6 col-sm-6 col-md-4">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cog"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Penialian Guru</span>
-                <span class="info-box-number">{{$tampilnilai->sum('nilai_guru')/$tampilnilai->count('nilai_guru')}}</span>
+                <span class="info-box-number">{{number_format($tampilnilai->sum('nilai_guru')/$tampilnilai->count('nilai_guru'), 0, '.', '')}}</span>
               </div>
             </div>
           </div>

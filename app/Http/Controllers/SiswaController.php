@@ -33,9 +33,18 @@ class SiswaController extends Controller
 
     public function tampilsiswa(){
         $kelas = Kelas::all();
-        $siswa = DB::table('siswa')->join('kelas', 'siswa.id_kelas', '=', 'kelas.id_kelas')->select('siswa.*', 'kelas.nama_kelas')->get();
+        $siswa = DB::table('siswa')->join('kelas', 'siswa.id_kelas', '=', 'kelas.id_kelas')->select('siswa.*', 'kelas.nama_kelas')->orderBy('nis')->get();
         return view('admin/siswa', [
             'siswa' => $siswa, 
+            'kelas' => $kelas,
+        ]);
+    }
+
+    public function siswacetak()
+    {
+        $kelas = Kelas::orderBy('nama_kelas')->get();
+
+        return view('admin/siswa_cetak', [
             'kelas' => $kelas,
         ]);
     }

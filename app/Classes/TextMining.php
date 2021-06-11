@@ -38,26 +38,6 @@ class TextMining{
         return $kata;
     }
 
-    public function precision($penilaian_sistem, $penilaian_manual){
-        $TP = $penilaian_sistem * ($penilaian_manual/100);
-        $FP = $penilaian_sistem - $TP;
-
-        $precision = $TP/($TP+$FP);
-
-        return $precision*100;
-    }
-
-    public function recall($penilaian_sistem, $penilaian_manual){
-        $TP = $penilaian_sistem * ($penilaian_manual/100);
-        $FN = 100 - $TP;
-
-        $recall = $TP/($TP+$FN);
-
-        return $recall*100;
-    }
-
-
-
     public function casefolding($kata){
         // mengubah format kata menjadi huruf kecil
         $kata = strtolower(trim($kata)); 

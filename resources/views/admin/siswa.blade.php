@@ -18,8 +18,11 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="float-left">Data Siswa</h3>
-                @if(Auth::guard('guru')->user()->level == "Admin")
-                <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal-lg"><i class="fas fa-plus"></i> Tambah Data</button>
+                @if(Auth::guard('guru')->user()->level == "Guru")
+                <a href="{{url('guru/siswa/cetak')}}" target="blank" class="btn btn-warning btn-sm float-right"><i class="fas fa-print"></i> Cetak Data Siswa</a>
+                @elseif(Auth::guard('guru')->user()->level == "Admin")
+                <a href="{{url('admin/siswa/cetak')}}" target="blank" class="btn btn-warning btn-sm float-right"><i class="fas fa-print"></i> Cetak Data Siswa</a>
+                <br><br><button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal-lg"><i class="fas fa-plus"></i> Tambah Data </button> 
                 @endif
               </div>
               <!-- /.card-header -->

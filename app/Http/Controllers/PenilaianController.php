@@ -8,9 +8,11 @@ use App\DetailMapel;
 use App\Soal;
 use App\Mapel;
 use App\Kelas;
+use App\Siswa;
 use App\Jawaban;
 use App\DetailSiswa;
 use Auth;
+use DB;
 use App\Classes\TextMining;
 use App\Classes\NaziefAndriani;
 use App\Classes\CosineSimilarity;
@@ -32,6 +34,41 @@ class PenilaianController extends Controller
             $getsoal_arr[$key] = $value->id_soal;
         }
 
+
+        // $where_in = (implode(",",$getsoal_arr));
+        $avg_nilai = Jawaban::select('id_siswa',
+        DB::raw('AVG(CASE
+            WHEN nilai_cosine < 2  then 10
+            WHEN nilai_cosine < 12  then 20
+            WHEN nilai_cosine < 22  then 30
+            WHEN nilai_cosine < 32  then 40
+            WHEN nilai_cosine < 42  then 50
+            WHEN nilai_cosine < 52  then 60
+            WHEN nilai_cosine < 62  then 70
+            WHEN nilai_cosine < 72  then 80
+            WHEN nilai_cosine < 82  then 90
+            ELSE 100 END) as nilai_cosine'), 
+        DB::raw('AVG(CASE
+            WHEN nilai_jaccard < 6 then 20
+            WHEN nilai_jaccard < 16  then 30
+            WHEN nilai_jaccard < 26  then 40
+            WHEN nilai_jaccard < 36  then 50
+            WHEN nilai_jaccard < 46  then 60
+            WHEN nilai_jaccard < 56  then 70
+            WHEN nilai_jaccard < 66  then 80
+            WHEN nilai_jaccard < 76  then 90
+            ELSE 100 END) as nilai_jaccard')
+        )->groupby("id_siswa")->whereIn('id_soal', $getsoal_arr)->get();
+
+
+        $avg_cosine = [];
+        $avg_jaccard = [];
+        foreach ($avg_nilai as $key => $value) {
+            // print($value);
+            $avg_cosine[$value->id_siswa] = number_format($value->nilai_cosine, 0, '.', '');
+            $avg_jaccard[$value->id_siswa] = number_format($value->nilai_jaccard, 0, '.', '');
+        }
+
         // get jumlah soal 
         $count_soal = Soal::where('id_detail',$id_detail)->count();
         // jika jumlah soal == 0 maka akan kembali pada halaman sebelumnya
@@ -45,7 +82,70 @@ class PenilaianController extends Controller
             'kls' => $kls,
             'getsoal_arr' => $getsoal_arr,
             'id_detail' => $id_detail,
-            'count_soal' => $count_soal
+            'count_soal' => $count_soal,
+            'avg_cosine' => $avg_cosine,
+            'avg_jaccard' => $avg_jaccard,
+        ]);
+    }
+
+    public function cetakpenilaian(Request $request, $id_detail)
+    {
+        $namamapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')->select('detailmapel.*', 'mapel.nama_mapel')->where('id_detail', $id_detail)->first();
+        $mapel = Mapel::all();
+        $kls = Kelas::join('mapelkelas', 'kelas.id_kelas', '=', 'mapelkelas.id_kelas')->select('kelas.*')->where('id_detail', $id_detail)->get();
+
+        // get array in id_detail
+        $getsoal = Soal::select('id_soal')->where('id_detail', $id_detail)->get();
+
+        $getsoal_arr = array();
+        foreach($getsoal as $key => $value){
+            $getsoal_arr[$key] = $value->id_soal;
+        }
+
+        $avg_nilai = Jawaban::select('id_siswa',
+        DB::raw('AVG(CASE
+            WHEN nilai_cosine < 2  then 10
+            WHEN nilai_cosine < 12  then 20
+            WHEN nilai_cosine < 22  then 30
+            WHEN nilai_cosine < 32  then 40
+            WHEN nilai_cosine < 42  then 50
+            WHEN nilai_cosine < 52  then 60
+            WHEN nilai_cosine < 62  then 70
+            WHEN nilai_cosine < 72  then 80
+            WHEN nilai_cosine < 82  then 90
+            ELSE 100 END) as nilai_cosine'), 
+        DB::raw('AVG(CASE
+            WHEN nilai_jaccard < 6 then 20
+            WHEN nilai_jaccard < 16  then 30
+            WHEN nilai_jaccard < 26  then 40
+            WHEN nilai_jaccard < 36  then 50
+            WHEN nilai_jaccard < 46  then 60
+            WHEN nilai_jaccard < 56  then 70
+            WHEN nilai_jaccard < 66  then 80
+            WHEN nilai_jaccard < 76  then 90
+            ELSE 100 END) as nilai_jaccard')
+        )->groupby("id_siswa")->whereIn('id_soal', $getsoal_arr)->get();
+
+        $avg_cosine = [];
+        $avg_jaccard = [];
+        foreach ($avg_nilai as $key => $value) {
+            // print($value);
+            $avg_cosine[$value->id_siswa] = number_format($value->nilai_cosine, 0, '.', '');
+            $avg_jaccard[$value->id_siswa] = number_format($value->nilai_jaccard, 0, '.', '');
+        }
+
+
+        // get jumlah soal 
+        $count_soal = Soal::where('id_detail',$id_detail)->count();
+
+        return view('guru/penilaian_cetak', [
+            'namamapel' => $namamapel, 
+            'kls' => $kls,
+            'getsoal_arr' => $getsoal_arr,
+            'id_detail' => $id_detail,
+            'count_soal' => $count_soal, 
+            'avg_cosine' => $avg_cosine,
+            'avg_jaccard' => $avg_jaccard,
         ]);
     }
 
@@ -55,12 +155,38 @@ class PenilaianController extends Controller
             $join->on('soal.id_soal', '=', 'jawaban.id_soal')
             ->where('jawaban.id_siswa', $id_siswa);
         })
-        ->select('soal.soal','soal.image', 'jawaban.*')->where('id_detail', $id_detail)->get();
+        ->select('soal.soal','soal.image', 'soal.jawaban', 'jawaban.jawaban_siswa', 'jawaban.nilai_guru',
+        DB::raw('CASE
+            WHEN nilai_cosine < 2  then 10
+            WHEN nilai_cosine < 12  then 20
+            WHEN nilai_cosine < 22  then 30
+            WHEN nilai_cosine < 32  then 40
+            WHEN nilai_cosine < 42  then 50
+            WHEN nilai_cosine < 52  then 60
+            WHEN nilai_cosine < 62  then 70
+            WHEN nilai_cosine < 72  then 80
+            WHEN nilai_cosine < 82  then 90
+            ELSE 100 END as nilai_cosine'), 
+        DB::raw('CASE
+            WHEN nilai_jaccard < 6 then 20
+            WHEN nilai_jaccard < 16  then 30
+            WHEN nilai_jaccard < 26  then 40
+            WHEN nilai_jaccard < 36  then 50
+            WHEN nilai_jaccard < 46  then 60
+            WHEN nilai_jaccard < 56  then 70
+            WHEN nilai_jaccard < 66  then 80
+            WHEN nilai_jaccard < 76  then 90
+            ELSE 100 END as nilai_jaccard')
+        )
+        ->where('id_detail', $id_detail)->get();
+
+        $data_siswa = Siswa::select('nama_siswa', 'nis')->where('id_siswa', $id_siswa)->first();
 
         return view('guru/penilaian_edit', [
             'tampilnilai'=>$tampilnilai,
             'id_detail' => $id_detail,
-            'id_siswa' => $id_siswa
+            'id_siswa' => $id_siswa,
+            'data_siswa' => $data_siswa
         ]);
     }
 
@@ -132,7 +258,30 @@ class PenilaianController extends Controller
             $join->on('soal.id_soal', '=', 'jawaban.id_soal')
             ->where('jawaban.id_siswa', Auth::guard('siswa')->user()->id_siswa);
         })
-        ->select('soal.soal', 'soal.image', 'jawaban.*')->where('id_detail', $id_detail)->get();
+        ->select('soal.soal','soal.image', 'soal.jawaban', 'jawaban.jawaban_siswa', 'jawaban.nilai_guru',
+        DB::raw('CASE
+            WHEN nilai_cosine < 2  then 10
+            WHEN nilai_cosine < 12  then 20
+            WHEN nilai_cosine < 22  then 30
+            WHEN nilai_cosine < 32  then 40
+            WHEN nilai_cosine < 42  then 50
+            WHEN nilai_cosine < 52  then 60
+            WHEN nilai_cosine < 62  then 70
+            WHEN nilai_cosine < 72  then 80
+            WHEN nilai_cosine < 82  then 90
+            ELSE 100 END as nilai_cosine'), 
+        DB::raw('CASE
+            WHEN nilai_jaccard < 6 then 20
+            WHEN nilai_jaccard < 16  then 30
+            WHEN nilai_jaccard < 26  then 40
+            WHEN nilai_jaccard < 36  then 50
+            WHEN nilai_jaccard < 46  then 60
+            WHEN nilai_jaccard < 56  then 70
+            WHEN nilai_jaccard < 66  then 80
+            WHEN nilai_jaccard < 76  then 90
+            ELSE 100 END as nilai_jaccard')
+        )
+        ->where('id_detail', $id_detail)->get();
 
         return view('siswa/cek_nilai', [
             'tampilnilai'=>$tampilnilai

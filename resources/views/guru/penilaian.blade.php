@@ -18,6 +18,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
+                <a href="{{url('guru/penilaian/')}}/{{$id_detail}}/cetak" target="blank" class="btn btn-warning float-right"><i class="fas fa-print"></i> Cetak Laporan Penilaian</a>
                 <h5>Perikasa Hasil Penilaian</h5>
                 <h6>Mata Pelajaran {{$namamapel->nama_mapel}} ({{$namamapel->waktu_mulai}} - {{$namamapel->waktu_selesai}})</h6> 
               </div>
@@ -30,7 +31,7 @@
                     <div class="card-header">
                       <h4 class="card-title w-100">
                         <a class="d-block w-100" data-toggle="collapse" href="#kelas{{$value->nama_kelas}}{{$value->id_kelas}}">
-                          Kelas {{$value->nama_kelas}}
+                          Kelas {{$value->nama_kelas}} <i class="fas fa-angle-down"></i>
                         </a>
                       </h4>
                     </div>
@@ -54,9 +55,17 @@
                               <th scope="row"> {{$no+1}}. </th>
                               <td>{{$key->nis}}</td>
                               <td>{{$key->nama_siswa}}</td>
-                              <td>{{$key->getjawaban->whereIn('id_soal',$getsoal_arr)->sum('nilai_cosine') / $count_soal}}</td>
-                              <td>{{$key->getjawaban->whereIn('id_soal',$getsoal_arr)->sum('nilai_jaccard') / $count_soal}}</td>
-                              <td>{{$key->getjawaban->whereIn('id_soal',$getsoal_arr)->sum('nilai_guru') / $count_soal}}</td>
+                              <td>@if(empty($avg_cosine[$key->id_siswa]))
+                                    0
+                                  @else {{$avg_cosine[$key->id_siswa]}}
+                                  @endif 
+                              </td>
+                              <td>@if(empty($avg_jaccard[$key->id_siswa]))
+                                    0
+                                  @else {{$avg_jaccard[$key->id_siswa]}}
+                                  @endif 
+                              </td>
+                              <td>{{number_format($key->getjawaban->whereIn('id_soal',$getsoal_arr)->sum('nilai_guru') / ($count_soal), 0, '.', '')}}</td>
                               <td> <a href="{{url('guru/penilaian/edit')}}/{{$id_detail}}/{{$key->id_siswa}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i>penialain manual</a></td>
                           </tr> 
                           @endforeach

@@ -17,7 +17,7 @@ class DetailMapelController extends Controller
     public function detailmapel(){
         $detailmapel = DetailMapel::join('mapel', 'detailmapel.id_mapel', '=', 'mapel.id_mapel')->select('detailmapel.*', 'mapel.nama_mapel')->get();
         $mapel = Mapel::all();
-        $kls = Kelas::all();
+        $kls = Kelas::orderBy('nama_kelas')->get();
 
         return view('guru/detail_mapel', [
             'detailmapel' => $detailmapel, 
@@ -121,7 +121,7 @@ class DetailMapelController extends Controller
     {
         $detailmapel = DetailMapel::find($id);
         $mapel = Mapel::all();
-        $kls = Kelas::all();
+        $kls = Kelas::orderBy('nama_kelas')->get();
 
         // return $detailmapel->waktu_mulai;
         return view('guru/detailmapel_edit', [

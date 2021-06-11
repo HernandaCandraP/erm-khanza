@@ -17,33 +17,43 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <section class="content-header">
       <!-- Main content -->
       <div class="container-fluid">
+          <div class="card">
+            <div class="card-header">
+              <h5>
+                <i class="fas fa-user"></i>
+                {{$data_siswa->nama_siswa}} - {{$data_siswa->nis}}
+              </h5>
+            </div>
+            <!-- /.card-header -->
+          </div>
+          <!-- /.card -->
         <div class="row">
           <div class="col-6 col-sm-6 col-md-4">
             <div class="info-box">
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Perhitungan Cosine</span>
-                <span class="info-box-number">{{$tampilnilai->sum('nilai_cosine')/$tampilnilai->count('nilai_cosine')}}</span>
+                <span class="info-box-number">{{number_format($tampilnilai->sum('nilai_cosine')/$tampilnilai->count('nilai_cosine'), 0, '.', '')}}</span>
               </div>
             </div>
           </div>
           <!-- /.col -->
           <div class="col-6 col-sm-6 col-md-4">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-cog"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Perhitungan Jaccard</span>
-                <span class="info-box-number">{{$tampilnilai->sum('nilai_jaccard')/$tampilnilai->count('nilai_jaccard')}}</span>
+                <span class="info-box-number">{{number_format($tampilnilai->sum('nilai_jaccard')/$tampilnilai->count('nilai_jaccard'), 0, '.', '')}}</span>
               </div>
             </div>
           </div>
           <!-- /.col -->
           <div class="col-6 col-sm-6 col-md-4">
             <div class="info-box mb-3">
-              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cog"></i></span>
               <div class="info-box-content">
-                <span class="info-box-text">Penialian Guru</span>
-                <span class="info-box-number">{{$tampilnilai->sum('nilai_guru')/$tampilnilai->count('nilai_guru')}}</span>
+                <span class="info-box-text">Penilaian Guru</span>
+                <span class="info-box-number">{{number_format($tampilnilai->sum('nilai_guru')/$tampilnilai->count('nilai_guru'), 0, '.', '')}}</span>
               </div>
             </div>
           </div>
@@ -67,6 +77,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     @endif
                     <div style="background-color:transparent; border:none; padding-left:20px; text-align:justify; height:auto" class="form-control">@nl2br($value->soal)</div>
                     <div style="background-color:transparent; text-align:justify; height:auto" class="form-control">{{$value->jawaban_siswa == null ? 'Jawaban Kosong' : ''}} @nl2br($value->jawaban_siswa)</div>
+                    <br>
+                    <div id="accordion">
+                    <div class="card card-success">
+                      <div class="card-header">
+                        <h4 class="card-title w-100">
+                          <a class="d-block w-100" data-toggle="collapse" href="#collapse{{$no}}">
+                            Cek Kunci Jawaban <i class="fas fa-angle-down"></i>
+                          </a>
+                        </h4>
+                      </div>
+                      <div id="collapse{{$no}}" class="collapse" data-parent="#accordion">
+                        <div style="background-color:transparent; text-align:justify; height:auto" class="form-control">@nl2br($value->jawaban)</div>
+                      </div>
+                    </div>
+                  </div>
                   </div>
                   <div class="col-lg-3 data-row">
                     <a class="btn bg-primary">
@@ -76,7 +101,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       Jaccard Similarity &ensp;: &nbsp; <b>{{$value->nilai_jaccard}}</b> 
                     </a>
                     <a class="btn bg-lightblue ">
-                      @if($value->nilai_guru == null)
+                      @if($value->nilai_guru === null)
                         Penilaian Guru &emsp;&ensp;&nbsp;: &nbsp; <b>-</b> 
                       @else
                         Penilaian Guru &emsp;&ensp;&nbsp;: &nbsp; <b>{{$value->nilai_guru}}</b> 
@@ -104,7 +129,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Default Modal</h4>
+              <h4 class="modal-title">Edit Nilai</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
