@@ -55,7 +55,7 @@
                       @endif
                       <div style="background-color:transparent; border:none; text-align:justify; height:auto; margin:-5px 0px 0px 10px;" class="form-control">@nl2br($tampilsoal->soal)</div><br>
                       <b>Jawaban:</b>
-                      <textarea class="form-control" name="jawaban_siswa" rows="5" placeholder="jawaban">{{$jawaban['jawaban_siswa']}}</textarea><br>
+                      <textarea class="form-control" name="jawaban_siswa" rows="5" placeholder="jawaban">@if(isset($jawaban['jawaban_siswa'])){{$jawaban['jawaban_siswa']}}@endif</textarea><br>
                     </div>
                     <div class="col-sm-3">
                       <div class="card card-success">

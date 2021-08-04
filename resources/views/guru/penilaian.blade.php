@@ -66,7 +66,7 @@
                                   @endif 
                               </td>
                               <td>{{number_format($key->getjawaban->whereIn('id_soal',$getsoal_arr)->sum('nilai_guru') / ($count_soal), 0, '.', '')}}</td>
-                              <td> <a href="{{url('guru/penilaian/edit')}}/{{$id_detail}}/{{$key->id_siswa}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i>penialain manual</a></td>
+                              <td> <a href="{{url('guru/penilaian/edit')}}/{{$id_detail}}/{{$key->id_siswa}}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i>penilaian manual</a></td>
                           </tr> 
                           @endforeach
                           </tbody>

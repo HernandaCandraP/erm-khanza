@@ -34,10 +34,18 @@ class PenilaianController extends Controller
             $getsoal_arr[$key] = $value->id_soal;
         }
 
+        // get jumlah soal 
+        $count_soal = count($getsoal);
+        // jika jumlah soal == 0 maka akan kembali pada halaman sebelumnya
+        if($count_soal == 0){
+            $request->session()->flash('warning', 'Periksa Ujian : ' .$namamapel->nama_mapel. ' Tidak Dapat Dibuka Dikarenakan Soal Masih Kosong');
+            return redirect()->back();
+        }
 
         // $where_in = (implode(",",$getsoal_arr));
-        $avg_nilai = Jawaban::select('id_siswa',
-        DB::raw('AVG(CASE
+        $sum_nilai = Jawaban::select('id_siswa',
+        DB::raw('SUM(CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_cosine < 2  then 10
             WHEN nilai_cosine < 12  then 20
             WHEN nilai_cosine < 22  then 30
@@ -48,7 +56,8 @@ class PenilaianController extends Controller
             WHEN nilai_cosine < 72  then 80
             WHEN nilai_cosine < 82  then 90
             ELSE 100 END) as nilai_cosine'), 
-        DB::raw('AVG(CASE
+        DB::raw('SUM(CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_jaccard < 6 then 20
             WHEN nilai_jaccard < 16  then 30
             WHEN nilai_jaccard < 26  then 40
@@ -63,18 +72,10 @@ class PenilaianController extends Controller
 
         $avg_cosine = [];
         $avg_jaccard = [];
-        foreach ($avg_nilai as $key => $value) {
+        foreach ($sum_nilai as $key => $value) {
             // print($value);
-            $avg_cosine[$value->id_siswa] = number_format($value->nilai_cosine, 0, '.', '');
-            $avg_jaccard[$value->id_siswa] = number_format($value->nilai_jaccard, 0, '.', '');
-        }
-
-        // get jumlah soal 
-        $count_soal = Soal::where('id_detail',$id_detail)->count();
-        // jika jumlah soal == 0 maka akan kembali pada halaman sebelumnya
-        if($count_soal == 0){
-            $request->session()->flash('warning', 'Periksa Ujian : ' .$namamapel->nama_mapel. ' Tidak Dapat Dibuka Dikarenakan Soal Masih Kosong');
-            return redirect()->back();
+            $avg_cosine[$value->id_siswa] = number_format(($value->nilai_cosine/$count_soal), 0, '.', '');
+            $avg_jaccard[$value->id_siswa] = number_format(($value->nilai_jaccard/$count_soal), 0, '.', '');
         }
 
         return view('guru/penilaian', [
@@ -102,8 +103,11 @@ class PenilaianController extends Controller
             $getsoal_arr[$key] = $value->id_soal;
         }
 
-        $avg_nilai = Jawaban::select('id_siswa',
-        DB::raw('AVG(CASE
+        $count_soal = count($getsoal);
+        
+        $sum_nilai = Jawaban::select('id_siswa',
+        DB::raw('SUM(CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_cosine < 2  then 10
             WHEN nilai_cosine < 12  then 20
             WHEN nilai_cosine < 22  then 30
@@ -114,7 +118,8 @@ class PenilaianController extends Controller
             WHEN nilai_cosine < 72  then 80
             WHEN nilai_cosine < 82  then 90
             ELSE 100 END) as nilai_cosine'), 
-        DB::raw('AVG(CASE
+        DB::raw('SUM(CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_jaccard < 6 then 20
             WHEN nilai_jaccard < 16  then 30
             WHEN nilai_jaccard < 26  then 40
@@ -128,10 +133,10 @@ class PenilaianController extends Controller
 
         $avg_cosine = [];
         $avg_jaccard = [];
-        foreach ($avg_nilai as $key => $value) {
+        foreach ($sum_nilai as $key => $value) {
             // print($value);
-            $avg_cosine[$value->id_siswa] = number_format($value->nilai_cosine, 0, '.', '');
-            $avg_jaccard[$value->id_siswa] = number_format($value->nilai_jaccard, 0, '.', '');
+            $avg_cosine[$value->id_siswa] = number_format(($value->nilai_cosine/$count_soal), 0, '.', '');
+            $avg_jaccard[$value->id_siswa] = number_format(($value->nilai_jaccard/$count_soal), 0, '.', '');
         }
 
 
@@ -155,8 +160,9 @@ class PenilaianController extends Controller
             $join->on('soal.id_soal', '=', 'jawaban.id_soal')
             ->where('jawaban.id_siswa', $id_siswa);
         })
-        ->select('soal.soal','soal.image', 'soal.jawaban', 'jawaban.jawaban_siswa', 'jawaban.nilai_guru',
+        ->select('soal.soal','soal.image', 'soal.jawaban', 'jawaban.jawaban_siswa','jawaban.id_jawaban', 'jawaban.nilai_guru',
         DB::raw('CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_cosine < 2  then 10
             WHEN nilai_cosine < 12  then 20
             WHEN nilai_cosine < 22  then 30
@@ -168,6 +174,7 @@ class PenilaianController extends Controller
             WHEN nilai_cosine < 82  then 90
             ELSE 100 END as nilai_cosine'), 
         DB::raw('CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_jaccard < 6 then 20
             WHEN nilai_jaccard < 16  then 30
             WHEN nilai_jaccard < 26  then 40
@@ -260,6 +267,7 @@ class PenilaianController extends Controller
         })
         ->select('soal.soal','soal.image', 'soal.jawaban', 'jawaban.jawaban_siswa', 'jawaban.nilai_guru',
         DB::raw('CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_cosine < 2  then 10
             WHEN nilai_cosine < 12  then 20
             WHEN nilai_cosine < 22  then 30
@@ -271,6 +279,7 @@ class PenilaianController extends Controller
             WHEN nilai_cosine < 82  then 90
             ELSE 100 END as nilai_cosine'), 
         DB::raw('CASE
+            WHEN jawaban_siswa is null or jawaban_siswa = "" then 0
             WHEN nilai_jaccard < 6 then 20
             WHEN nilai_jaccard < 16  then 30
             WHEN nilai_jaccard < 26  then 40

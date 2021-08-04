@@ -51,7 +51,7 @@ class GuruController extends Controller
              WHEN nilai_jaccard < 76  then 90
              ELSE 100
         END as nilai_jaccard
-        FROM `jawaban` WHERE nilai_guru IS NOT NULL");
+        FROM `jawaban` WHERE nilai_guru IS NOT NULL AND id_jawaban > 161");
 
         $data_cosine = [];
         $data_jaccard = [];
@@ -106,7 +106,7 @@ class GuruController extends Controller
              WHEN nilai_jaccard < 76  then 90
              ELSE 100
         END as nilai_jaccard
-        FROM `jawaban` WHERE nilai_guru IS NOT NULL");
+        FROM `jawaban` WHERE nilai_guru IS NOT NULL AND id_jawaban > 161");
 
         $data_cosine = [];
         $data_jaccard = [];

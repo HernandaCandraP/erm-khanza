@@ -14,8 +14,8 @@
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-// Route::get('/', 'TextMiningController@index')->name('welcome');
-Route::get('/', 'LoginController@index')->name('login');
+Route::get('/', 'TextMiningController@index')->name('welcome');
+// Route::get('/', 'LoginController@index')->name('welcome');
 
 // Auth::routes();
 
