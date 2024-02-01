@@ -18,114 +18,118 @@ use Auth;
 class GuruController extends Controller
 {
     public function index(){
-        $detailmapel = DetailMapel::count();
-        $totalsiswa = Siswa::count();
-        $totalkelas = Kelas::count();
-        $totalmapel = Mapel::count();
+        $pegawai = "hello";
+        // $totalsiswa = Siswa::count();
+        // $totalkelas = Kelas::count();
+        // $totalmapel = Mapel::count();
 
-        $pengujian = new Pengujian();
+        // $pengujian = new Pengujian();
 
-        // Data Uji
-        $data = DB::select("SELECT nilai_guru,
-        CASE
-             WHEN nilai_cosine < 2  then 10
-             WHEN nilai_cosine < 12  then 20
-             WHEN nilai_cosine < 22  then 30
-             WHEN nilai_cosine < 32  then 40
-             WHEN nilai_cosine < 42  then 50
-             WHEN nilai_cosine < 52  then 60
-             WHEN nilai_cosine < 62  then 70
-             WHEN nilai_cosine < 72  then 80
-             WHEN nilai_cosine < 82  then 90
-             ELSE 100
-        END as 
-        nilai_cosine, 
-        CASE
-             WHEN nilai_jaccard < 6 then 20
-             WHEN nilai_jaccard < 16  then 30
-             WHEN nilai_jaccard < 26  then 40
-             WHEN nilai_jaccard < 36  then 50
-             WHEN nilai_jaccard < 46  then 60
-             WHEN nilai_jaccard < 56  then 70
-             WHEN nilai_jaccard < 66  then 80
-             WHEN nilai_jaccard < 76  then 90
-             ELSE 100
-        END as nilai_jaccard
-        FROM `jawaban` WHERE nilai_guru IS NOT NULL AND id_jawaban > 161");
+        // // Data Uji
+        // $data = DB::select("SELECT nilai_guru,
+        // CASE
+        //      WHEN nilai_cosine < 2  then 10
+        //      WHEN nilai_cosine < 12  then 20
+        //      WHEN nilai_cosine < 22  then 30
+        //      WHEN nilai_cosine < 32  then 40
+        //      WHEN nilai_cosine < 42  then 50
+        //      WHEN nilai_cosine < 52  then 60
+        //      WHEN nilai_cosine < 62  then 70
+        //      WHEN nilai_cosine < 72  then 80
+        //      WHEN nilai_cosine < 82  then 90
+        //      ELSE 100
+        // END as 
+        // nilai_cosine, 
+        // CASE
+        //      WHEN nilai_jaccard < 6 then 20
+        //      WHEN nilai_jaccard < 16  then 30
+        //      WHEN nilai_jaccard < 26  then 40
+        //      WHEN nilai_jaccard < 36  then 50
+        //      WHEN nilai_jaccard < 46  then 60
+        //      WHEN nilai_jaccard < 56  then 70
+        //      WHEN nilai_jaccard < 66  then 80
+        //      WHEN nilai_jaccard < 76  then 90
+        //      ELSE 100
+        // END as nilai_jaccard
+        // FROM `jawaban` WHERE nilai_guru IS NOT NULL AND id_jawaban > 161");
 
-        $data_cosine = [];
-        $data_jaccard = [];
-        foreach ($data as $key => $value) {
-            array_push($data_cosine, $value->nilai_guru - $value->nilai_cosine);
-            array_push($data_jaccard, $value->nilai_guru - $value->nilai_jaccard);
-        }
+        // $data_cosine = [];
+        // $data_jaccard = [];
+        // foreach ($data as $key => $value) {
+        //     array_push($data_cosine, $value->nilai_guru - $value->nilai_cosine);
+        //     array_push($data_jaccard, $value->nilai_guru - $value->nilai_jaccard);
+        // }
 
-        $pengujian_cosine = $pengujian->pengujian_cosine($data_cosine);
-        $pengujian_jaccard = $pengujian->pengujian_jaccard($data_jaccard);
+        // $pengujian_cosine = $pengujian->pengujian_cosine($data_cosine);
+        // $pengujian_jaccard = $pengujian->pengujian_jaccard($data_jaccard);
 
         return view('guru/home', [
-            'detailmapel' => $detailmapel, 
-            'totalkelas' => $totalkelas, 
-            'totalsiswa' => $totalsiswa, 
-            'totalmapel' => $totalmapel,
-            'pengujian_cosine' => $pengujian_cosine,
-            'pengujian_jaccard' => $pengujian_jaccard,]);
+            // 'detailmapel' => $detailmapel, 
+            // 'totalkelas' => $totalkelas, 
+            // 'totalsiswa' => $totalsiswa, 
+            // 'totalmapel' => $totalmapel,
+            // 'pengujian_cosine' => $pengujian_cosine,
+            // 'pengujian_jaccard' => $pengujian_jaccard,
+            'pegawai' => $pegawai, 
+        ]);
     }
 
     public function admin(){
-        $totalguru = Guru::count();
-        $totalsiswa = Siswa::count();
-        $totalkelas = Kelas::count();
-        $totalmapel = Mapel::count();
+        $pegawai = "admin";
+        // $totalguru = Guru::count();
+        // $totalsiswa = Siswa::count();
+        // $totalkelas = Kelas::count();
+        // $totalmapel = Mapel::count();
 
-        $pengujian = new Pengujian();
+        // $pengujian = new Pengujian();
         
-        // Data Uji
-        $data = DB::select("SELECT nilai_guru,
-        CASE
-             WHEN nilai_cosine < 2  then 10
-             WHEN nilai_cosine < 12  then 20
-             WHEN nilai_cosine < 22  then 30
-             WHEN nilai_cosine < 32  then 40
-             WHEN nilai_cosine < 42  then 50
-             WHEN nilai_cosine < 52  then 60
-             WHEN nilai_cosine < 62  then 70
-             WHEN nilai_cosine < 72  then 80
-             WHEN nilai_cosine < 82  then 90
-             ELSE 100
-        END as 
-        nilai_cosine, 
-        CASE
-             WHEN nilai_jaccard < 6 then 20
-             WHEN nilai_jaccard < 16  then 30
-             WHEN nilai_jaccard < 26  then 40
-             WHEN nilai_jaccard < 36  then 50
-             WHEN nilai_jaccard < 46  then 60
-             WHEN nilai_jaccard < 56  then 70
-             WHEN nilai_jaccard < 66  then 80
-             WHEN nilai_jaccard < 76  then 90
-             ELSE 100
-        END as nilai_jaccard
-        FROM `jawaban` WHERE nilai_guru IS NOT NULL AND id_jawaban > 161");
+        // // Data Uji
+        // $data = DB::select("SELECT nilai_guru,
+        // CASE
+        //      WHEN nilai_cosine < 2  then 10
+        //      WHEN nilai_cosine < 12  then 20
+        //      WHEN nilai_cosine < 22  then 30
+        //      WHEN nilai_cosine < 32  then 40
+        //      WHEN nilai_cosine < 42  then 50
+        //      WHEN nilai_cosine < 52  then 60
+        //      WHEN nilai_cosine < 62  then 70
+        //      WHEN nilai_cosine < 72  then 80
+        //      WHEN nilai_cosine < 82  then 90
+        //      ELSE 100
+        // END as 
+        // nilai_cosine, 
+        // CASE
+        //      WHEN nilai_jaccard < 6 then 20
+        //      WHEN nilai_jaccard < 16  then 30
+        //      WHEN nilai_jaccard < 26  then 40
+        //      WHEN nilai_jaccard < 36  then 50
+        //      WHEN nilai_jaccard < 46  then 60
+        //      WHEN nilai_jaccard < 56  then 70
+        //      WHEN nilai_jaccard < 66  then 80
+        //      WHEN nilai_jaccard < 76  then 90
+        //      ELSE 100
+        // END as nilai_jaccard
+        // FROM `jawaban` WHERE nilai_guru IS NOT NULL AND id_jawaban > 161");
 
-        $data_cosine = [];
-        $data_jaccard = [];
-        foreach ($data as $key => $value) {
-            array_push($data_cosine, $value->nilai_guru - $value->nilai_cosine);
-            array_push($data_jaccard, $value->nilai_guru - $value->nilai_jaccard);
-        }
+        // $data_cosine = [];
+        // $data_jaccard = [];
+        // foreach ($data as $key => $value) {
+        //     array_push($data_cosine, $value->nilai_guru - $value->nilai_cosine);
+        //     array_push($data_jaccard, $value->nilai_guru - $value->nilai_jaccard);
+        // }
 
-        $pengujian_cosine = $pengujian->pengujian_cosine($data_cosine);
-        $pengujian_jaccard = $pengujian->pengujian_jaccard($data_jaccard);
+        // $pengujian_cosine = $pengujian->pengujian_cosine($data_cosine);
+        // $pengujian_jaccard = $pengujian->pengujian_jaccard($data_jaccard);
 
         return view('admin/home', [
-            'totalguru' => $totalguru, 
-            'totalkelas' => $totalkelas, 
-            'totalsiswa' => $totalsiswa, 
-            'totalmapel' => $totalmapel,
-            'pengujian_cosine' => $pengujian_cosine,
-            'pengujian_jaccard' => $pengujian_jaccard,
-            ]);
+            // 'detailmapel' => $detailmapel, 
+            // 'totalkelas' => $totalkelas, 
+            // 'totalsiswa' => $totalsiswa, 
+            // 'totalmapel' => $totalmapel,
+            // 'pengujian_cosine' => $pengujian_cosine,
+            // 'pengujian_jaccard' => $pengujian_jaccard,
+            'pegawai' => $pegawai, 
+        ]);
     }
 
     public function tampilguru(){

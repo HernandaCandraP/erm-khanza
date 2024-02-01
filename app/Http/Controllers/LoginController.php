@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
+use Session;
+use DB;
 
 class LoginController extends Controller
 {
     public function index()
     {
-        if(Auth::guard('siswa')->check() != null){
-            return redirect('siswa');
-        }else if (Auth::guard('guru')->check() != null){
-            if(Auth::guard('guru')->user()->level == "Guru"){
-                return redirect('guru');
-            }else if(Auth::guard('guru')->user()->level == "Admin"){
+        if (Auth::guard('pegawai')->check() != null){
+            if(Auth::guard('pegawai')->user()->level == "Petugas"){
+                return redirect('pegawai');
+            }else if(Auth::guard('pegawai')->user()->level == "Dokter"){
+                return redirect('dokter');
+            }else if(Auth::guard('pegawai')->user()->level == "Admin"){
                 return redirect('admin');
             }
         }
@@ -22,23 +24,24 @@ class LoginController extends Controller
     }
 
     public function postlogin(Request $request){
-        // dd($request->all());
-        // if(Auth::attempt($request->only('username', 'password'))){
-        //     return redirect('siswa');
-        // }
         $validate = $request->validate([
             'username' => ['required'],
             'password' => ['required']
         ]);
 
-        if(Auth::guard('siswa')->attempt(['username' => $request->username, 'password' => $request->password])){
-            return redirect('siswa');
-        }
-        
-        if(Auth::guard('guru')->attempt(['username' => $request->username, 'password' => $request->password])){
-            if(Auth::guard('guru')->user()->level == "Guru"){
-                return redirect('guru');
-            }else if(Auth::guard('guru')->user()->level == "Admin"){
+        if(Auth::guard('pegawai')->attempt(['username' => $request->username, 'password' => $request->password])){
+            // session nik
+            $nik = Auth::guard('pegawai')->user()->nik;
+            Session::put('nik', $nik);
+
+            if(Auth::guard('pegawai')->user()->level == "Petugas"){
+                return redirect('pegawai');
+            }else if(Auth::guard('pegawai')->user()->level == "Dokter"){
+                // session poli
+                $getpoli = DB::table('jadwal')->select('kd_poli')->where('kd_dokter', $nik)->first();
+                Session::put('getpoli', $getpoli->kd_poli);
+                return redirect('dokter');
+            }else if(Auth::guard('pegawai')->user()->level == "Admin"){
                 return redirect('admin');
             }
         }
@@ -46,14 +49,10 @@ class LoginController extends Controller
     }
 
     public function logout(Request $request){
-        // Auth::logout();
-        if(Auth::guard('siswa')->check()){
-            Auth::guard('siswa')->logout();
+        if (Auth::guard('pegawai')->check()) {
+            Auth::guard('pegawai')->logout();
         }
-
-        if (Auth::guard('guru')->check()) {
-            Auth::guard('guru')->logout();
-        }
-        return redirect('/');
+        Session::flush();
+        return redirect('/login');
     }
 }

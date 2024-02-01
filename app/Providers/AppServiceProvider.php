@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // \URL::forceScheme('https');
         Blade::directive('nl2br', function ($string) {
             return "<?php echo nl2br($string); ?>";
         });

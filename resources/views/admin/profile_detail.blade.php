@@ -18,7 +18,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="float-left">Profile Admin</h3>
+                <h3 class="float-left">Data Diri</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -26,27 +26,23 @@
                 <div class="modal-body">
                   <div class="form-group row">
                     <label class="col-sm-3">NIP</label>
-                    <div class="col-sm-9">{{$guru->nip}}</div>
+                    <div class="col-sm-9">{{$pegawai->nik}}</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-3">Nama</label>
-                    <div class="col-sm-9">{{$guru->nama_guru}}</div>
+                    <div class="col-sm-9">{{$pegawai->nama}}</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-3">Username</label>
-                    <div class="col-sm-9">{{$guru->username}}</div>
+                    <div class="col-sm-9">{{$pegawai->username}}</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-3">Jenis Kelamin</label>
-                    <div class="col-sm-9">{{$guru->jenis_kelamin}}</div>
+                    <div class="col-sm-9">{{$pegawai->jk}}</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-3">Alamat</label>
-                    <div class="col-sm-9">{{$guru->alamat}}</div>
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-3">No Telp</label>
-                    <div class="col-sm-9">{{$guru->no_telp}}</div>
+                    <div class="col-sm-9">{{$pegawai->alamat}}</div>
                   </div>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -82,10 +78,12 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      @if(Auth::guard('guru')->user()->level == "Admin")
+      @if(Auth::guard('pegawai')->user()->level == "Admin")
       <form action="{{route('homeadmin/profile/password')}}" method="post" class="form-horizontal">
+      @elseif(Auth::guard('pegawai')->user()->level == "Dokter")
+      <form action="{{route('homedokter/profile/password')}}" method="post" class="form-horizontal">
       @else
-      <form action="{{route('homeguru/profile/password')}}" method="post" class="form-horizontal">
+      <form action="{{route('homepegawai/profile/password')}}" method="post" class="form-horizontal">
       @endif
       {{ csrf_field() }}
       <div class="modal-body">

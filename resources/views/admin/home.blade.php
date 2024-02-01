@@ -14,7 +14,7 @@
   <div class="content-wrapper">
     <div class="content-header"></div>
 
-    <!-- Main content -->
+    {{-- <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
       <div class="row">
@@ -118,7 +118,7 @@
     </div>
     <!-- /.content -->
   </div>
-  <!-- /.content-wrapper -->
+  <!-- /.content-wrapper --> --}}
 
   <!-- Main Footer -->
   <footer class="main-footer">

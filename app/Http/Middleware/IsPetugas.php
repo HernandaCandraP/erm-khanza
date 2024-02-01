@@ -5,11 +5,11 @@ namespace App\Http\Middleware;
 use Closure;
 use Auth;
 
-class IsGuru
+class IsPetugas
 {
     public function handle($request, Closure $next)
     {
-        if(Auth::guard('guru')->user()->level == "Guru") {
+        if (Auth::guard('pegawai')->user()->level == "Petugas") {
             return $next($request);
         }
         return redirect('/404');

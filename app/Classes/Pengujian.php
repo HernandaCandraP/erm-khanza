@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Classes;
+
 use DB;
 
-class Pengujian{
-    public function pengujian_cosine($data_uji){
+class Pengujian
+{
+    public function pengujian_cosine($data_uji)
+    {
         $training = $this->training();
 
         $pengujian_cosine =  $this->perhitungan_pengujian($data_uji,$training['training_cosine']);
@@ -14,11 +17,12 @@ class Pengujian{
     public function pengujian_jaccard($data_uji){
         $training = $this->training();
 
-        $pengujian_jaccard =  $this->perhitungan_pengujian($data_uji,$training['training_jaccard']);
+        $pengujian_jaccard =$this->perhitungan_pengujian($data_uji, $training['training_jaccard']);
         return $pengujian_jaccard;
     }
 
-    public function training(){
+    public function training()
+    {
         // mengambil data training
         $data = DB::select("SELECT nilai_guru,
         CASE
@@ -53,40 +57,44 @@ class Pengujian{
             // mencari nilai absolute
             $abs_cosine = abs($value->nilai_guru - $value->nilai_cosine);
             $abs_jaccard = abs($value->nilai_guru - $value->nilai_jaccard);
-            
+
             $sum_c = $sum_c + $abs_cosine;
             $sum_j = $sum_j + $abs_jaccard;
         }
 
         // menghitung rata - rata
-        $hasil_training_c = $sum_c/count($data);
-        $hasil_training_j = $sum_j/count($data);
-        print_r(array('training_cosine' => $hasil_training_c, 'training_jaccard' => $hasil_training_j));
+        $hasil_training_c = $sum_c / count($data);
+        $hasil_training_j = $sum_j / count($data);
+        // print_r(array('training_cosine' => $hasil_training_c, 'training_jaccard' => $hasil_training_j));
         return array('training_cosine' => $hasil_training_c, 'training_jaccard' => $hasil_training_j);
     }
 
-    public function perhitungan_pengujian($data, $hasil_training){
-        $TP = 0; $TN = 0; $FP = 0; $FN = 0;
+    public function perhitungan_pengujian($data, $hasil_training)
+    {
+        $TP = 0;
+        $TN = 0;
+        $FP = 0;
+        $FN = 0;
 
         foreach ($data as $key => $value) {
-            if($value >= 0 && $value <= $hasil_training){
+            if ($value >= 0 && $value <= $hasil_training) {
                 $TP++;
-            }elseif ($value >= $hasil_training) {
+            } elseif ($value >= $hasil_training) {
                 $FP++;
-            }elseif ($value <= 0 && $value >= -$hasil_training) {
+            } elseif ($value <= 0 && $value >= -$hasil_training) {
                 $TN++;
-            }elseif ($value <= -$hasil_training) {
+            } elseif ($value <= -$hasil_training) {
                 $FN++;
             }
         }
 
-        $precision = $TP/($TP+$FP);
-        $recall = $TP/($TP+$FN);
-        $accuracy = ($TP+$TN)/($TP+$TN+$FP+$FN);
+        $precision = $TP / ($TP + $FP);
+        $recall = $TP / ($TP + $FN);
+        $accuracy = ($TP + $TN) / ($TP + $TN + $FP + $FN);
 
-        $precision = number_format($precision*100, 2, '.', '');
-        $recall = number_format($recall*100, 2, '.', '');
-        $accuracy = number_format($accuracy*100, 2, '.', '');
+        $precision = number_format($precision * 100, 2, '.', '');
+        $recall = number_format($recall * 100, 2, '.', '');
+        $accuracy = number_format($accuracy * 100, 2, '.', '');
 
         $decision = array('TP' => $TP, 'TN' => $TN, 'FP' => $FP, 'FN' => $FN);
         $hasil_pengujian = array('precision' => $precision, 'recall' => $recall, 'accuracy' => $accuracy);

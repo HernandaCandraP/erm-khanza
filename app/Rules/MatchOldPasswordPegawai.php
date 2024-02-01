@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 
-class MatchOldPasswordGuru implements Rule
+class MatchOldPasswordPegawai implements Rule
 {
     /**
      * Create a new rule instance.
@@ -26,7 +26,7 @@ class MatchOldPasswordGuru implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Hash::check($value, auth()->guard('guru')->user()->password);
+        return Hash::check($value, auth()->guard('pegawai')->user()->password);
     }
 
     /**

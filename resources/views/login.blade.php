@@ -4,15 +4,17 @@
 <head>
   @include('template.head')
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" style='background-color:#98d9a3'>
+  <div class="card-header text-center">
+    <img src="{{asset('image/logo-hst.png')}}" class="pb-2 img-fluid" width="150px" />
+    <p class="h4">RUMAH SAKIT BUDI ASIH</p>
+    <p class="login-box-msg">JL MAYJEN SUNGKONO NO 80 - TRENGGALEK</p>
+  </div>
 <div class="login-box">
   <!-- /.login-logo -->
   <div class="card card-outline card-primary">
-    <div class="card-header text-center">
-      <a href="#" class="h2">LOGIN</a>
-    </div>
     <div class="card-body">
-      <p class="login-box-msg">login to start ujian esai otomatis</p>
+      <p class="login-box-msg">Silahkan login dulu untuk memulai</p>
       @error('msg')<p class="text-danger">{{$message}}</p>@enderror
       <form action="{{route('postlogin')}}" method="post">
       {{ csrf_field() }}
@@ -38,7 +40,7 @@
           <div class="col-7">
           </div>
           <div class="col-5">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
           </div>
         </div>
       </form>

@@ -9,7 +9,7 @@ class IsAdmin
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::guard('guru')->user()->level == "Admin") {
+        if (Auth::guard('pegawai')->user()->level == "Admin") {
             return $next($request);
         }
         return redirect('/404');

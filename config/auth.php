@@ -52,14 +52,9 @@ return [
             'provider' => 'users'
         ],
 
-        'guru' => [
+        'pegawai' => [
             'driver' => 'session',
-            'provider' => 'guru'
-        ],
-
-        'siswa' => [
-            'driver' => 'session',
-            'provider' => 'siswa'
+            'provider' => 'pegawai'
         ]
     ],
 
@@ -86,14 +81,9 @@ return [
             'model' => App\User::class,
         ],
 
-        'guru' => [
+        'pegawai' => [
             'driver' => 'eloquent',
-            'model' => App\Guru::class,
-        ],
-
-        'siswa' => [
-            'driver' => 'eloquent',
-            'model' => App\Siswa::class,
+            'model' => App\Pegawai::class,
         ],
     ],
 
@@ -115,6 +105,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'pegawai' => [
+            'provider' => 'pegawai',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
