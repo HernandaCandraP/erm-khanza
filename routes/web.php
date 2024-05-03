@@ -79,6 +79,23 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/dokter/profile', 'PegawaiController@profile')->name('homedokter/profile');
     Route::post('/dokter/profile/password', 'PegawaiController@gantipassword')->name('homedokter/profile/password');
 
+    Route::get('/pasien/ralan', 'PasienController@show')->name('pasien/ralan');
+    
+    Route::get('/form-soap', 'FormController@formsoap')->name('form-soap');
+    Route::get('/form/listdata', 'FormController@listdata')->name('form/listdata');
+
+    Route::post('/form/tambah', 'FormController@create')->name('form/tambah');
+
+    Route::get('/form/hapus', 'FormController@delete')->name('form/hapus');
+
+
+    Route::get('/form/awalmedisparu', 'FormController@rjawalmedisparu')->name('form-awalmedisparu');
+    Route::get('/form/penanganandokter', 'FormController@rjpenanganandokter')->name('form-penanganandokter');
+    Route::get('/form/diagnosa', 'FormController@rjdiagnosa')->name('form-diagnosa');
+    Route::get('/form/resume', 'FormController@rjresume')->name('form-resume');
+    Route::get('/form/permintaanlab', 'FormController@permintaanlab')->name('form-permintaanlab');
+    Route::get('/form/permintaanrad', 'FormController@permintaanrad')->name('form-permintaanrad');
+
     // admin/guru
     Route::get('/admin/guru', 'GuruController@tampilguru')->name('homeadmin/guru');
     Route::post('/admin/guru/tambah', 'GuruController@create')->name('homeadmin/guru/tambah');

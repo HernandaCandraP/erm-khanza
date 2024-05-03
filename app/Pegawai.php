@@ -8,7 +8,7 @@ class Pegawai extends Authenticatable
 {
     public $timestamps = false;
 
-    protected $table = "pegawai";
+    protected $table = "login_rsba";
     protected $primaryKey = "id";
 
     /**

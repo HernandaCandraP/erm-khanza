@@ -31,15 +31,21 @@ class LoginController extends Controller
 
         if(Auth::guard('pegawai')->attempt(['username' => $request->username, 'password' => $request->password])){
             // session nik
-            $nik = Auth::guard('pegawai')->user()->nik;
-            Session::put('nik', $nik);
+            $username = Auth::guard('pegawai')->user()->nik;
+            Session::put('username', $username);
 
             if(Auth::guard('pegawai')->user()->level == "Petugas"){
                 return redirect('pegawai');
             }else if(Auth::guard('pegawai')->user()->level == "Dokter"){
                 // session poli
-                $getpoli = DB::table('jadwal')->select('kd_poli')->where('kd_dokter', $nik)->first();
+                $getpoli = DB::table('jadwal as j')->select('j.kd_poli', 'p.nm_poli')->join('poliklinik as p', 'p.kd_poli', '=', 'j.kd_poli')->where('kd_dokter', $username)->first();
                 Session::put('getpoli', $getpoli->kd_poli);
+                Session::put('nmpoli', ucwords(strtolower($getpoli->nm_poli)));
+
+                $getspecialis = DB::table('dokter as d')->select('d.kd_dokter', 'd.nm_dokter','s.nm_sps', 's.kd_sps')->join('spesialis as s', 's.kd_sps','=', 'd.kd_sps')->where('d.kd_dokter', $username)->first();
+                Session::put('kd_sps', $getspecialis->kd_sps);
+                Session::put('nm_sps', $getspecialis->nm_sps);
+
                 return redirect('dokter');
             }else if(Auth::guard('pegawai')->user()->level == "Admin"){
                 return redirect('admin');

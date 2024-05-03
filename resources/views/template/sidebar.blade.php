@@ -37,8 +37,43 @@
           <li class="nav-item">
             <a href="{{route('homeadmin/siswa')}}" class="nav-link {{ Request::is('admin/siswa') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users"></i>
-              <p>Pasien</p>
+              <p>Form</p>
             </a>
+          </li>
+          <li class="nav-item {{ Request::is('form-resume') ? 'menu-open' : '' }}">
+            <a href="#" class="nav-link {{ Request::is('form-resume') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                Charts
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('form-resume')}}" class="nav-link {{ Request::is('form-resume') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Test link</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="pages/charts/flot.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Flot</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="pages/charts/inline.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Inline</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="pages/charts/uplot.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>uPlot</p>
+                </a>
+              </li>
+            </ul>
           </li>
           {{-- <li class="nav-item">
             <a href="{{route('homeadmin/kelas')}}" class="nav-link {{ Request::is('admin/kelas') ? 'active' : '' }}">

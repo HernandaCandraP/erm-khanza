@@ -65,15 +65,73 @@
 
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-6 col-sm-6 col-12">
-            <div class="info-box">
-              Pasien Poliklinik Paru Paling Aktif
+          <div class="col-md-12 col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Pasien {{Session::get('nmpoli')}} Paling Aktif</h5>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nama Lengkap</th>
+                    <th>Kunj</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($pasienaktif as $no => $key)
+                    <tr>
+                        <th scope="row"> {{$no+1}}. </th>
+                        <td>{{$key->nm_pasien}} </td>
+                        <td>{{$key->jumlah}}</td>
+                    </tr> 
+                    @endforeach
+                  
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
             </div>
+            <!-- /.card -->
           </div>
-          <div class="col-md-6 col-sm-6 col-12">
-            <div class="info-box">
-              Antrian 10 Pasien Terakhir Poliklinik Paru
+          <div class="col-md-12 col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Antrian 10 Pasien Terakhir {{Session::get('nmpoli')}}</h5>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nama Lengkap</th>
+                    <th>Form Input Dokter</th>
+                    <th>Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($pasienterakhir as $no => $key)
+                    <tr>
+                        <th scope="row"> {{$no+1}}. </th>
+                        <td>
+                          <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a>
+                        </td>
+                        <td>
+                          <a href="{{ route('form-resume', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">Form</a>  
+                        </td>
+                        <td>{{$key->stts}}</td>
+                    </tr> 
+                    @endforeach
+                  
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
             </div>
+            <!-- /.card -->
           </div>
         </div>
       </div>
