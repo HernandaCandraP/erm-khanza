@@ -68,24 +68,31 @@
           <div class="col-md-12 col-lg-6">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Pasien {{Session::get('nmpoli')}} Paling Aktif</h5>
+                <h5 class="float-left">Antrian {{Session::get('nmpoli')}}</h5>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="example3" class="table table-bordered table-striped">
                   <thead>
                   <tr>
                     <th>No.</th>
+                    <th>No. Rawat</th>
+                    <th>No. RM</th>
                     <th>Nama Lengkap</th>
-                    <th>Kunj</th>
+                    <th>Status</th>
                   </tr>
                   </thead>
                   <tbody>
-                    @foreach ($pasienaktif as $no => $key)
+                    @foreach ($pasienterakhir as $no => $key)
                     <tr>
                         <th scope="row"> {{$no+1}}. </th>
-                        <td>{{$key->nm_pasien}} </td>
-                        <td>{{$key->jumlah}}</td>
+                        <th><a href="{{ route('form-resume', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
+                        <td>{{$key->no_rkm_medis}}</td>
+                        <td>
+                          {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
+                          {{$key->nm_pasien}}
+                        </td>
+                        <td>{{$key->stts}}</td>
                     </tr> 
                     @endforeach
                   
@@ -99,34 +106,31 @@
           <div class="col-md-12 col-lg-6">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Antrian 10 Pasien Terakhir {{Session::get('nmpoli')}}</h5>
+                <h5 class="float-left">Pasien Rawat Inap</h5>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Nama Lengkap</th>
-                    <th>Form Input Dokter</th>
-                    <th>Status</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($pasienterakhir as $no => $key)
                     <tr>
-                        <th scope="row"> {{$no+1}}. </th>
-                        <td>
-                          <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a>
-                        </td>
-                        <td>
-                          <a href="{{ route('form-resume', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">Form</a>  
-                        </td>
-                        <td>{{$key->stts}}</td>
-                    </tr> 
-                    @endforeach
-                  
-                  </tbody>
+                      <th>No.</th>
+                      <th>No. Rawat</th>
+                      <th>No. RM</th>
+                      <th>Nama Pasien</th>
+                      <th>Kamar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      @foreach ($pasienranap as $no => $key)
+                      <tr>
+                          <th scope="row"> {{$no+1}}. </th>
+                          <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
+                          <td>{{$key->no_rkm_medis}}</td>
+                          <td>{{$key->nm_pasien}}</td>
+                          <td>{{$key->nm_bangsal}}</td>
+                      </tr> 
+                      @endforeach
+                    </tbody>
                 </table>
               </div>
               <!-- /.card-body -->
@@ -148,7 +152,7 @@
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
 <script src="{{asset('tampilan/plugins/jquery-knob/jquery.knob.min.js')}}"></script>
 <script>
   $(function () {

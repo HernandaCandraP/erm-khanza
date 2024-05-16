@@ -3,4 +3,4 @@
   <title>SIMRS BUDI ASIH</title>
 
   <link rel="stylesheet" href="{{asset('tampilan/styles.min.css')}}">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{{asset('favicon.ico')}}" type="image/x-icon">

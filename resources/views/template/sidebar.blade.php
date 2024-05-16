@@ -30,17 +30,23 @@
           @if(Auth::guard('pegawai')->user()->level == "Dokter")
           <li class="nav-item menu-open">
             <a href="{{route('homedokter')}}" class="nav-link {{ Request::is('dokter') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-home"></i>
+              <i class="nav-icon fas fa-hospital"></i>
               <p>Beranda</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('homeadmin/siswa')}}" class="nav-link {{ Request::is('admin/siswa') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-users"></i>
-              <p>Form</p>
+            <a href="{{route('menu-rajal')}}" class="nav-link {{ Request::is('form*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-book-medical"></i>
+              <p>Rawat Jalan</p>
             </a>
           </li>
-          <li class="nav-item {{ Request::is('form-resume') ? 'menu-open' : '' }}">
+          <li class="nav-item">
+            <a href="{{route('menu-ranap')}}" class="nav-link {{ Request::is('menu-ranap*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file-medical"></i>
+              <p>Rawat Inap</p>
+            </a>
+          </li>
+          {{-- <li class="nav-item {{ Request::is('form-resume') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ Request::is('form-resume') ? 'active' : '' }}">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
@@ -74,7 +80,7 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> --}}
           {{-- <li class="nav-item">
             <a href="{{route('homeadmin/kelas')}}" class="nav-link {{ Request::is('admin/kelas') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
@@ -117,6 +123,7 @@
           @endif
           <!-- End dokter -->
 
+          <hr>
           <!-- Admin -->
           @if(Str::length(Auth::guard('pegawai')->user()) > 0)
           @if(Auth::guard('pegawai')->user()->level == "Admin")

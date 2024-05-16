@@ -81,20 +81,40 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
 
     Route::get('/pasien/ralan', 'PasienController@show')->name('pasien/ralan');
     
-    Route::get('/form-soap', 'FormController@formsoap')->name('form-soap');
+    Route::get('/form/soap', 'FormController@formsoap')->name('form-soap');
     Route::get('/form/listdata', 'FormController@listdata')->name('form/listdata');
 
     Route::post('/form/tambah', 'FormController@create')->name('form/tambah');
 
     Route::get('/form/hapus', 'FormController@delete')->name('form/hapus');
 
-
+    Route::get('/form', 'FormController@menurajal')->name('menu-rajal');
     Route::get('/form/awalmedisparu', 'FormController@rjawalmedisparu')->name('form-awalmedisparu');
+    Route::get('/form/awalmedisbedah', 'FormController@rjawalmedisbedah')->name('form-awalmedisbedah');
+    Route::get('/form/awalmedissyaraf', 'FormController@rjawalmedissyaraf')->name('form-awalmedissyaraf');
+    Route::get('/form/awalmedisobsgyn', 'FormController@rjawalmedisobsgyn')->name('form-awalmedisobsgyn');
+    Route::get('/form/awalmedisanak', 'FormController@rjawalmedisanak')->name('form-awalmedisanak');
+    Route::get('/form/awalmedismata', 'FormController@rjawalmedismata')->name('form-awalmedismata');
+    Route::get('/form/awalmedisdalam', 'FormController@rjawalmedisdalam')->name('form-awalmedisdalam');
+    Route::get('/form/awalmedisjantung', 'FormController@rjawalmedisumum')->name('form-awalmedisjantung');
+    Route::get('/form/awalmedis-', 'FormController@rjawalmedisumum')->name('form-awalmedis-');
     Route::get('/form/penanganandokter', 'FormController@rjpenanganandokter')->name('form-penanganandokter');
     Route::get('/form/diagnosa', 'FormController@rjdiagnosa')->name('form-diagnosa');
     Route::get('/form/resume', 'FormController@rjresume')->name('form-resume');
     Route::get('/form/permintaanlab', 'FormController@permintaanlab')->name('form-permintaanlab');
     Route::get('/form/permintaanrad', 'FormController@permintaanrad')->name('form-permintaanrad');
+
+    // Menu Rawat Jalan
+    Route::get('/menu-ranap', 'FormControllerRanap@menuranap')->name('menu-ranap');
+    Route::get('/menu-ranap/soap', 'FormControllerRanap@risoap')->name('formri-soap');
+    Route::get('/menu-ranap/penanganandokter', 'FormControllerRanap@ripenanganandokter')->name('formri-penanganandokter');
+    Route::get('/menu-ranap/permintaanlab', 'FormControllerRanap@ripermintaanlab')->name('formri-permintaanlab');
+    Route::get('/menu-ranap/permintaanrad', 'FormControllerRanap@ripermintaanrad')->name('formri-permintaanrad');
+    Route::get('/menu-ranap/medisumum', 'FormControllerRanap@rimedisumum')->name('formri-medisumum');
+    Route::get('/menu-ranap/mediskebidanan', 'FormControllerRanap@rimediskebidanan')->name('formri-mediskebidanan');
+    Route::get('/menu-ranap/listdata', 'FormControllerRanap@listdata')->name('formri-listdata');
+    Route::post('/menu-ranap/tambah', 'FormControllerRanap@create')->name('formri-tambah');
+    Route::get('/menu-ranap/hapus', 'FormControllerRanap@delete')->name('formri-hapus');
 
     // admin/guru
     Route::get('/admin/guru', 'GuruController@tampilguru')->name('homeadmin/guru');

@@ -39,16 +39,28 @@ class PegawaiController extends Controller
 
         $polihari = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('tgl_registrasi', 'like', '%'.$date.'%')->count();
 
-        $pasienaktif = DB::table('reg_periksa as rp')->select('p.no_rkm_medis', DB::raw('count(*) as jumlah'), 'p.nm_pasien')->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')->where('kd_dokter', $username)->groupby('no_rkm_medis')->orderby('jumlah', 'desc')->take(10)->get();
+        // $pasienaktif = DB::table('reg_periksa as rp')->select('p.no_rkm_medis', DB::raw('count(*) as jumlah'), 'p.nm_pasien')->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')->where('kd_dokter', $username)->groupby('no_rkm_medis')->orderby('jumlah', 'desc')->take(10)->get();
 
-        $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')->where('a.kd_poli', $kdpoli)->where('a.tgl_registrasi', $date)->orderby('a.jam_reg', 'desc')->take(10)->get();
+        $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->where('a.kd_poli', $kdpoli)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->orderby('a.jam_reg', 'desc')->get();
+
+        // dd($kdpoli);
+        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal')
+            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
+            ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
+            ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
+            ->get();
 
         return view('dokter/home', [
             'totalpasien' => $totalpasien, 
             'pasienbulan' => $pasienbulan, 
             'polibulan' => $polibulan, 
             'polihari' => $polihari, 
-            'pasienaktif' => $pasienaktif, 
+            'pasienranap' => $pasienranap, 
+            // 'pasienaktif' => $pasienaktif, 
             'pasienterakhir' => $pasienterakhir, 
         ]);
     }

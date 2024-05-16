@@ -39,8 +39,13 @@ class LoginController extends Controller
             }else if(Auth::guard('pegawai')->user()->level == "Dokter"){
                 // session poli
                 $getpoli = DB::table('jadwal as j')->select('j.kd_poli', 'p.nm_poli')->join('poliklinik as p', 'p.kd_poli', '=', 'j.kd_poli')->where('kd_dokter', $username)->first();
-                Session::put('getpoli', $getpoli->kd_poli);
-                Session::put('nmpoli', ucwords(strtolower($getpoli->nm_poli)));
+                if($getpoli != null){
+                    Session::put('getpoli', $getpoli->kd_poli);
+                    Session::put('nmpoli', ucwords(strtolower($getpoli->nm_poli)));
+                }else{
+                    Session::put('getpoli', '-');
+                    Session::put('nmpoli', '-');
+                }
 
                 $getspecialis = DB::table('dokter as d')->select('d.kd_dokter', 'd.nm_dokter','s.nm_sps', 's.kd_sps')->join('spesialis as s', 's.kd_sps','=', 'd.kd_sps')->where('d.kd_dokter', $username)->first();
                 Session::put('kd_sps', $getspecialis->kd_sps);
