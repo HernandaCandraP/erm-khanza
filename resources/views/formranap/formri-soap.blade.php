@@ -161,6 +161,12 @@
                       </div>
                       <div class="form-inline pt-2">Plan : 
                         <textarea class="form-control form-control-sm" rows="2" name="rtl" autocomplete="off" style="width: 100%">{{ old('rtl', $data->rtl) }}</textarea>
+                        <table id="testing" class="table table-bordered table-striped text-sm">
+                            
+                        </table>
+                        <div class="col-sm-12">
+                          <div type="text" class="btn btn-warning addmore float-right">+ Tambah Obat</div>
+                        </div>
                       </div>
                       <div class="form-inline">Instruksi :
                         <textarea class="form-control form-control-sm" rows="2" name="instruksi" autocomplete="off" style="width: 100%">{{ old('instruksi', $data->instruksi) }}</textarea>
@@ -199,6 +205,40 @@
 <!-- ./wrapper -->
 
 <!-- SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+  })
+
+
+  var i=1;
+  $(".addmore").on('click',function(){
+    if(i == 1){
+      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Total</th><th>Aksi</th></tr>';
+    }
+
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}"> {{ $key->kode_brng }} - {{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresep'+i).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    i++;
+  });
+
+  $("#hapusresep").on('click', function() {
+    $(this).parents("tr").remove();
+    return false;
+  });
+</script>
 </body>
 </html>

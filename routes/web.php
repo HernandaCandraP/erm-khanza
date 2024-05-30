@@ -103,13 +103,15 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/resume', 'FormController@rjresume')->name('form-resume');
     Route::get('/form/permintaanlab', 'FormController@permintaanlab')->name('form-permintaanlab');
     Route::get('/form/permintaanrad', 'FormController@permintaanrad')->name('form-permintaanrad');
+    Route::get('/form/resep', 'FormController@rjresep')->name('form-resep');
 
-    // Menu Rawat Jalan
+    // Menu Rawat Inap
     Route::get('/menu-ranap', 'FormControllerRanap@menuranap')->name('menu-ranap');
     Route::get('/menu-ranap/soap', 'FormControllerRanap@risoap')->name('formri-soap');
     Route::get('/menu-ranap/penanganandokter', 'FormControllerRanap@ripenanganandokter')->name('formri-penanganandokter');
     Route::get('/menu-ranap/permintaanlab', 'FormControllerRanap@ripermintaanlab')->name('formri-permintaanlab');
     Route::get('/menu-ranap/permintaanrad', 'FormControllerRanap@ripermintaanrad')->name('formri-permintaanrad');
+    Route::get('/menu-ranap/resep', 'FormControllerRanap@riresep')->name('formri-resep');
     Route::get('/menu-ranap/medisumum', 'FormControllerRanap@rimedisumum')->name('formri-medisumum');
     Route::get('/menu-ranap/mediskebidanan', 'FormControllerRanap@rimediskebidanan')->name('formri-mediskebidanan');
     Route::get('/menu-ranap/listdata', 'FormControllerRanap@listdata')->name('formri-listdata');

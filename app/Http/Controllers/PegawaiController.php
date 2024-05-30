@@ -29,8 +29,9 @@ class PegawaiController extends Controller
 
     public function dokter(){
         $username = Session::get('username');
-        $month = '2023-06'; //date('Y-m');
-        $date = '2023-06-15'; //date('Y-m-d');
+        $month = date('Y-m'); //'2023-06'; //
+        $date = date('Y-m-d'); //'2023-06-15'; //
+
         $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
         $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
         
@@ -43,7 +44,7 @@ class PegawaiController extends Controller
 
         $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
-            ->where('a.kd_poli', $kdpoli)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->orderby('a.jam_reg', 'desc')->get();
 
         // dd($kdpoli);
@@ -52,6 +53,8 @@ class PegawaiController extends Controller
             ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
             ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
             ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
+            ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
+            ->where('dr.kd_dokter', $username)
             ->get();
 
         return view('dokter/home', [

@@ -16,3 +16,6 @@
 <div class="col-sm-2 pt-2">
   <a href="{{ route('formri-permintaanrad', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('menu-ranap/permintaanrad') ? 'active' : '' }}">Permintaan Rad</a>
 </div>
+<div class="col-sm-2 pt-2">
+  <a href="{{ route('formri-resep', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('menu-ranap/resep') ? 'active' : '' }}">Resep Dokter</a>
+</div>

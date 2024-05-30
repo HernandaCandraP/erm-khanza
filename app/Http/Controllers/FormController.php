@@ -11,8 +11,8 @@ class FormController extends Controller
 {
     public function menurajal(Request $request){
         $username = Session::get('username');
-        $month = '2023-06'; //date('Y-m');
-        $date = '2023-06-15'; //date('Y-m-d');
+        $month = date('Y-m'); //'2023-06'; //
+        $date = date('Y-m-d'); //'2023-06-15'; //
         
         $kdpoli = Session::get('getpoli');
 
@@ -37,6 +37,12 @@ class FormController extends Controller
 
         $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'a.tgl_registrasi')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
         $no_rawat = $request->no_rawat;
+
+        $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
 
         // dd($detailpasien);
 
@@ -72,6 +78,7 @@ class FormController extends Controller
         return view('form/soap', [
             'detailpasien' => $detailpasien,
             'data' => $data,
+            'resepdokter' => $resepdokter,
             'no_rawat' => $no_rawat
         ]);
     }
@@ -498,6 +505,45 @@ class FormController extends Controller
         ]);
     }
 
+    public function rjresep(Request $request){
+        // get session nama & kode poli
+        $kd_dokter = Session::get('username');
+        $nmpoli = Session::get('nmpoli');
+
+        $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
+        $no_rawat = $request->no_rawat;
+
+        $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
+
+        $listresep = DB::table('resep_obat as ro')
+            ->select('ro.kd_dokter', 'p.nama', 'ro.no_rawat', 'rd.*', 'db.nama_brng')
+            ->leftjoin('pegawai as p', 'p.nik', '=', 'ro.kd_dokter')
+            ->join('resep_dokter as rd', 'rd.no_resep', '=', 'ro.no_resep')
+            ->join('databarang as db', 'db.kode_brng', '=', 'rd.kode_brng')
+            ->where('no_rawat', $no_rawat)->orderby('rd.no_resep', 'DESC')->get();
+
+        // dd($listresep);
+
+            // dd($resepdokter);
+        // select databarang.kode_brng, databarang.nama_brng, databarang.letak_barang,jenis.nama, databarang.kode_sat, sum(gudangbarang.stok) as stok 
+        //               from databarang 
+		// 									inner join jenis on databarang.kdjns=jenis.kdjns 
+		// 									inner join gudangbarang on databarang.kode_brng=gudangbarang.kode_brng 
+        //               where databarang.status='1' and gudangbarang.stok>0 group by gudangbarang.kode_brng order by databarang.nama_brng							
+											
+
+        return view('form/resepdokter', [
+            'detailpasien' => $detailpasien, 
+            'resepdokter' => $resepdokter,
+            'listresep' => $listresep,
+            'no_rawat' => $no_rawat
+        ]);
+    }
+
     public function create(Request $request)
     {      
         // dd($request->all());
@@ -917,6 +963,20 @@ class FormController extends Controller
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanUmum, 'penilaian_medis_ralan', 'form/awalmedisumum');
         }
         elseif ($request->tabel == 'DataPemeriksaanRawatJalan') {
+            if($request->jumlah != null || $request->resep){
+                $request->tabel = 'ResepDokter';
+                $request->jam_peresepan = $request->jam_rawat;
+                $request->tgl_peresepan =  $request->tgl_perawatan2;
+                $this->create($request);
+                
+                // Menambahkan obat ke plan
+                $listResep = " Resep : \r\n";
+                foreach ($request->jumlah as $key => $value) {
+                    $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
+                    $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlah[$key] . " Aturan Pakai " . $request->aturan_pakai[$key] . "\r\n";
+                }
+                $request->rtl = $request->rtl . $listResep;
+            }
             $DataPemeriksaanRawatJalan = [
                 'tgl_perawatan' => $request->tgl_perawatan,
                 'jam_rawat' => $request->jam_rawat,
@@ -944,8 +1004,13 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PermintaanLab') {
             $data = date('Ymd', strtotime($request->tgl_permintaan));
-            $noorder = DB::table('permintaan_lab')->where('tgl_permintaan', $request->tgl_permintaan)->count();
-            $noorderPK = "PK". $data . sprintf("%04s", $noorder+1);
+            $noorder = DB::table('permintaan_lab')->where('tgl_permintaan', $request->tgl_permintaan)->orderby('noorder', 'DESC');
+            if($noorder->count() == 0){
+                $noorderPK = "PK". $data . sprintf("%04s", 1);
+            }else{
+                $lastOrder = substr($noorder->first()->noorder, -4) +1;
+                $noorderPK = "PK". $data . sprintf("%04s", $lastOrder);
+            }
             $pemeriksaanlab = [];
             $detailpermintaanlab = [];
             if($request->pemeriksaan){
@@ -978,8 +1043,13 @@ class FormController extends Controller
         elseif ($request->tabel == 'PermintaanRadiologi') {
             $data = date('Ymd', strtotime($request->tgl_permintaan));
             // dd($data);
-            $noorder = DB::table('permintaan_radiologi')->where('tgl_permintaan', $request->tgl_permintaan)->count();
-            $noorderPR = "PR". $data . sprintf("%04s", $noorder+1);
+            $noorder = DB::table('permintaan_radiologi')->where('tgl_permintaan', $request->tgl_permintaan)->orderby('noorder', 'DESC');
+            if($noorder->count() == 0){
+                $noorderPR = "PR". $data . sprintf("%04s", 1);
+            }else{
+                $lastOrder = substr($noorder->first()->noorder, -4) +1;
+                $noorderPR = "PR". $data . sprintf("%04s", $lastOrder);
+            }
             // dd($noorderPR);
             $pemeriksaanrad = [];
             if($request->pemeriksaan){
@@ -1001,6 +1071,48 @@ class FormController extends Controller
             DB::table('permintaan_radiologi')->insert($permintaanRad);
             DB::table('permintaan_pemeriksaan_radiologi')->insert($pemeriksaanrad);
             $request->session()->flash('success', 'Berhasil menyimpan permintaan Radiologi');
+            return redirect()->back();
+        }
+        elseif ($request->tabel == 'ResepDokter') {
+            $reg_periksa = DB::table('reg_periksa')->where('no_rawat', $request->no_rawat)->first();
+            if($reg_periksa->status_bayar == 'Sudah Bayar'){
+                $request->session()->flash('error', 'Data billing sudah terferifikasi,  Silahkan hubungi bagian kasir / keuangan');
+                return redirect()->back();
+            }
+
+            $data = date('Ymd', strtotime($request->tgl_peresepan));
+            // dd($data);
+            $noorder = DB::table('resep_obat')->where('tgl_peresepan', $request->tgl_peresepan)->orderby('no_resep', 'DESC');
+
+            if($noorder->count() == 0){
+                $noorderResep = $data . sprintf("%04s", 1);
+            }else{
+                $noorderResep = $noorder->first()->no_resep+1;
+            }
+            // dd($noorderResep);
+            $resepdokter = [];
+            if($request->jumlah){
+                foreach ($request->jumlah as $key => $value) {
+                    $dtresepdokter = ['no_resep'=>$noorderResep, 'kode_brng'=> $request->resep[$key], 'jml' => $request->jumlah[$key], 'aturan_pakai' => $request->aturan_pakai[$key]];
+                    array_push($resepdokter, $dtresepdokter);
+                }
+            }
+
+            $resep_obat = [
+                'no_resep' => $noorderResep,
+                'tgl_perawatan' => '0000-00-00',
+                'jam' => '00:00:00',
+                'no_rawat' => $request->no_rawat,
+                'kd_dokter' => $request->nip,
+                'tgl_peresepan' => $request->tgl_peresepan,
+                'jam_peresepan' => $request->jam_peresepan,
+                'status' => 'ralan',
+                'tgl_penyerahan' => '0000-00-00',
+                'jam_penyerahan' => '00:00:00',
+            ];
+            DB::table('resep_obat')->insert($resep_obat);
+            DB::table('resep_dokter')->insert($resepdokter);
+            $request->session()->flash('success', 'Berhasil menyimpan Resep');
             return redirect()->back();
         }
         elseif ($request->tabel == 'PenangananDokter') {

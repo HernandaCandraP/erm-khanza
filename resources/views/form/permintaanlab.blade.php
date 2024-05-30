@@ -89,7 +89,7 @@
                         </div>
                         <div class="col-sm-6 pt-2 select2-purple">
                           pemeriksaan
-                          <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaan[]" id="pemeriksaan" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                          <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaan[]" id="pemeriksaan" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple" required>
                             @foreach ($jnsperawatanlab as $key)
                               <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
                             @endforeach
