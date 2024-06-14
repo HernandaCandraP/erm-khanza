@@ -78,9 +78,6 @@
                       <div class="form-inline">Subject :
                         <textarea class="form-control form-control-sm" rows="2" name="keluhan" autocomplete="off" style="width: 100%">{{ old('keluhan', $data->keluhan) }}</textarea>
                       </div>
-                      <div class="form-inline pt-2">Object : 
-                        <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
-                      </div>
                       <div class="row text-sm"> 
                         <div class="col-sm-4"> 
                           Suhu
@@ -148,6 +145,14 @@
                           </select>
                         </div>
                       </div>
+                      <div class="form-inline pt-2">Object : 
+                        <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
+                        <div class="col-sm-10"> 
+                          <div class="form-inline">
+                            <img src="{{asset($getimage)}}" class="mx-auto d-block"/><br>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group row">
@@ -171,7 +176,65 @@
                       <div class="form-inline">Instruksi :
                         <textarea class="form-control form-control-sm" rows="2" name="instruksi" autocomplete="off" style="width: 100%">{{ old('instruksi', $data->instruksi) }}</textarea>
                       </div>
-                      <div class="form-inline pt-2">Evaluasi : 
+                      <div class="form-group pt-2">
+                        <div class="card card-primary collapsed-card">
+                          <div class="card-header">
+                            <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Radiologi</h3>&emsp;&emsp;<i class="fas fa-plus"></i></div>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <div class="form-group row text-sm"> 
+                              <div class="col-sm-12"> 
+                                <div class="">Informasi Tambahan Permintaan Foto 
+                                  <input type="text" name="informasi_tambahanrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                </div>
+                                <div class=" pt-2">Indikasi Pemeriksaan / Diagnosisi Klinis
+                                  <input type="text" name="diagnosa_klinisrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                </div>
+                              </div>
+                              <div class="col-sm-12 pt-2 select2-purple">
+                                Pemeriksaan
+                                <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanrad[]" id="pemeriksaanrad" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                  @foreach ($jnsperawatanrad as $key)
+                                    <option value="{{ $key->kd_jenis_prw }}"> {{ $key->kd_jenis_prw }} - {{$key->nm_perawatan}} </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="form-group">
+                        <div class="card card-primary collapsed-card">
+                          <div class="card-header">
+                            <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Laboratorium</h3><i class="fas fa-plus"></i></div>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <div class="form-group row text-sm"> 
+                              <div class="col-sm-12"> 
+                                Indikasi / Klinis :  <input type="text" name="diagnosa_klinislab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                              </div>
+                              <div class="col-sm-12">
+                                Informasi Tambahan : <input type="text" name="informasi_tambahanlab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                              </div>
+                              <div class="col-sm-12 pt-2 select2-purple">
+                                pemeriksaan
+                                <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanlab[]" id="pemeriksaanlab" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                  @foreach ($jnsperawatanlab as $key)
+                                    <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="form-inline pt-2" hidden>Evaluasi : 
                         <textarea class="form-control form-control-sm" rows="2" name="evaluasi" autocomplete="off" style="width: 100%">{{ old('evaluasi', $data->evaluasi) }}</textarea>
                       </div>
                     </div>
@@ -183,7 +246,7 @@
                   <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus data?')" name="action" value="hapus"><i class="fas fa-trash"></i></button>
                   {{-- <button type="submit" class="btn btn-info float-right">Simpan Data</button> --}}
                   <button type="submit" class="btn btn-info float-right ml-3" name="action" value="simpan">Simpan</button>
-                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update_with_time">Update</button>
+                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update_with_time">Ganti</button>
                 </div>
                 <!-- /.card-footer -->
               </form>

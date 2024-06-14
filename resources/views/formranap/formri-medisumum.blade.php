@@ -200,7 +200,7 @@
                         </div>
                         <hr>
 
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Kepala&emsp;
                           <select class="form-control form-control-sm" name="kepala">
                             <option value="Normal" {{ old('kepala', $medisumum->kepala) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -208,7 +208,7 @@
                             <option value="Tidak Diperiksa" {{ old('kepala', $medisumum->kepala) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Mata&emsp;
                           <select class="form-control form-control-sm" name="mata">
                             <option value="Normal" {{ old('mata', $medisumum->mata) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -216,7 +216,7 @@
                             <option value="Tidak Diperiksa" {{ old('mata', $medisumum->mata) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Gigi & Mulut&emsp;
                           <select class="form-control form-control-sm" name="gigi">
                             <option value="Normal" {{ old('gigi', $medisumum->gigi) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -224,7 +224,7 @@
                             <option value="Tidak Diperiksa" {{ old('gigi', $medisumum->gigi) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           THT&emsp;
                           <select class="form-control form-control-sm" name="tht">
                             <option value="Normal" {{ old('tht', $medisumum->tht) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -232,7 +232,7 @@
                             <option value="Tidak Diperiksa" {{ old('tht', $medisumum->tht) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Thoraks&emsp;
                           <select class="form-control form-control-sm" name="thoraks">
                             <option value="Normal" {{ old('thoraks', $medisumum->thoraks) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -240,7 +240,7 @@
                             <option value="Tidak Diperiksa" {{ old('thoraks', $medisumum->thoraks) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Jantung&emsp;
                           <select class="form-control form-control-sm" name="jantung">
                             <option value="Normal" {{ old('jantung', $medisumum->jantung) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -248,7 +248,7 @@
                             <option value="Tidak Diperiksa" {{ old('jantung', $medisumum->jantung) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Paru&emsp;
                           <select class="form-control form-control-sm" name="paru">
                             <option value="Normal" {{ old('paru', $medisumum->paru) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -256,7 +256,7 @@
                             <option value="Tidak Diperiksa" {{ old('paru', $medisumum->paru) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Abdomen&emsp;
                           <select class="form-control form-control-sm" name="abdomen">
                             <option value="Normal" {{ old('abdomen', $medisumum->abdomen) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -264,7 +264,7 @@
                             <option value="Tidak Diperiksa" {{ old('abdomen', $medisumum->abdomen) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Genital & Anus&emsp;
                           <select class="form-control form-control-sm" name="genital">
                             <option value="Normal" {{ old('genital', $medisumum->genital) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -272,7 +272,7 @@
                             <option value="Tidak Diperiksa" {{ old('genital', $medisumum->genital) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Ekstremitas&emsp;
                           <select class="form-control form-control-sm" name="ekstremitas">
                             <option value="Normal" {{ old('ekstremitas', $medisumum->ekstremitas) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -280,7 +280,7 @@
                             <option value="Tidak Diperiksa" {{ old('ekstremitas', $medisumum->ekstremitas) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Kulit&emsp;
                           <select class="form-control form-control-sm" name="kulit">
                             <option value="Normal" {{ old('kulit', $medisumum->kulit) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -288,9 +288,9 @@
                             <option value="Tidak Diperiksa" {{ old('kulit', $medisumum->kulit) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-12 pt-2"> 
+                        {{-- <div class="col-sm-12 pt-2" hidden> 
                           <textarea class="form-control form-control-sm" rows="2" name="ket_fisik" autocomplete="off" style="width: 100%">{{ old('ket_fisik', $medisumum->ket_fisik) }}</textarea>
-                        </div>
+                        </div> --}}
                       </div>
                     </div>
                   </div>
@@ -309,8 +309,9 @@
                           </div>
                         </div>
                         <div class="col-sm-6">
-                          <div class="form-inline">Riwayat Penyakit Sekarang : 
-                            <textarea class="form-control form-control-sm" rows="15" name="ket_lokalis" autocomplete="off" style="width: 100%">{{ old('ket_lokalis', $medisumum->ket_lokalis) }}</textarea>
+                          <div class="form-inline">Keterangan : 
+                            <textarea hidden class="form-control form-control-sm" rows="15" name="ket_lokalis" autocomplete="off" style="width: 100%">{{ old('ket_lokalis', $medisumum->ket_lokalis) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="12" name="ket_fisik" autocomplete="off" style="width: 100%">{{ old('ket_fisik', $medisumum->ket_fisik) }}</textarea>
                           </div>
                         </div>
                       </div>
@@ -329,10 +330,68 @@
                           <div class="form-inline">Laboratorium : 
                             <textarea class="form-control form-control-sm" rows="2" name="lab" autocomplete="off" style="width: 100%">{{ old('lab', $medisumum->lab) }}</textarea>
                           </div>
+                          <div class="form-group">
+                            <div class="card card-primary collapsed-card">
+                              <div class="card-header">
+                                <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Laboratorium</h3><i class="fas fa-plus"></i></div>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div class="form-group row text-sm"> 
+                                  <div class="col-sm-12"> 
+                                    Indikasi / Klinis :  <input type="text" name="diagnosa_klinislab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                  </div>
+                                  <div class="col-sm-12">
+                                    Informasi Tambahan : <input type="text" name="informasi_tambahanlab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                  </div>
+                                  <div class="col-sm-12 pt-2 select2-purple">
+                                    pemeriksaan
+                                    <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanlab[]" id="pemeriksaanlab" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                      @foreach ($jnsperawatanlab as $key)
+                                        <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
+                                      @endforeach
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                          </div>
                         </div>
                         <div class="col-sm-4 pt-1">
                           <div class="form-inline">Radiologi : 
                             <textarea class="form-control form-control-sm" rows="2" name="rad" autocomplete="off" style="width: 100%">{{ old('rad', $medisumum->rad) }}</textarea>
+                          </div>
+                          <div class="form-group">
+                            <div class="card card-primary collapsed-card">
+                              <div class="card-header">
+                                <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Radiologi</h3>&emsp;&emsp;<i class="fas fa-plus"></i></div>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div class="form-group row text-sm"> 
+                                  <div class="col-sm-12"> 
+                                    <div class="">Informasi Tambahan Permintaan Foto 
+                                      <input type="text" name="informasi_tambahanrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                    </div>
+                                    <div class=" pt-2">Indikasi Pemeriksaan / Diagnosisi Klinis
+                                      <input type="text" name="diagnosa_klinisrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-12 pt-2 select2-purple">
+                                    Pemeriksaan
+                                    <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanrad[]" id="pemeriksaanrad" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                      @foreach ($jnsperawatanrad as $key)
+                                        <option value="{{ $key->kd_jenis_prw }}"> {{ $key->kd_jenis_prw }} - {{$key->nm_perawatan}} </option>
+                                      @endforeach
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
                           </div>
                         </div>
                         <div class="col-sm-4 pt-1">
@@ -398,7 +457,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer"><button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus data?')" name="action" value="hapus"><i class="fas fa-trash"></i></button>
                   <button type="submit" class="btn btn-info float-right ml-3" name="action" value="simpan">Simpan</button>
-                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Update</button>
+                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Ganti</button>
                 </div>
                 <!-- /.card-footer -->
               </form>
@@ -420,6 +479,17 @@
 <!-- ./wrapper -->
 
 <!-- SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+  })
+</script>
 </body>
 </html>

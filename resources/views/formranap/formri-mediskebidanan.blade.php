@@ -200,7 +200,7 @@
                         </div>
                         <hr>
 
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Kepala&emsp;
                           <select class="form-control form-control-sm" name="kepala">
                             <option value="Normal" {{ old('kepala', $mediskebidanan->kepala) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -208,7 +208,7 @@
                             <option value="Tidak Diperiksa" {{ old('kepala', $mediskebidanan->kepala) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Mata&emsp;
                           <select class="form-control form-control-sm" name="mata">
                             <option value="Normal" {{ old('mata', $mediskebidanan->mata) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -216,7 +216,7 @@
                             <option value="Tidak Diperiksa" {{ old('mata', $mediskebidanan->mata) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Gigi & Mulut&emsp;
                           <select class="form-control form-control-sm" name="gigi">
                             <option value="Normal" {{ old('gigi', $mediskebidanan->gigi) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -224,7 +224,7 @@
                             <option value="Tidak Diperiksa" {{ old('gigi', $mediskebidanan->gigi) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           THT&emsp;
                           <select class="form-control form-control-sm" name="tht">
                             <option value="Normal" {{ old('tht', $mediskebidanan->tht) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -232,7 +232,7 @@
                             <option value="Tidak Diperiksa" {{ old('tht', $mediskebidanan->tht) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Thoraks&emsp;
                           <select class="form-control form-control-sm" name="thoraks">
                             <option value="Normal" {{ old('thoraks', $mediskebidanan->thoraks) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -240,7 +240,7 @@
                             <option value="Tidak Diperiksa" {{ old('thoraks', $mediskebidanan->thoraks) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Jantung&emsp;
                           <select class="form-control form-control-sm" name="jantung">
                             <option value="Normal" {{ old('jantung', $mediskebidanan->jantung) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -248,7 +248,7 @@
                             <option value="Tidak Diperiksa" {{ old('jantung', $mediskebidanan->jantung) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Paru&emsp;
                           <select class="form-control form-control-sm" name="paru">
                             <option value="Normal" {{ old('paru', $mediskebidanan->paru) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -256,7 +256,7 @@
                             <option value="Tidak Diperiksa" {{ old('paru', $mediskebidanan->paru) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Abdomen&emsp;
                           <select class="form-control form-control-sm" name="abdomen">
                             <option value="Normal" {{ old('abdomen', $mediskebidanan->abdomen) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -264,7 +264,7 @@
                             <option value="Tidak Diperiksa" {{ old('abdomen', $mediskebidanan->abdomen) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Genital & Anus&emsp;
                           <select class="form-control form-control-sm" name="genital">
                             <option value="Normal" {{ old('genital', $mediskebidanan->genital) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -272,7 +272,7 @@
                             <option value="Tidak Diperiksa" {{ old('genital', $mediskebidanan->genital) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Ekstremitas&emsp;
                           <select class="form-control form-control-sm" name="ekstremitas">
                             <option value="Normal" {{ old('ekstremitas', $mediskebidanan->ekstremitas) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -280,7 +280,7 @@
                             <option value="Tidak Diperiksa" {{ old('ekstremitas', $mediskebidanan->ekstremitas) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-3"> 
+                        <div class="col-sm-3" hidden> 
                           Kulit&emsp;
                           <select class="form-control form-control-sm" name="kulit">
                             <option value="Normal" {{ old('kulit', $mediskebidanan->kulit) == 'Normal' ? 'selected':'' }}>Normal</option>
@@ -288,7 +288,7 @@
                             <option value="Tidak Diperiksa" {{ old('kulit', $mediskebidanan->kulit) == 'Tidak Diperiksa' ? 'selected':'' }}>Tidak Diperiksa</option>
                           </select>
                         </div>
-                        <div class="col-sm-12 pt-2"> 
+                        <div class="col-sm-12 pt-2">Keterangan 
                           <textarea class="form-control form-control-sm" rows="2" name="ket_fisik" autocomplete="off" style="width: 100%">{{ old('ket_fisik', $mediskebidanan->ket_fisik) }}</textarea>
                         </div>
                       </div>
@@ -435,7 +435,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer"><button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus data?')" name="action" value="hapus"><i class="fas fa-trash"></i></button>
                   <button type="submit" class="btn btn-info float-right ml-3" name="action" value="simpan">Simpan</button>
-                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Update</button>
+                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Ganti</button>
                 </div>
                 <!-- /.card-footer -->
               </form>

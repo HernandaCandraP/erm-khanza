@@ -78,7 +78,7 @@
                       @error('keluhan_utama')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Jalannya Penyakit Selama Perawatan</label>
                     <div class="col-sm-10">
                       <textarea class="form-control form-control-sm" rows="3" name="jalannya_penyakit" autocomplete="off">{{ old('jalannya_penyakit', $dataresume->jalannya_penyakit) }}</textarea>
@@ -102,7 +102,7 @@
                   <hr>
                   <div class="form-group row">
                     <h3 class="col-sm-10">Diagnosa Akhir</h3>
-                    <div class="col-sm-2">Kode ICD</div>
+                    <div class="col-sm-2" hidden>Kode ICD</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Utama</label>
@@ -111,51 +111,51 @@
                       @error('diagnosa_utama')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_utama', $dataresume->kd_diagnosa_utama) }}">
+                      <input type="text" name="kd_diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_utama', $dataresume->kd_diagnosa_utama) }}" hidden>
                       @error('kd_diagnosa_utama')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 1</label>
+                    <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder', $dataresume->diagnosa_sekunder) }}">
                       @error('diagnosa_sekunder')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder', $dataresume->kd_diagnosa_sekunder) }}">
+                      <input type="text" name="kd_diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder', $dataresume->kd_diagnosa_sekunder) }}" hidden>
                       @error('kd_diagnosa_sekunder')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 2</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder2', $dataresume->diagnosa_sekunder2) }}">
                       @error('diagnosa_sekunder2')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder2', $dataresume->kd_diagnosa_sekunder2) }}">
+                      <input type="text" name="kd_diagnosa_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder2', $dataresume->kd_diagnosa_sekunder2) }}" hidden>
                       @error('kd_diagnosa_sekunder2')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 3</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder3', $dataresume->diagnosa_sekunder3) }}">
                       @error('diagnosa_sekunder3')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder3', $dataresume->kd_diagnosa_sekunder3) }}">
+                      <input type="text" name="kd_diagnosa_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder3', $dataresume->kd_diagnosa_sekunder3) }}" hidden>
                       @error('kd_diagnosa_sekunder3')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 4</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder4" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder4', $dataresume->diagnosa_sekunder4) }}">
                       @error('diagnosa_sekunder4')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder4" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder4', $dataresume->kd_diagnosa_sekunder4) }}">
+                      <input type="text" name="kd_diagnosa_sekunder4" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder4', $dataresume->kd_diagnosa_sekunder4) }}" hidden>
                       @error('kd_diagnosa_sekunder4')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
@@ -166,44 +166,44 @@
                       @error('prosedur_utama')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_utama', $dataresume->kd_diagnosa_sekunder) }}">
+                      <input type="text" name="kd_prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_utama', $dataresume->kd_diagnosa_sekunder) }}" hidden>
                       @error('kd_prosedur_utama')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Prosedur Sekunder 1</label>
+                    <label class="col-sm-2 col-form-label-sm">Prosedur Sekunder</label>
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_sekunder', $dataresume->prosedur_sekunder) }}">
                       @error('prosedur_sekunder')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_prosedur_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder', $dataresume->kd_prosedur_sekunder) }}">
+                      <input type="text" name="kd_prosedur_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder', $dataresume->kd_prosedur_sekunder) }}" hidden>
                       @error('kd_prosedur_sekunder')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Prosedur Sekunder 2</label>
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_sekunder2', $dataresume->prosedur_sekunder2) }}">
                       @error('prosedur_sekunder2')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_prosedur_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder2', $dataresume->kd_prosedur_sekunder2) }}">
+                      <input type="text" name="kd_prosedur_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder2', $dataresume->kd_prosedur_sekunder2) }}" hidden>
                       @error('kd_prosedur_sekunder2')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Prosedur Sekunder 3</label>
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_sekunder3', $dataresume->prosedur_sekunder3) }}">
                       @error('prosedur_sekunder3')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_prosedur_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder3', $dataresume->kd_prosedur_sekunder3) }}">
+                      <input type="text" name="kd_prosedur_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder3', $dataresume->kd_prosedur_sekunder3) }}" hidden>
                       @error('kd_prosedur_sekunder3')<p class="text-danger">{{$message}}</p>@enderror
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-4 col-form-label-sm">Obat-obatan waktu pulang / nasihat</label>
                     <div class="col-sm-8">
                       <textarea class="form-control form-control-sm" rows="3" name="obat_pulang" autocomplete="off">{{ old('obat_pulang', $dataresume->obat_pulang) }}</textarea>
@@ -216,7 +216,7 @@
                   <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus data?')" name="action" value="hapus"><i class="fas fa-trash"></i></button>
                   {{-- <button type="submit" class="btn btn-info float-right ml-3">Simpan Data</button> --}}
                   <button type="submit" class="btn btn-info float-right ml-3" name="action" value="simpan">Simpan</button>
-                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Update</button>
+                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Ganti</button>
                 </div>
                 <!-- /.card-footer -->
               </form>

@@ -59,6 +59,8 @@
                       <input type="text" name="nip" class="form-control form-control-sm" value="{{ Auth::guard('pegawai')->user()->nik}}" hidden>
                       <input type="text" name="niplama" class="form-control form-control-sm" value="{{ $penilaianralanmata->kd_dokter }}" hidden>
                       <input type="text" name="tabel" class="form-control form-control-sm" value="PenilaianAwalMedisRawatJalanMata" hidden>
+                      <input type="date" name="tgl_perawatan2" class="form-control form-control-sm" placeholder="tgl_perawatan" value="{{Carbon\Carbon::now()->format('Y-m-d')}}" hidden>
+                      <input type="time" name="jam_rawat" class="form-control form-control-sm" placeholder="jam_rawat" value="{{Carbon\Carbon::now()->format('H:i:s')}}" hidden>
                     </div>
 
                     <div class="form-inline row">
@@ -160,7 +162,7 @@
                           Nyeri : 
                           <input type="text" name="nyeri" class="form-control form-control-sm" value="{{ old('nyeri', $penilaianralanmata->nyeri) }}">
                         </div>
-                        <div class="col-sm-6 pt-2">
+                        <div class="col-sm-6 pt-2" hidden>
                           Status Nutrisi : 
                           <input type="text" name="status" class="form-control form-control-sm" value="{{ old('status', $penilaianralanmata->status) }}">
                         </div>
@@ -285,10 +287,68 @@
                           <div class="form-inline">Laboratorium : 
                             <textarea class="form-control form-control-sm" rows="2" name="lab" autocomplete="off" style="width: 100%">{{ old('lab', $penilaianralanmata->lab) }}</textarea>
                           </div>
+                          <div class="form-group">
+                            <div class="card card-primary collapsed-card">
+                              <div class="card-header">
+                                <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Laboratorium</h3><i class="fas fa-plus"></i></div>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div class="form-group row text-sm"> 
+                                  <div class="col-sm-12"> 
+                                    Indikasi / Klinis :  <input type="text" name="diagnosa_klinislab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                  </div>
+                                  <div class="col-sm-12">
+                                    Informasi Tambahan : <input type="text" name="informasi_tambahanlab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                  </div>
+                                  <div class="col-sm-12 pt-2 select2-purple">
+                                    pemeriksaan
+                                    <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanlab[]" id="pemeriksaanlab" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                      @foreach ($jnsperawatanlab as $key)
+                                        <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
+                                      @endforeach
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                          </div>
                         </div>
                         <div class="col-sm-4 pt-1">
                           <div class="form-inline">Radiologi : 
                             <textarea class="form-control form-control-sm" rows="2" name="rad" autocomplete="off" style="width: 100%">{{ old('rad', $penilaianralanmata->rad) }}</textarea>
+                          </div>
+                          <div class="form-group">
+                            <div class="card card-primary collapsed-card">
+                              <div class="card-header">
+                                <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Radiologi</h3>&emsp;&emsp;<i class="fas fa-plus"></i></div>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div class="form-group row text-sm"> 
+                                  <div class="col-sm-12"> 
+                                    <div class="">Informasi Tambahan Permintaan Foto 
+                                      <input type="text" name="informasi_tambahanrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                    </div>
+                                    <div class=" pt-2">Indikasi Pemeriksaan / Diagnosisi Klinis
+                                      <input type="text" name="diagnosa_klinisrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-12 pt-2 select2-purple">
+                                    Pemeriksaan
+                                    <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanrad[]" id="pemeriksaanrad" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                      @foreach ($jnsperawatanrad as $key)
+                                        <option value="{{ $key->kd_jenis_prw }}"> {{ $key->kd_jenis_prw }} - {{$key->nm_perawatan}} </option>
+                                      @endforeach
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
                           </div>
                         </div>
                         <div class="col-sm-4 pt-1">
@@ -318,12 +378,12 @@
                     </div>
                     <div class="card-body">
                       <div class="form-group row text-sm"> 
-                        <div class="col-sm-6 pt-1">
-                          <div class="form-inline">Asesmen Kerja :
+                        <div class="col-sm-12 pt-1">
+                          <div class="form-inline">
                             <textarea class="form-control form-control-sm" rows="2" name="diagnosis" autocomplete="off" style="width: 100%">{{ old('diagnosis', $penilaianralanmata->diagnosis) }}</textarea>
                           </div>
                         </div>
-                        <div class="col-sm-6 pt-1">
+                        <div class="col-sm-6 pt-1" hidden>
                           <div class="form-inline">Asesmen Banding :
                             <textarea class="form-control form-control-sm" rows="2" name="diagnosisbdg" autocomplete="off" style="width: 100%">{{ old('diagnosisbdg', $penilaianralanmata->diagnosisbdg) }}</textarea>
                           </div>
@@ -340,7 +400,7 @@
                     </div>
                     <div class="card-body">
                       <div class="form-group row text-sm"> 
-                        <div class="col-sm-6 pt-1">
+                        <div class="col-sm-6 pt-1" hidden>
                           <div class="form-inline">Permasalahan :
                             <textarea class="form-control form-control-sm" rows="2" name="permasalahan" autocomplete="off" style="width: 100%">{{ old('permasalahan', $penilaianralanmata->permasalahan) }}</textarea>
                           </div>
@@ -349,8 +409,13 @@
                           <div class="form-inline">Terapi / Pengobatan :
                             <textarea class="form-control form-control-sm" rows="2" name="terapi" autocomplete="off" style="width: 100%">{{ old('terapi', $penilaianralanmata->terapi) }}</textarea>
                           </div>
+                          <table id="testing" class="table table-bordered table-striped text-sm">
+                          </table>
+                          <div class="col-sm-12">
+                            <div type="text" class="btn btn-warning addmore float-right">+ Tambah Obat</div>
+                          </div>
                         </div>
-                        <div class="col-sm-12 pt-1">
+                        <div class="col-sm-6 pt-1">
                           <div class="form-inline">Tindakan / Rencana Tindakan :
                             <textarea class="form-control form-control-sm" rows="2" name="tindakan" autocomplete="off" style="width: 100%">{{ old('tindakan', $penilaianralanmata->tindakan) }}</textarea>
                           </div>
@@ -380,7 +445,7 @@
                   <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus data?')" name="action" value="hapus"><i class="fas fa-trash"></i></button>
                   {{-- <button type="submit" class="btn btn-info float-right">Simpan Data</button> --}}
                   <button type="submit" class="btn btn-info float-right ml-3" name="action" value="simpan">Simpan</button>
-                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Update</button>
+                  <button type="submit" class="btn btn-warning float-right ml-3" name="action" value="update">Ganti</button>
                 </div>
                 <!-- /.card-footer -->
               </form>
@@ -402,6 +467,57 @@
 <!-- ./wrapper -->
 
 <!-- SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+  })
+
+
+  var i=1;
+  $(".addmore").on('click',function(){
+    if(i == 1){
+      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
+    }
+
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresep'+i).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    i++;
+  });
+
+  $(".addmorerad").on('click',function(){
+    // if(i == 1){
+    //   document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
+    // }
+
+    document.getElementById("permintaanlab").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresep'+i).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    i++;
+  });
+
+  $("#hapusresep").on('click', function() {
+    $(this).parents("tr").remove();
+    return false;
+  });
+</script>
 </body>
 </html>
+

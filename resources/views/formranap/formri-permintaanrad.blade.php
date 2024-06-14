@@ -80,15 +80,15 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-12"> 
                           <div class="">Informasi Tambahan Permintaan Foto 
-                            <input type="text" name="informasi_tambahan" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                            <input type="text" name="informasi_tambahanrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
                           </div>
                           <div class=" pt-2">Indikasi Pemeriksaan / Diagnosisi Klinis
-                            <input type="text" name="diagnosa_klinis" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                            <input type="text" name="diagnosa_klinisrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
                           </div>
                         </div>
                         <div class="col-sm-12 pt-2 select2-purple">
                           Pemeriksaan
-                          <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaan[]" id="pemeriksaan" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple" required>
+                          <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanrad[]" id="pemeriksaan" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple" required>
                             @foreach ($jnsperawatanrad as $key)
                               <option value="{{ $key->kd_jenis_prw }}"> {{ $key->kd_jenis_prw }} - {{$key->nm_perawatan}} </option>
                             @endforeach

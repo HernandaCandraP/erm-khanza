@@ -107,6 +107,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
 
     // Menu Rawat Inap
     Route::get('/menu-ranap', 'FormControllerRanap@menuranap')->name('menu-ranap');
+    Route::get('/menu-ranap/resume', 'FormControllerRanap@riresume')->name('formri-resume');
     Route::get('/menu-ranap/soap', 'FormControllerRanap@risoap')->name('formri-soap');
     Route::get('/menu-ranap/penanganandokter', 'FormControllerRanap@ripenanganandokter')->name('formri-penanganandokter');
     Route::get('/menu-ranap/permintaanlab', 'FormControllerRanap@ripermintaanlab')->name('formri-permintaanlab');

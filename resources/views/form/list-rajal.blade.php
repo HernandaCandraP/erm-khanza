@@ -42,7 +42,7 @@
                     @foreach ($pasienterakhir as $no => $key)
                     <tr>
                         <th scope="row"> {{$no+1}}. </th>
-                        <th><a href="{{ route('form-resume', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
+                        <th><a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
                         <td>{{$key->no_rkm_medis}}</td>
                         <td>
                           {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}

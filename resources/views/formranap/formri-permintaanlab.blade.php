@@ -79,17 +79,17 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">Indikasi / Klinis : 
-                            <input type="text" name="diagnosa_klinis" class="form-control form-control-sm" autocomplete="off" style="width: 70%">
+                            <input type="text" name="diagnosa_klinislab" class="form-control form-control-sm" autocomplete="off" style="width: 70%">
                           </div>
                         </div>
                         <div class="col-sm-6">
                           <div class="form-inline">Informasi Tambahan : 
-                            <input type="text" name="informasi_tambahan" class="form-control form-control-sm" autocomplete="off" style="width: 70%">
+                            <input type="text" name="informasi_tambahanlab" class="form-control form-control-sm" autocomplete="off" style="width: 70%">
                           </div>
                         </div>
                         <div class="col-sm-6 pt-2 select2-purple">
                           pemeriksaan
-                          <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaan[]" id="pemeriksaan" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple" required>
+                          <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanlab[]" id="pemeriksaan" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple" required>
                             @foreach ($jnsperawatanlab as $key)
                               <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
                             @endforeach
