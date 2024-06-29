@@ -329,11 +329,11 @@
                               <div class="card-body">
                                 <div class="form-group row text-sm"> 
                                   <div class="col-sm-12"> 
-                                    <div class="">Informasi Tambahan Permintaan Foto 
-                                      <input type="text" name="informasi_tambahanrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
-                                    </div>
-                                    <div class=" pt-2">Indikasi Pemeriksaan / Diagnosisi Klinis
+                                    <div class="">Indikasi / Klinis
                                       <input type="text" name="diagnosa_klinisrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                    </div>
+                                    <div class="">Informasi Tambahan
+                                      <input type="text" name="informasi_tambahanrad" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
                                     </div>
                                   </div>
                                   <div class="col-sm-12 pt-2 select2-purple">

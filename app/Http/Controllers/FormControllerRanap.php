@@ -59,6 +59,47 @@ class FormControllerRanap extends Controller
            }
            $dataresume->kd_dokter = $kd_dokter;
            $dataresume->nama = Auth::guard('pegawai')->user()->nama;
+
+           $keluhanutama = DB::table('pemeriksaan_ranap')->select('keluhan', 'pemeriksaan', 'suhu_tubuh', 'tensi', 'nadi', 'respirasi')
+                ->where('no_rawat', $request->no_rawat)
+                ->where('nip', $kd_dokter)
+                ->orderby('tgl_perawatan', 'DESC')->orderby('jam_rawat', 'DESC')->first();
+
+            $penunjanglab = DB::table('permintaan_lab as pl')->select('jpl.nm_perawatan')
+                ->join('permintaan_pemeriksaan_lab as ppl', 'pl.noorder','=', 'ppl.noorder')
+                ->join('jns_perawatan_lab as jpl', 'jpl.kd_jenis_prw','=', 'ppl.kd_jenis_prw')
+                ->where('pl.no_rawat', $request->no_rawat)
+                ->get();
+
+            $penunjangrad = DB::table('permintaan_radiologi as pr')->select('jpr.nm_perawatan')
+                ->join('permintaan_pemeriksaan_radiologi as ppr', 'pr.noorder','=', 'ppr.noorder')
+                ->join('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw','=', 'ppr.kd_jenis_prw')
+                ->where('pr.no_rawat', $request->no_rawat)
+                ->get();
+
+            $listpenunjanglab= "";
+            if($penunjanglab->isNotEmpty()){
+                $listpenunjanglab .= "Penunjang Laboratorium : ";
+                foreach ($penunjanglab as $key => $value) {
+                    $listpenunjanglab .= $value->nm_perawatan . ", ";
+                }
+            }
+
+            $listpenunjangrad= "";
+            if($penunjangrad->isNotEmpty()){
+                // cek jika penunjang lab ada isi maka jalankan next line
+                if($listpenunjanglab != null){
+                    $listpenunjangrad .= "\r\n";
+                }
+                $listpenunjangrad .= "Penunjang Radiologi : ";
+                foreach ($penunjangrad as $key => $value) {
+                    $listpenunjangrad .= $value->nm_perawatan . ", ";
+                }
+            }
+            $dataresume->pemeriksaan_penunjang = $listpenunjanglab . $listpenunjangrad;
+            $dataresume->keluhan_utama = $keluhanutama->keluhan ?? '';
+            $dataresume->pemeriksaan_fisik = $keluhanutama->pemeriksaan ?? '';
+            $dataresume->ket_keadaan = "suhu: " . $keluhanutama->suhu_tubuh . "°C, tensi: " . $keluhanutama->tensi . "mmHg, nadi: " . $keluhanutama->nadi . "x/menit, RR: " . $keluhanutama->respirasi . "/menit";
        }
 
        //  dd($dataresume);

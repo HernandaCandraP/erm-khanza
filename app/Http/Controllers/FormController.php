@@ -452,12 +452,12 @@ class FormController extends Controller
             // ambil data ttv dari keperawatan umum
             $ambilttv = DB::table('penilaian_awal_keperawatan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tanggal', 'DESC')->first();
             if($ambilttv != null){
-                $penilaianralandalam->suhu = $ambilttv->suhu;
-                $penilaianralandalam->td = $ambilttv->td;
-                $penilaianralandalam->nadi = $ambilttv->nadi;
-                $penilaianralandalam->rr = $ambilttv->rr;
-                $penilaianralandalam->bb = $ambilttv->bb;
-                $penilaianralandalam->gcs = $ambilttv->gcs;
+                $penilaianralanumum->suhu = $ambilttv->suhu;
+                $penilaianralanumum->td = $ambilttv->td;
+                $penilaianralanumum->nadi = $ambilttv->nadi;
+                $penilaianralanumum->rr = $ambilttv->rr;
+                $penilaianralanumum->bb = $ambilttv->bb;
+                $penilaianralanumum->gcs = $ambilttv->gcs;
             }
         }
 
@@ -531,6 +531,46 @@ class FormController extends Controller
             }
             $dataresume->kd_dokter = $kd_dokter;
             $dataresume->nama = Auth::guard('pegawai')->user()->nama;
+
+            $keluhanutama = DB::table('pemeriksaan_ralan')->select('keluhan', 'pemeriksaan')
+                ->where('no_rawat', $request->no_rawat)
+                ->where('nip', $kd_dokter)
+                ->orderby('jam_rawat', 'DESC')->first();
+
+            $penunjanglab = DB::table('permintaan_lab as pl')->select('jpl.nm_perawatan')
+                ->join('permintaan_pemeriksaan_lab as ppl', 'pl.noorder','=', 'ppl.noorder')
+                ->join('jns_perawatan_lab as jpl', 'jpl.kd_jenis_prw','=', 'ppl.kd_jenis_prw')
+                ->where('pl.no_rawat', $request->no_rawat)
+                ->get();
+
+            $penunjangrad = DB::table('permintaan_radiologi as pr')->select('jpr.nm_perawatan')
+                ->join('permintaan_pemeriksaan_radiologi as ppr', 'pr.noorder','=', 'ppr.noorder')
+                ->join('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw','=', 'ppr.kd_jenis_prw')
+                ->where('pr.no_rawat', $request->no_rawat)
+                ->get();
+
+            $listpenunjanglab= "";
+            if($penunjanglab->isNotEmpty()){
+                $listpenunjanglab .= "Penunjang Laboratorium : ";
+                foreach ($penunjanglab as $key => $value) {
+                    $listpenunjanglab .= $value->nm_perawatan . ", ";
+                }
+            }
+
+            $listpenunjangrad= "";
+            if($penunjangrad->isNotEmpty()){
+                // cek jika penunjang lab ada isi maka jalankan next line
+                if($listpenunjanglab != null){
+                    $listpenunjangrad .= "\r\n";
+                }
+                $listpenunjangrad .= "Penunjang Radiologi : ";
+                foreach ($penunjangrad as $key => $value) {
+                    $listpenunjangrad .= $value->nm_perawatan . ", ";
+                }
+            }
+            $dataresume->pemeriksaan_penunjang = $listpenunjanglab . $listpenunjangrad;
+            $dataresume->keluhan_utama = $keluhanutama->keluhan ?? '';
+            $dataresume->jalannya_penyakit = $keluhanutama->pemeriksaan ?? '';
         }
 
         //  dd($dataresume);

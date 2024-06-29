@@ -14,26 +14,16 @@
   <div class="content-wrapper">
     <div class="content-header"></div>
 
-    {{-- <!-- Main content -->
+    <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
       <div class="row">
           <div class="col-md-3 col-sm-6 col-12">
             <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="far fa-building"></i></span>
+              <span class="info-box-icon bg-info"><i class="far fa-hospital"></i></span>
               <div class="info-box-content">
-                <span class="info-box-text">Total Kelas</span>
-                <span class="info-box-number">{{$totalkelas}}</span>
-              </div>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-success"><i class="fas fa-chalkboard-teacher"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">Total Guru</span>
-                <span class="info-box-number">{{$totalguru}}</span>
+                <span class="info-box-text">TOTAL PASIEN</span>
+                <span class="info-box-number">{{$totalpasien}}</span>
               </div>
             </div>
           </div>
@@ -42,83 +32,117 @@
             <div class="info-box">
               <span class="info-box-icon bg-warning"><i class="fa fa-users"></i></span>
               <div class="info-box-content">
-                <span class="info-box-text">Total Siswa</span>
-                <span class="info-box-number">{{$totalsiswa}}</span>
+                <span class="info-box-text">PASIEN BULAN INI</span>
+                <span class="info-box-number">{{$pasienbulan}}</span>
               </div>
             </div>
           </div>
           <!-- /.col -->
           <div class="col-md-3 col-sm-6 col-12">
             <div class="info-box">
-              <span class="info-box-icon bg-danger"><i class="fa fa-book"></i></span>
+              <span class="info-box-icon bg-danger"><i class="fa fa-user-plus"></i></span>
               <div class="info-box-content">
-                <span class="info-box-text">Mata Pelajaran</span>
-                <span class="info-box-number">{{$totalmapel}}</span>
+                <span class="info-box-text">PASIEN POLI BULAN INI</span>
+                <span class="info-box-number">{{$polibulan}}</span>
               </div>
             </div>
           </div>
           <!-- /.col -->
-
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">
-                  <i class="far fa-chart-bar"></i>
-                  Precision & Recall
-                </h3>
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-success"><i class="fas fa-user-clock"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">PASIEN POLI HARI INI</span>
+                <span class="info-box-number">{{$polihari}}</span>
               </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-3 col-md-3">
-                    <h5 class="text-center" style="line-height:120px">Cosine Similarity</h5>
-                  </div>
-                  <div class="col-3 col-md-3 text-center">
-                  <input type="text" class="knob" value="{{$pengujian_cosine['accuracy']}}" data-width="120" data-height="120" data-fgColor="#3835FF" disabled readonly>
-                    <div class="knob-label">Accuracy</div>
-                  </div>
-                  <div class="col-3 col-md-3 text-center">
-                    <input type="text" class="knob" value="{{$pengujian_cosine['precision']}}" data-width="120" data-height="120" data-fgColor="#00a65a" disabled readonly>
-                    <div class="knob-label">Precision</div>
-                  </div>
-                  <div class="col-3 col-md-3 text-center">
-                  <input type="text" class="knob" value="{{$pengujian_cosine['recall']}}" data-width="120" data-height="120" data-fgColor="#FFB600" disabled readonly>
-                    <div class="knob-label">Recall</div>
-                  </div>
-                </div><hr>
-                <!-- /.row -->
-                <div class="row">
-                  <div class="col-3 col-md-3">
-                    <h5 class="text-center" style="line-height:120px">Jaccard Similarity</h5>
-                  </div>
-                  <div class="col-3 col-md-3 text-center">
-                  <input type="text" class="knob" value="{{$pengujian_jaccard['accuracy']}}" data-width="120" data-height="120" data-fgColor="#3835FF" disabled readonly>
-                    <div class="knob-label">Accuracy</div>
-                  </div>
-                  <div class="col-3 col-md-3 text-center">
-                    <input type="text" class="knob" value="{{$pengujian_jaccard['precision']}}" data-width="120" data-height="120" data-fgColor="#00a65a" disabled readonly>
-                    <div class="knob-label">Precision</div>
-                  </div>
-                  <div class="col-3 col-md-3 text-center">
-                  <input type="text" class="knob" value="{{$pengujian_jaccard['recall']}}" data-width="120" data-height="120" data-fgColor="#FFB600" disabled readonly>
-                    <div class="knob-label">Recall</div>
-                  </div>
-                </div>
-                <!-- /.row -->
-              </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
           </div>
           <!-- /.col -->
 
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12 col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Antrian Poli Hari Ini</h5>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example3" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>No. Rawat</th>
+                    <th>No. RM</th>
+                    <th>Nama Lengkap</th>
+                    <th>Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($pasienterakhir as $no => $key)
+                    <tr>
+                        <th scope="row"> {{$no+1}}. </th>
+                        <th><a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
+                        <td>{{$key->no_rkm_medis}}</td>
+                        <td>
+                          {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
+                          {{$key->nm_pasien}}
+                        </td>
+                        <td>{{$key->stts}}</td>
+                    </tr> 
+                    @endforeach
+                  
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <div class="col-md-12 col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Pasien Rawat Inap</h5>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>No. Rawat</th>
+                      <th>No. RM</th>
+                      <th>Nama Pasien</th>
+                      <th>Kamar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      @foreach ($pasienranap as $no => $key)
+                      <tr>
+                          <th scope="row"> {{$no+1}}. </th>
+                          <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
+                          <td>{{$key->no_rkm_medis}}</td>
+                          <td>{{$key->nm_pasien}}</td>
+                          <td>{{$key->nm_bangsal}}</td>
+                      </tr> 
+                      @endforeach
+                    </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+      </div>
     </div>
     <!-- /.content -->
   </div>
-  <!-- /.content-wrapper --> --}}
+  <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
   <footer class="main-footer">
@@ -128,7 +152,7 @@
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
 <script src="{{asset('tampilan/plugins/jquery-knob/jquery.knob.min.js')}}"></script>
 <script>
   $(function () {
@@ -138,6 +162,5 @@
     })
   })
 </script>
-
 </body>
 </html>

@@ -21,6 +21,18 @@
               <p>Pegawai</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{route('menu-rajal')}}" class="nav-link {{ Request::is('form*') ? 'active' : '' }}">
+              <i class="nav-icon  fas fa-laptop-house"></i>
+              <p>Pendaftaran</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{route('menu-ranap')}}" class="nav-link {{ Request::is('menu-ranap*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-stethoscope"></i>
+              <p>Poli</p>
+            </a>
+          </li>
           @endif
           @endif
           <!-- End Petugas -->
@@ -46,79 +58,6 @@
               <p>Rawat Inap</p>
             </a>
           </li>
-          {{-- <li class="nav-item {{ Request::is('form-resume') ? 'menu-open' : '' }}">
-            <a href="#" class="nav-link {{ Request::is('form-resume') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-chart-pie"></i>
-              <p>
-                Charts
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{route('form-resume')}}" class="nav-link {{ Request::is('form-resume') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Test link</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="pages/charts/flot.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Flot</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="pages/charts/inline.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Inline</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="pages/charts/uplot.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>uPlot</p>
-                </a>
-              </li>
-            </ul>
-          </li> --}}
-          {{-- <li class="nav-item">
-            <a href="{{route('homeadmin/kelas')}}" class="nav-link {{ Request::is('admin/kelas') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-building"></i>
-              <p>Kelas</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{route('homeadmin/mapel')}}" class="nav-link {{ Request::is('admin/mapel') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-book"></i>
-              <p>Mata Pelajaran</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>Mailbox<i class="fas fa-angle-left right"></i></p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
-                <a href="pages/mailbox/mailbox.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Inbox</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="pages/mailbox/compose.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Compose</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="pages/mailbox/read-mail.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Read</p>
-                </a>
-              </li>
-            </ul>
-          </li> --}}
           @endif
           @endif
           <!-- End dokter -->
@@ -132,31 +71,12 @@
               <i class="nav-icon fas fa-home"></i>
               <p>Admin</p>
             </a>
-          </li>
-          {{-- <li class="nav-item">
-            <a href="{{route('homeadmin/guru')}}" class="nav-link {{ Request::is('admin/guru') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-chalkboard-teacher"></i>
-              <p>Guru</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{route('homeadmin/siswa')}}" class="nav-link {{ Request::is('admin/siswa') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-users"></i>
-              <p>Siswa</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{route('homeadmin/kelas')}}" class="nav-link {{ Request::is('admin/kelas') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-building"></i>
-              <p>Kelas</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{route('homeadmin/mapel')}}" class="nav-link {{ Request::is('admin/mapel') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-book"></i>
-              <p>Mata Pelajaran</p>
-            </a>
-          </li> --}}
+            <li class="nav-item">
+              <a href="{{route('menu-rajal')}}" class="nav-link {{ Request::is('form*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>Kelola Login</p>
+              </a>
+            </li>
           @endif
           @endif
           <!-- End Guru -->

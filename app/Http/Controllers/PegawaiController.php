@@ -69,24 +69,41 @@ class PegawaiController extends Controller
     }
 
     public function admin(){
-        $pegawai = "admin";
-        // $totalguru = Guru::count();
-        // $totalsiswa = Siswa::count();
-        // $totalkelas = Kelas::count();
-        // $totalmapel = Mapel::count();
+        $username = Session::get('username');
+        $month = '2023-06'; // date('Y-m'); //
+        $date = '2023-06-15'; // date('Y-m-d'); //
 
-        // $pengujian = new Pengujian();
-        // $pengujian_cosine = $pengujian->pengujian_cosine($data_cosine);
-        // $pengujian_jaccard = $pengujian->pengujian_jaccard($data_jaccard);
+        $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
+        $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
+        
+        $kdpoli = Session::get('getpoli');
+        $polibulan = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('stts', "!=", 'Belum')->where('tgl_registrasi', 'like', '%'.$month.'%')->count();
 
-        return view('admin/home', [
-            // 'detailmapel' => $detailmapel, 
-            // 'totalkelas' => $totalkelas, 
-            // 'totalsiswa' => $totalsiswa, 
-            // 'totalmapel' => $totalmapel,
-            // 'pengujian_cosine' => $pengujian_cosine,
-            // 'pengujian_jaccard' => $pengujian_jaccard,
-            'pegawai' => $pegawai, 
+        $polihari = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('tgl_registrasi', 'like', '%'.$date.'%')->count();
+
+        // $pasienaktif = DB::table('reg_periksa as rp')->select('p.no_rkm_medis', DB::raw('count(*) as jumlah'), 'p.nm_pasien')->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')->where('kd_dokter', $username)->groupby('no_rkm_medis')->orderby('jumlah', 'desc')->take(10)->get();
+
+        $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->orderby('a.jam_reg', 'desc')->get();
+
+        // dd($kdpoli);
+        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal')
+            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
+            ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
+            ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
+            ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
+            ->get();
+
+        return view('dokter/home', [
+            'totalpasien' => $totalpasien, 
+            'pasienbulan' => $pasienbulan, 
+            'polibulan' => $polibulan, 
+            'polihari' => $polihari, 
+            'pasienranap' => $pasienranap, 
+            // 'pasienaktif' => $pasienaktif, 
+            'pasienterakhir' => $pasienterakhir, 
         ]);
     }
 

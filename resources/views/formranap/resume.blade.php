@@ -73,8 +73,8 @@
                     <div class="col-sm-4 col-form-label-sm">: {{Carbon\Carbon::now()->format('Y-m-d : H:i:s')}}</div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Alasan Masuk Dirawat</label>
-                    <div class="col-sm-4">
+                    <label class="col-sm-2 col-form-label-sm" hidden>Alasan Masuk Dirawat</label>
+                    <div class="col-sm-4" hidden>
                       <input type="text" name="alasan" class="form-control form-control-sm" autocomplete="off" value="{{ old('alasan', $dataresume->alasan) }}">
                     </div>
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Awal Masuk</label>
@@ -175,7 +175,7 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Prosedur Utama</label>
+                    <label class="col-sm-2 col-form-label-sm">Prosedur</label>
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_utama', $dataresume->prosedur_utama) }}">
                     </div>
@@ -184,7 +184,7 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Prosedur Sekunder</label>
+                    <label class="col-sm-2 col-form-label-sm">Komorbit</label>
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_sekunder', $dataresume->prosedur_sekunder) }}">
                     </div>
@@ -211,26 +211,26 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Alergi Obat</label>
+                    <label class="col-sm-2 col-form-label-sm">Alergi</label>
                     <div class="col-sm-10">
                       <input type="text" name="alergi" class="form-control form-control-sm" autocomplete="off" value="{{ old('alergi', $dataresume->alergi) }}">
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-2 col-form-label-sm">Diet</label>
                     <div class="col-sm-10">
                       <textarea class="form-control form-control-sm" rows="2" name="diet" autocomplete="off">{{ old('diet', $dataresume->diet) }}</textarea>
                     </div>
                   </div>
-                  <div class="form-group row">
+                  <div class="form-group row" hidden>
                     <label class="col-sm-3 col-form-label-sm">Hasil Lab yang Belum Selesai (Pending)</label>
                     <div class="col-sm-9">
                       <textarea class="form-control form-control-sm" rows="2" name="lab_belum" autocomplete="off">{{ old('lab_belum', $dataresume->lab_belum) }}</textarea>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label class="col-sm-3 col-form-label-sm">Instruksi/Anjuran dan Edukasi (Follow Up)</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-2 col-form-label-sm">Edukasi</label>
+                    <div class="col-sm-10">
                       <textarea class="form-control form-control-sm" rows="2" name="edukasi" autocomplete="off">{{ old('edukasi', $dataresume->edukasi) }}</textarea>
                     </div>
                   </div>
