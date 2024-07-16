@@ -127,14 +127,21 @@
                   <hr>
                   <div class="form-group row">
                     <h3 class="col-sm-10">Diagnosa Akhir</h3>
-                    <div class="col-sm-2" hidden>Kode ICD</div>
+                    <div class="col-sm-2">Kode ICD</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Utama</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_utama', $dataresume->diagnosa_utama) }}">
                     </div>
-                    <div class="col-sm-2" hidden>
+                    {{-- <div class="col-sm-8 select2-purple">
+                      <select class="form-control form-control-sm select2" id="tags" name="diagnosa_utama" >
+                        @foreach ($jnspenyakit as $key)
+                          <option value="{{ $key->kd_penyakit }}">{{ $key->kd_penyakit }} - {{ $key->nm_penyakit }}</option>
+                        @endforeach
+                      </select>
+                    </div> --}}
+                    <div class="col-sm-2">
                       <input type="text" name="kd_diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_utama', $dataresume->kd_diagnosa_utama) }}">
                     </div>
                   </div>
@@ -143,7 +150,7 @@
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder', $dataresume->diagnosa_sekunder) }}">
                     </div>
-                    <div class="col-sm-2" hidden>
+                    <div class="col-sm-2">
                       <input type="text" name="kd_diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder', $dataresume->kd_diagnosa_sekunder) }}">
                     </div>
                   </div>
@@ -179,7 +186,7 @@
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_utama', $dataresume->prosedur_utama) }}">
                     </div>
-                    <div class="col-sm-2" hidden>
+                    <div class="col-sm-2">
                       <input type="text" name="kd_prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_utama', $dataresume->kd_prosedur_utama) }}">
                     </div>
                   </div>
@@ -188,7 +195,7 @@
                     <div class="col-sm-8">
                       <input type="text" name="prosedur_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_sekunder', $dataresume->prosedur_sekunder) }}">
                     </div>
-                    <div class="col-sm-2" hidden>
+                    <div class="col-sm-2">
                       <input type="text" name="kd_prosedur_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_sekunder', $dataresume->kd_prosedur_sekunder) }}">
                     </div>
                   </div>
@@ -231,7 +238,13 @@
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Edukasi</label>
                     <div class="col-sm-10">
-                      <textarea class="form-control form-control-sm" rows="2" name="edukasi" autocomplete="off">{{ old('edukasi', $dataresume->edukasi) }}</textarea>
+                      <textarea class="form-control form-control-sm" rows="3" name="edukasi" autocomplete="off">{{ old('edukasi', $dataresume->edukasi) }}</textarea>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-sm-2 col-form-label-sm">Obat Pulang</label>
+                    <div class="col-sm-10">
+                      <textarea class="form-control form-control-sm" rows="2" name="obat_pulang" autocomplete="off">{{ old('obat_pulang', $dataresume->obat_pulang) }}</textarea>
                     </div>
                   </div>
                   <div class="form-group row">
@@ -283,11 +296,6 @@
                       <input type="datetime-local" name="kontrol" class="form-control form-control-sm" placeholder="Waktu Selesai" value="{{Carbon\Carbon::now()->format('Y-m-d H:i:s')}}">
                     </div>
                   </div>
-                  <div class="form-group row">
-                    <label class="col-sm-2 col-form-label-sm">Obat Pulang</label>
-                    <div class="col-sm-10">
-                      <textarea class="form-control form-control-sm" rows="2" name="obat_pulang" autocomplete="off">{{ old('obat_pulang', $dataresume->obat_pulang) }}</textarea>
-                  </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
@@ -317,6 +325,17 @@
 <!-- ./wrapper -->
 
 <!-- SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+  })
+</script>
 </body>
 </html>

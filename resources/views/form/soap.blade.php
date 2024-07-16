@@ -72,6 +72,7 @@
                         <input type="text" name="niplama" class="form-control form-control-sm" value="{{ $data->nip }}" hidden>
                         <input type="text" name="tgl_perawatan" class="form-control form-control-sm" value="{{$detailpasien[0]->tgl_registrasi}}" hidden>
                         <input type="text" name="tgl_perawatan_lama" class="form-control form-control-sm" value="{{$data->tgl_perawatan_lama ?? null}}" hidden>
+                        <input type="text" name="no_rm" class="form-control form-control-sm" value="{{$detailpasien[0]->no_rkm_medis ?? null}}" hidden>
                         <input type="text" name="jam_rawat_lama" class="form-control form-control-sm" value="{{$data->jam_rawat_lama ?? null}}" hidden>
                         <input type="text" name="tabel" class="form-control form-control-sm" value="DataPemeriksaanRawatJalan" hidden>
                       </div>
@@ -148,11 +149,11 @@
                       <div class="form-inline pt-2">Object : 
                         <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
 
-                        <div class="col-sm-10"> 
+                        {{-- <div class="col-sm-10"> 
                           <div class="form-inline">
                             <img src="{{asset($getimage)}}" class="mx-auto d-block"/><br>
                           </div>
-                        </div>
+                        </div> --}}
                       </div>
                     </div>
                     <div class="col-sm-6">
@@ -168,6 +169,18 @@
                       </div>
                       <div class="form-inline">Asesmen :
                         <textarea class="form-control form-control-sm" rows="2" name="penilaian" autocomplete="off" style="width: 100%">{{ old('penilaian', $data->penilaian) }}</textarea>
+                        {{-- <div class="select2-purple" style="width: 100%">
+                          <select class="select2 form-control form-control-sm" multiple="multiple" name="diagnosa_utama[]" id="diagnosa_utama" data-placeholder="ICD - Diagnosa" data-dropdown-css-class="select2-purple">
+                            @foreach ($jnspenyakit as $key)
+                              <option value="{{ $key->kd_penyakit }}">{{ $key->kd_penyakit }} - {{ $key->nm_penyakit }}</option>
+                            @endforeach
+                          </select>
+                        </div> --}}
+                        <div class="select2-purple input-group col-md-12" style="width: 100%">
+                          <select class="select2 form-control form-control-sm" multiple="multiple" name="diagnosa_utama[]" id="diagnosa_utama" data-placeholder="ICD - Diagnosa" data-dropdown-css-class="select2-purple">
+                            
+                          </select>
+                        </div>
                       </div>
                       <div class="form-inline pt-2">Plan : 
                         <textarea class="form-control form-control-sm" rows="2" name="rtl" autocomplete="off" style="width: 100%">{{ old('rtl', $data->rtl) }}</textarea>
@@ -276,17 +289,6 @@
 <!-- SCRIPTS -->
 @include('template.script_table')
 <script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2').select2()
-
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-  })
-
-
   var i=1;
   $(".addmore").on('click',function(){
     if(i == 1){
@@ -302,28 +304,53 @@
       return false;
     });
     i++;
+
+    myFunction();
+  });
+  
+  $(document).ready(function() {
+    myFunction();
   });
 
-  $(".addmorerad").on('click',function(){
-    // if(i == 1){
-    //   document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
-    // }
+  var myFunction = function(){
+    //Initialize Select2 Elements
+    $('.select2').select2()
 
-    document.getElementById("permintaanlab").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $("#hapusresep").on('click', function() {
-    $(this).parents("tr").remove();
-    return false;
-  });
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+    $('#diagnosa_utama').select2({
+        minimumInputLength: 3,  // bebas semau kita, tapi w saranin 3 angka lebih biar lebih cepat
+        maximumSelectionLength: 4,
+        allowClear: true,
+        placeholder: 'Input nama',
+        ajax: {
+          dataType: 'json',
+          url: '{{route("ambil_icd")}}',  // ini data yang akan kita ambil untuk di load
+          delay: 5,  // ini bebas mau di pake atau tidak
+          data: function(params) {
+            return {
+              search: params.term
+            }
+          },
+          processResults: function (data, page) {
+          return {
+            results: data
+          };
+        },
+      }
+      }).on('select2:select', function (evt) {
+          var data = $("#diagnosa_utama option:selected").text();
+        // alert("data yang anda pilih"+data+"");
+        var element = evt.params.data.element;
+        var $element = $(element);
+    
+        $element.detach();
+        $(this).append($element);
+        $(this).trigger("change");
+      });
+  }
 </script>
 </body>
 </html>

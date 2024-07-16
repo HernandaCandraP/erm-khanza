@@ -265,8 +265,8 @@
                         </div>
                         <div class="col-sm-6">
                           <div class="form-inline">Keterangan : 
-                            <textarea hidden class="form-control form-control-sm" rows="12" name="ket_lokalis" autocomplete="off" style="width: 100%">{{ old('ket_lokalis', $penilaianralanbedah->ket_lokalis) }}</textarea>
-                            <textarea class="form-control form-control-sm" rows="12" name="lainnya" autocomplete="off" style="width: 100%">{{ old('lainnya', $penilaianralanbedah->lainnya) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="12" name="ket_lokalis" autocomplete="off" style="width: 100%">{{ old('ket_lokalis', $penilaianralanbedah->ket_lokalis) }}</textarea>
+                            <textarea hidden class="form-control form-control-sm" rows="12" name="lainnya" autocomplete="off" style="width: 100%">{{ old('lainnya', $penilaianralanbedah->lainnya) }}</textarea>
                           </div>
                         </div>
                       </div>

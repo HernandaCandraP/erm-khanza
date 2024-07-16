@@ -33,12 +33,16 @@ Route::fallback(function () {
 Route::get('/login', 'LoginController@index')->name('login');
 Route::post('/postlogin', 'LoginController@postlogin')->name('postlogin');
 Route::post('/logout', 'LoginController@logout')->name('logout');
+Route::get('/ambil_icd', 'PegawaiController@ambil_icd')->name('ambil_icd');
 
 //admin
 Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/admin', 'PegawaiController@admin')->name('homeadmin');
     Route::get('/admin/profile', 'PegawaiController@profile')->name('homeadmin/profile');
     Route::post('/admin/profile/password', 'PegawaiController@gantipassword')->name('homeadmin/profile/password');
+
+    Route::get('/admin/kelolalogin', 'LoginController@kelolalogin')->name('kelolalogin');
+    Route::get('/admin/resetpassword', 'LoginController@resetpassword')->name('resetpassword');
 });
 
 // login dokter

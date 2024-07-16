@@ -23,6 +23,25 @@ class LoginController extends Controller
         return view('login');
     }
 
+    public function kelolalogin()
+    {
+        $datalogin = DB::table('login_rsba')->orderby("nik", "ASC")->get();
+
+        return view('admin/kelolalogin', [
+            'datalogin' => $datalogin, 
+        ]);
+    }
+
+    public function resetpassword(Request $request)
+    {
+        $datalogin = DB::table('login_rsba')->orderby("nik", "ASC")->get();
+
+        dd($request->nik);
+        return view('admin/kelolalogin', [
+            'datalogin' => $datalogin, 
+        ]);
+    }
+
     public function postlogin(Request $request){
         $validate = $request->validate([
             'username' => ['required'],

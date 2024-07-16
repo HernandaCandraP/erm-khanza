@@ -59,7 +59,7 @@ class FormController extends Controller
             if($data != null){
                 foreach ($data as $key => $value) {
                     // ambil data ttv sebelumnya
-                    if($key == 'suhu_tubuh' || $key == 'tensi' || $key == 'nadi' || $key == 'respirasi' || $key == 'tinggi' || $key == 'berat' || $key == 'spo2' || $key == 'gcs' || $key == 'lingkar_perut' ){
+                    if($key == 'suhu_tubuh' || $key == 'tensi' || $key == 'nadi' || $key == 'respirasi' || $key == 'tinggi' || $key == 'berat' || $key == 'spo2' || $key == 'gcs' || $key == 'lingkar_perut' || $key == 'alergi' ){
                         $data->$key = $value;
                     }else{
                         $data->$key = "";
@@ -91,12 +91,15 @@ class FormController extends Controller
 
         $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
         $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan')->where('status', '1')->get();
+                
+        // $jnspenyakit = DB::table('penyakit as p')->select('p.kd_penyakit', 'p.nm_penyakit')->orderby('kd_penyakit', 'ASC')->get();
 
         return view('form/soap', [
             'detailpasien' => $detailpasien,
             'data' => $data,
             'getimage' => $getimage,
             'resepdokter' => $resepdokter,
+            // 'jnspenyakit' => $jnspenyakit,
             'jnsperawatanlab' => $jnsperawatanlab,
             'jnsperawatanrad' => $jnsperawatanrad,
             'no_rawat' => $no_rawat
@@ -235,11 +238,22 @@ class FormController extends Controller
                 $penilaianralanobsgyn->his = $ambilttv->his;
                 $penilaianralanobsgyn->djj = $ambilttv->bjj;
             }
-        }        
+        }     
+        
+        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
+        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan')->where('status', '1')->get();
+        $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
 
         return view('form/rjawalmedisobsgyn', [
             'detailpasien' => $detailpasien, 
             // 'listdokter' => $listdokter, 
+            'jnsperawatanlab' => $jnsperawatanlab,
+            'jnsperawatanrad' => $jnsperawatanrad,
+            'resepdokter' => $resepdokter,
             'penilaianralanobsgyn' => $penilaianralanobsgyn,
             'no_rawat' => $no_rawat
         ]);
@@ -324,9 +338,21 @@ class FormController extends Controller
             }
             // dd($ambilttv, $penilaianralananak);
         }
+
+        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
+        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan')->where('status', '1')->get();
+        $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
+            
         return view('form/rjawalmedisanak', [
             'detailpasien' => $detailpasien, 
             // 'listdokter' => $listdokter, 
+            'jnsperawatanlab' => $jnsperawatanlab,
+            'jnsperawatanrad' => $jnsperawatanrad,
+            'resepdokter' => $resepdokter,
             'penilaianralananak' => $penilaianralananak,
             'no_rawat' => $no_rawat
         ]);
@@ -461,9 +487,20 @@ class FormController extends Controller
             }
         }
 
+        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
+        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan')->where('status', '1')->get();
+        $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
+
         return view('form/rjawalmedisumum', [
             'detailpasien' => $detailpasien, 
             // 'listdokter' => $listdokter, 
+            'jnsperawatanlab' => $jnsperawatanlab,
+            'jnsperawatanrad' => $jnsperawatanrad,
+            'resepdokter' => $resepdokter,
             'penilaianralanumum' => $penilaianralanumum,
             'no_rawat' => $no_rawat
         ]);
@@ -548,6 +585,16 @@ class FormController extends Controller
                 ->join('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw','=', 'ppr.kd_jenis_prw')
                 ->where('pr.no_rawat', $request->no_rawat)
                 ->get();
+            
+            // cek diagnosa pasien yang telah dimasukkan
+            $cekdiagnosa = DB::table('diagnosa_pasien as dp')->select('dp.*', 'p.nm_penyakit')
+                ->join('penyakit as p', 'p.kd_penyakit','=', 'dp.kd_penyakit')
+                ->where('dp.no_rawat', $request->no_rawat)->where('dp.status', 'Ralan')->orderby('dp.prioritas', 'ASC')->get();
+
+            // cek prosedur pasien yang telah dimasukkan
+            $cekprosedur = DB::table('prosedur_pasien as pp')->select('pp.*', 'i.deskripsi_panjang')
+                ->join('icd9 as i', 'i.kode','=', 'pp.kode')
+                ->where('pp.no_rawat', $request->no_rawat)->where('pp.status', 'Ralan')->orderby('pp.prioritas', 'ASC')->get();
 
             $listpenunjanglab= "";
             if($penunjanglab->isNotEmpty()){
@@ -571,6 +618,26 @@ class FormController extends Controller
             $dataresume->pemeriksaan_penunjang = $listpenunjanglab . $listpenunjangrad;
             $dataresume->keluhan_utama = $keluhanutama->keluhan ?? '';
             $dataresume->jalannya_penyakit = $keluhanutama->pemeriksaan ?? '';
+
+            // cek diagnosa 
+            if($cekdiagnosa->isNotEmpty()){
+                if (isset($cekdiagnosa[0])) {
+                    $dataresume->diagnosa_utama = $cekdiagnosa[0]->nm_penyakit;
+                    $dataresume->kd_diagnosa_utama = $cekdiagnosa[0]->kd_penyakit;
+                }
+                if (isset($cekdiagnosa[1])) {
+                    $dataresume->diagnosa_sekunder = $cekdiagnosa[1]->nm_penyakit;
+                    $dataresume->kd_diagnosa_sekunder = $cekdiagnosa[1]->kd_penyakit;
+                }
+            }
+
+            // cek prosedur
+            if($cekprosedur->isNotEmpty()){
+                if (isset($cekprosedur[0])) {
+                    $dataresume->prosedur_utama = $cekprosedur[0]->deskripsi_panjang;
+                    $dataresume->kd_prosedur_utama = $cekprosedur[0]->kode;
+                }
+            }
         }
 
         //  dd($dataresume);
@@ -706,9 +773,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanParu') {
             $permintaan = $this->permintan($request);
-            $request->terapi = $permintaan['terapi'];
-            $request->lab = $permintaan['lab'];
-            $request->rad = $permintaan['rad'];
+            $request->terapi .= $permintaan['terapi'];
+            $request->lab .= $permintaan['lab'];
+            $request->rad .= $permintaan['rad'];
             // dd($request->all());
             $PenilaianAwalMedisRawatJalanParu = [
                 'no_rawat' => $request->no_rawat,
@@ -750,9 +817,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanBedah') {
             $permintaan = $this->permintan($request);
-            $request->terapi = $permintaan['terapi'];
-            $request->lab = $permintaan['lab'];
-            $request->rad = $permintaan['rad'];
+            $request->terapi .= $permintaan['terapi'];
+            $request->lab .= $permintaan['lab'];
+            $request->rad .= $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanBedah = [
                 'no_rawat' => $request->no_rawat,
@@ -797,9 +864,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanSyaraf') {
             $permintaan = $this->permintan($request);
-            $request->terapi = $permintaan['terapi'];
-            $request->lab = $permintaan['lab'];
-            $request->rad = $permintaan['rad'];
+            $request->terapi .= $permintaan['terapi'];
+            $request->lab .= $permintaan['lab'];
+            $request->rad .= $permintaan['rad'];
             
             $PenilaianAwalMedisRawatJalanSyaraf = [
                 'no_rawat' => $request->no_rawat,
@@ -848,6 +915,10 @@ class FormController extends Controller
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanSyaraf, 'penilaian_medis_ralan_neurologi', 'form/awalmedissyaraf');
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanObsgyn') {
+            $permintaan = $this->permintan($request);
+            $request->tata = $permintaan['terapi'];
+            $request->penunjang .= $permintaan['lab'];
+
             $PenilaianAwalMedisRawatJalanObsgyn = [
                 'no_rawat' => $request->no_rawat,
                 'kd_dokter' => $request->nip,
@@ -900,6 +971,11 @@ class FormController extends Controller
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanObsgyn, 'penilaian_medis_ralan_kandungan', 'form/awalmedisobsgyn');
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanAnak') {
+            $permintaan = $this->permintan($request);
+            $request->tata = $permintaan['terapi'];
+            $request->penunjang .= $permintaan['lab'] . ", ";
+            $request->penunjang .= $permintaan['rad'];
+            
             $PenilaianAwalMedisRawatJalanAnak = [
                 'no_rawat' => $request->no_rawat,
                 'kd_dokter' => $request->nip,
@@ -943,9 +1019,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanMata') {
             $permintaan = $this->permintan($request);
-            $request->terapi = $permintaan['terapi'];
-            $request->lab = $permintaan['lab'];
-            $request->rad = $permintaan['rad'];
+            $request->terapi .= $permintaan['terapi'];
+            $request->lab .= $permintaan['lab'];
+            $request->rad .= $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanMata = [
                 'no_rawat' => $request->no_rawat,
@@ -1011,9 +1087,9 @@ class FormController extends Controller
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanDalam') {
             // dd($request->all());
             $permintaan = $this->permintan($request);
-            $request->terapi = $permintaan['terapi'];
-            $request->lab = $permintaan['lab'];
-            $request->rad = $permintaan['rad'];
+            $request->terapi .= $permintaan['terapi'];
+            $request->lab .= $permintaan['lab'];
+            $request->rad .= $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanDalam = [
                 'no_rawat' => $request->no_rawat,
@@ -1058,6 +1134,11 @@ class FormController extends Controller
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanDalam, 'penilaian_medis_ralan_penyakit_dalam', 'form/awalmedisdalam');
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanUmum') {
+            $permintaan = $this->permintan($request);
+            $request->tata = $permintaan['terapi'];
+            $request->penunjang .= $permintaan['lab'] . ", ";
+            $request->penunjang .= $permintaan['rad'];
+
             $PenilaianAwalMedisRawatJalanUmum = [
                 'no_rawat' => $request->no_rawat,
                 'kd_dokter' => $request->nip,
@@ -1099,6 +1180,50 @@ class FormController extends Controller
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanUmum, 'penilaian_medis_ralan', 'form/awalmedisumum');
         }
         elseif ($request->tabel == 'DataPemeriksaanRawatJalan') {
+            // jika diagnosa terisi, cek no rawat sebelumnya apakah sudah ada diagnosa yang sama dengan diagnosa no rawat baru
+            $status_penyakit = "Baru";
+            $duplicatediagnosa = [];
+            if($request->diagnosa_utama != null){
+                $cekdiagnosa = DB::table('diagnosa_pasien')->where('no_rawat', $request->no_rawat)->where('status', 'Ralan')->orderby('prioritas', 'ASC')->get();
+
+                // jika cekdiagnosa kosong maka set prioritas menjadi 0
+                if($cekdiagnosa->isEmpty()){
+                    $cekdiagnosa[] = new \stdClass();
+                    $cekdiagnosa[0]->prioritas = "0";
+                }else{
+                    foreach ($cekdiagnosa as $no => $kode) {
+                        foreach ($request->diagnosa_utama as $key => $value) {
+                            if($kode->kd_penyakit == $value){
+                                $duplicatediagnosa[] = $key;
+                            }
+                        }
+                    }
+                }
+                // menghapus diagnosa yang sama
+                $diagnosafilter = array_diff_key($request->diagnosa_utama, $duplicatediagnosa);
+                $diagnosafilter = array_values($diagnosafilter);
+                
+                // perulangan untuk menyimpan multiple select diagnosa
+                $isipenilaian = "";
+                foreach ($diagnosafilter as $key => $value) {
+                    $diagnosa = [
+                        'no_rawat' => $request->no_rawat,
+                        'kd_penyakit' => $value,
+                        'status' => 'Ralan',
+                        'prioritas' => $cekdiagnosa[0]->prioritas + $key + 1,
+                        'status_penyakit' => 'Baru',
+                    ];
+
+                    DB::table('diagnosa_pasien')->insert($diagnosa);
+                    $isipenilaian .= $value . ", ";
+                }
+
+                if($request->penilaian != '-'){
+                    $request->penilaian .= "\r\n";
+                }
+                $request->penilaian .= "Diagnosa :" . $isipenilaian ;
+            }
+
             if($request->jumlah != null || $request->resep){
                 $request->tabel = 'ResepDokter';
                 $request->jam_peresepan = $request->jam_rawat;

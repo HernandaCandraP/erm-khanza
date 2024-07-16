@@ -107,6 +107,28 @@ class PegawaiController extends Controller
         ]);
     }
 
+    function ambil_icd(Request $request){
+        // dd($request->search);
+        $search = $request->search;
+        // ini hanya mencari kata nama, sekarang kita tambahkan pakai pekerjaan oke
+        $sql = DB::table('penyakit as p')->select('p.kd_penyakit', 'p.nm_penyakit')
+            ->where('nm_penyakit', 'like', '%'.$search.'%')
+            ->orwhere('kd_penyakit', 'like', '%'.$search.'%')
+            ->orderby('kd_penyakit', 'ASC')->limit(10)->get();
+        
+        if ($sql->isNotEmpty()) {
+            $list = array();
+            foreach ($sql as $key => $value) {
+                $gabungan = $value->kd_penyakit." - ".$value->nm_penyakit;
+                $list[$key]['id'] = $value->kd_penyakit;
+                $list[$key]['text'] = $gabungan;
+            }
+            echo json_encode($list);
+        } else {
+            echo "hasil kosong";
+        }
+    }
+
     public function tampilguru(){
         $guru = Guru::orderBy('nip')->get();
         return view('admin/guru', ['guru' => $guru]);

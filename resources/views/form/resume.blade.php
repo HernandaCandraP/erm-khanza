@@ -99,7 +99,7 @@
                   <hr>
                   <div class="form-group row">
                     <h3 class="col-sm-10">Diagnosa Akhir</h3>
-                    <div class="col-sm-2" hidden>Kode ICD</div>
+                    <div class="col-sm-2">Kode ICD</div>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Utama</label>
@@ -107,7 +107,7 @@
                       <input type="text" name="diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_utama', $dataresume->diagnosa_utama) }}">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_utama', $dataresume->kd_diagnosa_utama) }}" hidden>
+                      <input type="text" name="kd_diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_utama', $dataresume->kd_diagnosa_utama) }}">
                     </div>
                   </div>
                   <div class="form-group row">
@@ -116,7 +116,7 @@
                       <input type="text" name="diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder', $dataresume->diagnosa_sekunder) }}">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder', $dataresume->kd_diagnosa_sekunder) }}" hidden>
+                      <input type="text" name="kd_diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder', $dataresume->kd_diagnosa_sekunder) }}">
                     </div>
                   </div>
                   <div class="form-group row" hidden>
@@ -149,10 +149,10 @@
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Tindakan</label>
                     <div class="col-sm-8">
-                      <input type="text" name="prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_utama', $dataresume->diagnosa_sekunder) }}">
+                      <input type="text" name="prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('prosedur_utama', $dataresume->prosedur_utama) }}">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_utama', $dataresume->kd_diagnosa_sekunder) }}" hidden>
+                      <input type="text" name="kd_prosedur_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_prosedur_utama', $dataresume->kd_prosedur_utama) }}">
                     </div>
                   </div>
                   <div class="form-group row" hidden>

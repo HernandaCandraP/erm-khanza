@@ -360,6 +360,31 @@
                           <div class="form-inline">Laboratorium : 
                             <textarea class="form-control form-control-sm" rows="2" name="lab" autocomplete="off" style="width: 100%">{{ old('lab', $penilaianralanobsgyn->lab) }}</textarea>
                           </div>
+                          <div class="card card-primary collapsed-card">
+                            <div class="card-header">
+                              <div type="button" class="btn btn-tool col-sm-12" data-card-widget="collapse"><h3 class="card-title">Permintaan Laboratorium</h3><i class="fas fa-plus"></i></div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                              <div class="form-group row text-sm"> 
+                                <div class="col-sm-12"> 
+                                  Indikasi / Klinis :  <input type="text" name="diagnosa_klinislab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                </div>
+                                <div class="col-sm-12">
+                                  Informasi Tambahan : <input type="text" name="informasi_tambahanlab" class="form-control form-control-sm" autocomplete="off" style="width: 100%">
+                                </div>
+                                <div class="col-sm-12 pt-2 select2-purple">
+                                  pemeriksaan
+                                  <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanlab[]" id="pemeriksaanlab" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
+                                    @foreach ($jnsperawatanlab as $key)
+                                      <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
+                                    @endforeach
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -395,6 +420,11 @@
                             <textarea class="form-control form-control-sm" rows="3" name="tata" autocomplete="off" style="width: 100%">{{ old('tata', $penilaianralanobsgyn->tata) }}</textarea>
                           </div>
                         </div>
+                      </div>
+                      <table id="testing" class="table table-bordered table-striped text-sm">
+                      </table>
+                      <div class="col-sm-12">
+                        <div type="text" class="btn btn-warning addmore float-right">+ Tambah Obat</div>
                       </div>
                     </div>
                   </div>
@@ -441,6 +471,57 @@
 <!-- ./wrapper -->
 
 <!-- SCRIPTS -->
-@include('template.script')
+@include('template.script_table')
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+  })
+
+
+  var i=1;
+  $(".addmore").on('click',function(){
+    if(i == 1){
+      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
+    }
+
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresep'+i).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    i++;
+  });
+
+  $(".addmorerad").on('click',function(){
+    // if(i == 1){
+    //   document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
+    // }
+
+    document.getElementById("permintaanlab").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresep'+i).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    i++;
+  });
+
+  $("#hapusresep").on('click', function() {
+    $(this).parents("tr").remove();
+    return false;
+  });
+</script>
 </body>
 </html>
+

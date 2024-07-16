@@ -72,7 +72,7 @@
               <p>Admin</p>
             </a>
             <li class="nav-item">
-              <a href="{{route('menu-rajal')}}" class="nav-link {{ Request::is('form*') ? 'active' : '' }}">
+              <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Kelola Login</p>
               </a>
