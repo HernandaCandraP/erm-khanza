@@ -10,15 +10,17 @@ use Auth;
 class FormControllerRanap extends Controller
 {
     public function menuranap (Request $request){
-        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal')
+        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'rg.no_rawat2', 'p2.no_rkm_medis as no_rkm_medis2', 'p2.nm_pasien as nm_pasien2')
             ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
             ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
             ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
             ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
             ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
-            ->where('dr.kd_dokter',  Session::get('username'))
+            ->leftjoin('ranap_gabung as rg', 'rg.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('reg_periksa as rp2', 'rp2.no_rawat', '=', 'rg.no_rawat2')
+            ->leftjoin('pasien as p2', 'p2.no_rkm_medis', '=', 'rp2.no_rkm_medis')
+            ->where('dr.kd_dokter', Session::get('username'))
             ->get();
-
         
         // dd($pasienranap);
         

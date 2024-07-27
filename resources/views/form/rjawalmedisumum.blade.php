@@ -280,7 +280,11 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">
-                            <img src="{{asset('image/semua.png')}}" class="mx-auto d-block"/><br>
+                            @if ($nmpoli == 'Poliklinik Jantung')
+                              <img src="{{asset('image/jantung.jpg')}}" class="mx-auto d-block"/><br>
+                            @else
+                              <img src="{{asset('image/semua.png')}}" class="mx-auto d-block"/><br>
+                            @endif
                           </div>
                         </div>
                         <div class="col-sm-6">

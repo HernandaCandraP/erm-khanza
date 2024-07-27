@@ -17,13 +17,13 @@
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
-      <div class="row">
+      <div class="row" hidden>
           <div class="col-md-4 col-sm-6 col-12">
             <div class="info-box">
               <span class="info-box-icon bg-warning"><i class="fa fa-users"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">PASIEN RAWAT INAP BULAN INI</span>
-                <span class="info-box-number">{{$pasienbulan}}</span>
+                {{-- <span class="info-box-number">{{$pasienbulan}}</span> --}}
               </div>
             </div>
           </div>
@@ -58,19 +58,48 @@
                   </thead>
                   <tbody>
                     @foreach ($pasienranap as $no => $key)
-                    <tr>
-                        <th scope="row"> {{$no+1}}. </th>
-                        <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs"> {{$key->no_rawat}}</a></td>
-                        <td>{{$key->no_rkm_medis}}</td>
-                        <td>{{$key->nm_pasien}}</td>
-                        <td>{{$key->kd_kamar}}</td>
-                        <td>{{$key->nm_bangsal}}</td>
-                        <td>{{$key->diagnosa_awal}}</td>
-                        <td>{{$key->diagnosa_akhir}}</td>
-                        <td>{{$key->tgl_masuk}} {{$key->jam_masuk}}</td>
-                        <td>{{$key->tgl_keluar}} {{$key->jam_keluar}}</td>
-                    </tr> 
-                    @endforeach
+                        @if ($key->no_rawat2 != null)
+                          <tr>
+                            <th scope="row"> {{$no+1}}. </th>
+                            <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-info btn-xs">{{$key->no_rawat}}</a></td>
+                            <td>{{$key->no_rkm_medis}}</td>
+                            <td>{{$key->nm_pasien}}</td>
+                            <td>{{$key->kd_kamar}}</td>
+                            <td>{{$key->nm_bangsal}}</td>
+                            <td>{{$key->diagnosa_awal}}</td>
+                            <td>{{$key->diagnosa_akhir}}</td>
+                            <td>{{$key->tgl_masuk}} {{$key->jam_masuk}}</td>
+                            <td>{{$key->tgl_keluar}} {{$key->jam_keluar}}</td>
+                          </tr> 
+                          <tr>
+                            <th scope="row"> <b hidden>{{$no+1}}.</b></th>
+                            <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat2]) }}" class="btn btn-block btn-info btn-xs">{{$key->no_rawat2}}</a></td>
+                            <td>{{$key->no_rkm_medis2}}</td>
+                            <td>{{$key->nm_pasien2}}</td>
+                            <td>{{$key->kd_kamar}}</td>
+                            <td>{{$key->nm_bangsal}}</td>
+                            <td>{{$key->diagnosa_awal}}</td>
+                            <td>{{$key->diagnosa_akhir}}</td>
+                            <td>{{$key->tgl_masuk}} {{$key->jam_masuk}}</td>
+                            <td>{{$key->tgl_keluar}} {{$key->jam_keluar}}</td>
+                            <td>&nbsp;</td>
+                          </tr> 
+                        @else
+                          <tr>
+                              <th scope="row"> {{$no+1}}. </th>
+                              <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
+                              <td>{{$key->no_rkm_medis}}</td>
+                              <td>{{$key->nm_pasien}}</td>
+                              <td>{{$key->kd_kamar}}</td>
+                              <td>{{$key->nm_bangsal}}</td>
+                              <td>{{$key->diagnosa_awal}}</td>
+                              <td>{{$key->diagnosa_akhir}}</td>
+                              <td>{{$key->tgl_masuk}} {{$key->jam_masuk}}</td>
+                              <td>{{$key->tgl_keluar}} {{$key->jam_keluar}}</td>
+                          </tr> 
+                        @endif
+                     
+                      @endforeach
                   </tbody>
                 </table>
               </div>

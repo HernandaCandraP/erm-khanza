@@ -47,22 +47,35 @@ class PegawaiController extends Controller
             ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->orderby('a.jam_reg', 'desc')->get();
 
-        // dd($kdpoli);
-        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal')
+        $rujukaninternal = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->leftjoin('rujukan_internal_poli as int', 'int.no_rawat', '=', 'a.no_rawat')
+            ->where('int.kd_dokter', $username)->where('a.tgl_registrasi', $date)
+            ->orderby('a.jam_reg', 'desc')->get();
+
+        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'rg.no_rawat2', 'p2.no_rkm_medis as no_rkm_medis2', 'p2.nm_pasien as nm_pasien2')
             ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
             ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
             ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
             ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
             ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('ranap_gabung as rg', 'rg.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('reg_periksa as rp2', 'rp2.no_rawat', '=', 'rg.no_rawat2')
+            ->leftjoin('pasien as p2', 'p2.no_rkm_medis', '=', 'rp2.no_rkm_medis')
             ->where('dr.kd_dokter', $username)
             ->get();
 
+            // 2024-07-23 08:54:58.0	Admin Utama 	insert into ranap_gabung values('2024/01/18/000005','2024/01/18/000083)
+
+        // dd($pasienranap);
+        
         return view('dokter/home', [
             'totalpasien' => $totalpasien, 
             'pasienbulan' => $pasienbulan, 
             'polibulan' => $polibulan, 
             'polihari' => $polihari, 
             'pasienranap' => $pasienranap, 
+            'rujukaninternal' => $rujukaninternal, 
             // 'pasienaktif' => $pasienaktif, 
             'pasienterakhir' => $pasienterakhir, 
         ]);

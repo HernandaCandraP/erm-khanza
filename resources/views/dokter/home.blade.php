@@ -66,6 +66,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-12 col-lg-6">
+            <div class="col-md-12">
             <div class="card">
               <div class="card-header">
                 <h5 class="float-left">Antrian {{Session::get('nmpoli')}}</h5>
@@ -102,6 +103,45 @@
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
+            </div>
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="float-left">Rujukan Internal {{Session::get('nmpoli')}}</h5>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table id="example4" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>No. Rawat</th>
+                      <th>No. RM</th>
+                      <th>Nama Lengkap</th>
+                      <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      @foreach ($rujukaninternal as $no => $key)
+                      <tr>
+                          <th scope="row"> {{$no+1}}. </th>
+                          <th><a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
+                          <td>{{$key->no_rkm_medis}}</td>
+                          <td>
+                            {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
+                            {{$key->nm_pasien}}
+                          </td>
+                          <td>{{$key->stts}}</td>
+                      </tr> 
+                      @endforeach
+                    
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
           </div>
           <div class="col-md-12 col-lg-6">
             <div class="card">
@@ -122,13 +162,31 @@
                     </thead>
                     <tbody>
                       @foreach ($pasienranap as $no => $key)
-                      <tr>
-                          <th scope="row"> {{$no+1}}. </th>
-                          <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
-                          <td>{{$key->no_rkm_medis}}</td>
-                          <td>{{$key->nm_pasien}}</td>
-                          <td>{{$key->nm_bangsal}}</td>
-                      </tr> 
+                        @if ($key->no_rawat2 != null)
+                          <tr>
+                            <th scope="row"> {{$no+1}}. </th>
+                            <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-info btn-xs">{{$key->no_rawat}}</a></td>
+                            <td>{{$key->no_rkm_medis}}</td>
+                            <td>{{$key->nm_pasien}}</td>
+                            <td>{{$key->nm_bangsal}}</td>
+                          </tr> 
+                          <tr>
+                            <th scope="row"> <b hidden>{{$no+1}}.</b></th>
+                            <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat2]) }}" class="btn btn-block btn-info btn-xs">{{$key->no_rawat2}}</a></td>
+                            <td>{{$key->no_rkm_medis2}}</td>
+                            <td>{{$key->nm_pasien2}}</td>
+                            <td>&nbsp;</td>
+                          </tr> 
+                        @else
+                          <tr>
+                              <th scope="row"> {{$no+1}}. </th>
+                              <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
+                              <td>{{$key->no_rkm_medis}}</td>
+                              <td>{{$key->nm_pasien}}</td>
+                              <td>{{$key->nm_bangsal}}</td>
+                          </tr> 
+                        @endif
+                     
                       @endforeach
                     </tbody>
                 </table>

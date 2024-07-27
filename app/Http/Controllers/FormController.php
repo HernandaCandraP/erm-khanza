@@ -23,8 +23,14 @@ class FormController extends Controller
         ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
         ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')->orderby('a.jam_reg', 'desc')->get();
 
+        $rujukaninternal = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
+        ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+        ->leftjoin('rujukan_internal_poli as int', 'int.no_rawat', '=', 'a.no_rawat')
+        ->where('int.kd_dokter', $username)->where('a.tgl_registrasi', $date)
+        ->orderby('a.jam_reg', 'desc')->get();
+
         return view('form/list-rajal', [
-            // 'pasienaktif' => $pasienaktif, 
+            'rujukaninternal' => $rujukaninternal, 
             'pasienterakhir' => $pasienterakhir, 
         ]);
     }
@@ -81,10 +87,12 @@ class FormController extends Controller
             $getimage = 'image/LokalisOrtho.png';
         }elseif($getsps == 'Paru'){
             $getimage = 'image/LokalisParu.png';
-        }elseif($getsps == 'Syaraf' || $getsps == 'Anak' || $getsps == 'Dalam'|| $getsps == 'Jantung'|| $getsps == 'Obsgyn'){
+        }elseif($getsps == 'Syaraf' || $getsps == 'Anak' || $getsps == 'Dalam'|| $getsps == 'Obsgyn'){
             $getimage = 'image/semua.png';
         }elseif($getsps == 'Mata' ){
             $getimage = 'image/mata.png';
+        }elseif($getsps == 'Jantung' ){
+            $getimage = 'image/jantung.png';
         }else{
             dd('gambar belum ada');
         }
@@ -501,6 +509,7 @@ class FormController extends Controller
             'jnsperawatanlab' => $jnsperawatanlab,
             'jnsperawatanrad' => $jnsperawatanrad,
             'resepdokter' => $resepdokter,
+            'nmpoli' => $nmpoli,
             'penilaianralanumum' => $penilaianralanumum,
             'no_rawat' => $no_rawat
         ]);
