@@ -88,6 +88,10 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::post('/menu-ranap/tambah', 'FormControllerRanap@create')->name('formri-tambah');
     Route::get('/menu-ranap/hapus', 'FormControllerRanap@delete')->name('formri-hapus');
 
+    // Menu Radologi
+    Route::get('/menu-radiologi', 'FormControllerRad@menuradiologi')->name('menu-radiologi');
+    Route::get('/menu-radiologi/form', 'FormControllerRad@formradiologi')->name('form-radiologi');
+    Route::post('/menu-radiologi/tambah', 'FormControllerRad@create')->name('formrad-tambah');
 });
 
 // login pegawai

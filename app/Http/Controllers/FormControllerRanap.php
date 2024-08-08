@@ -299,12 +299,29 @@ class FormControllerRanap extends Controller
         // ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
         // ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
 
+        $getsps = Session::get('nm_sps');
+        $getimage = '';
+        if($getsps == 'Bedah'){
+            $getimage = 'image/LokalisOrtho.png';
+        }elseif($getsps == 'Paru'){
+            $getimage = 'image/LokalisParu.png';
+        }elseif($getsps == 'Syaraf' || $getsps == 'Anak' || $getsps == 'Dalam'|| $getsps == 'Obsgyn'){
+            $getimage = 'image/semua.png';
+        }elseif($getsps == 'Mata' ){
+            $getimage = 'image/mata.png';
+        }elseif($getsps == 'Jantung' ){
+            $getimage = 'image/jantung.jpg';
+        }else{
+            dd('gambar belum ada');
+        }
+
         return view('formranap/formri-medisumum', [
             'detailpasien' => $detailpasien,
             'medisumum' => $medisumum,
             'jnsperawatanlab' => $jnsperawatanlab,
             'jnsperawatanrad' => $jnsperawatanrad,
             'resepdokter' => $resepdokter,
+            'getimage' => $getimage,
             'no_rawat' => $no_rawat
         ]);
     }
@@ -627,7 +644,7 @@ class FormControllerRanap extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatInap') {
             $permintaan = $this->permintan($request);
-            $request->tata = $permintaan['terapi'];
+            $request->tata = "-". $permintaan['terapi'];
             $request->lab = $permintaan['lab'];
             $request->rad = $permintaan['rad'];
 

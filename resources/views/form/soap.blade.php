@@ -42,8 +42,11 @@
                         <div class="col-7">&nbsp; {{$detailpasien[0]->umur}}</div>
                       </div>
                     </div>
-                    <div class="col-sm-6 pt-3">
-                      <a href="{{ route('form/listdata', ['no_rawat' => $detailpasien[0]->no_rawat, 'tabel' => 'DataPemeriksaanRawatJalan']) }}" class="btn btn-warning btn-sm">List Data Soap Sebelumnya</a>
+                    <div class="col-sm-3 pt-3">
+                      <a href="{{ route('form/listdata', ['no_rawat' => $detailpasien[0]->no_rawat, 'no_rkm_medis' => $detailpasien[0]->no_rkm_medis, 'tabel' => 'DataPemeriksaanRawatJalan']) }}" class="btn btn-warning btn-sm">List Data Soap Sekarang</a>
+                    </div>
+                    <div class="col-sm-3 pt-3">
+                      <a href="{{ route('form/listdata', ['no_rawat' => $detailpasien[0]->no_rawat, 'no_rkm_medis' => $detailpasien[0]->no_rkm_medis, 'tabel' => 'DataKontrolRawatJalan']) }}" class="btn btn-success btn-sm">4 Riwayat Kontrol Terakhir</a>
                     </div>
                   </div>
                 </div>

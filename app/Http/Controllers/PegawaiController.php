@@ -29,8 +29,8 @@ class PegawaiController extends Controller
 
     public function dokter(){
         $username = Session::get('username');
-        $month = date('Y-m'); //'2023-06'; //
-        $date = date('Y-m-d'); //'2023-06-15'; //
+        $month = '2023-06'; // date('Y-m'); //
+        $date = '2023-06-15'; // date('Y-m-d'); //
 
         $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
         $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
@@ -46,6 +46,24 @@ class PegawaiController extends Controller
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
             ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->orderby('a.jam_reg', 'desc')->get();
+            
+        $ceksoapdokter = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.nip as petugasrs')->distinct()
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
+            ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->where('pr.nip', '=', $username)
+            ->orderby('a.jam_reg', 'desc')->get();
+    
+        foreach ($pasienterakhir as $key => $value) {
+            $pasienterakhir[$key]->stts = "Belum";
+            if($ceksoapdokter->isNotEmpty()){
+                foreach ($ceksoapdokter as $keysoap => $soapsudah) {
+                    if($value->no_rawat == $soapsudah->no_rawat){
+                        $pasienterakhir[$key]->stts = "Sudah";
+                    }
+                }
+            }
+        }
 
         $rujukaninternal = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')

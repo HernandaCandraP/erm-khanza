@@ -46,6 +46,14 @@
               <p>Beranda</p>
             </a>
           </li>
+          @if(Auth::guard('pegawai')->user()->nik == "D023" || Auth::guard('pegawai')->user()->nik == "0110")
+          <li class="nav-item">
+            <a href="{{route('menu-radiologi')}}" class="nav-link {{ Request::is('menu-radiologi*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file-medical"></i>
+              <p>Radiologi</p>
+            </a>
+          </li>
+          @endif
           <li class="nav-item">
             <a href="{{route('menu-rajal')}}" class="nav-link {{ Request::is('form*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-book-medical"></i>

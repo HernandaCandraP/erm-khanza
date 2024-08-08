@@ -93,7 +93,13 @@
                           {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
                           {{$key->nm_pasien}}
                         </td>
-                        <td>{{$key->stts}}</td>
+                        <th>
+                          @if ($key->stts == 'Belum' )
+                            <p class="text-danger">Belum</p>
+                          @else
+                            <p class="text-success">Sudah</p>
+                          @endif
+                        </th>
                     </tr> 
                     @endforeach
                   

@@ -11,8 +11,8 @@ class FormController extends Controller
 {
     public function menurajal(Request $request){
         $username = Session::get('username');
-        $month = date('Y-m'); //'2023-06'; //
-        $date = date('Y-m-d'); //'2023-06-15'; //
+        $month = '2023-06'; // date('Y-m'); //
+        $date = '2023-06-15'; // date('Y-m-d'); //
         
         $kdpoli = Session::get('getpoli');
 
@@ -22,6 +22,24 @@ class FormController extends Controller
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
         ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')->orderby('a.jam_reg', 'desc')->get();
+
+        $ceksoapdokter = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.nip as petugasrs')->distinct()
+        ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+        ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
+        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+        ->where('pr.nip', '=', $username)
+        ->orderby('a.jam_reg', 'desc')->get();
+
+        foreach ($pasienterakhir as $key => $value) {
+            $pasienterakhir[$key]->stts = "Belum";
+            if($ceksoapdokter->isNotEmpty()){
+                foreach ($ceksoapdokter as $keysoap => $soapsudah) {
+                    if($value->no_rawat == $soapsudah->no_rawat){
+                        $pasienterakhir[$key]->stts = "Sudah";
+                    }
+                }
+            }
+        }
 
         $rujukaninternal = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
@@ -92,7 +110,7 @@ class FormController extends Controller
         }elseif($getsps == 'Mata' ){
             $getimage = 'image/mata.png';
         }elseif($getsps == 'Jantung' ){
-            $getimage = 'image/jantung.png';
+            $getimage = 'image/jantung.jpg';
         }else{
             dd('gambar belum ada');
         }
@@ -1553,6 +1571,15 @@ class FormController extends Controller
 
     public function listdata(Request $request){
         // dd($request->all());
+        $listnorawat = DB::table('reg_periksa')->select('no_rawat')
+            ->where('no_rkm_medis', $request->no_rkm_medis)
+            ->orderby('tgl_registrasi', 'DESC')->limit(4)->get();
+        
+        $arraylistnorawat = [];
+        foreach ($listnorawat as $key => $value) {
+            array_push($arraylistnorawat, $value->no_rawat);
+        }
+
         if($request->tabel == 'DataPemeriksaanRawatJalan'){            
             $data = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'c.*', 'd.nama')
                 ->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')
@@ -1561,6 +1588,16 @@ class FormController extends Controller
                 ->orderby('c.tgl_perawatan', 'DESC')
                 ->where('a.no_rawat', $request->no_rawat);
             return $this->func_listdata($request, 'form/listsoap', $data, 'Tidak Ada Riwayat Soap');
+        }
+        if($request->tabel == 'DataKontrolRawatJalan'){            
+            $data = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'c.*', 'd.nama')
+                ->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')
+                ->join('pemeriksaan_ralan as c', 'a.no_rawat','=', 'c.no_rawat')
+                ->leftjoin('pegawai as d', 'c.nip','=', 'd.nik')
+                ->orderby('a.no_rawat', 'DESC')
+                ->whereIn('a.no_rawat', $arraylistnorawat);
+
+            return $this->func_listdata($request, 'form/listkontrol', $data, 'Tidak Ada Riwayat Soap');
         }
         elseif($request->tabel == 'DataResumeMedisPasienRawatJalan'){            
             $data = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'c.*', 'd.nama')

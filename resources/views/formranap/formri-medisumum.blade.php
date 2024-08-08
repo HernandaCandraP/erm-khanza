@@ -305,7 +305,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">
-                            <img src="{{asset('image/semua.png')}}" class="mx-auto d-block"/><br>
+                            <img src="{{asset($getimage)}}" class="mx-auto d-block"/><br>
                           </div>
                         </div>
                         <div class="col-sm-6">
