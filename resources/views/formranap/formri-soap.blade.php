@@ -79,6 +79,14 @@
                       <div class="form-inline">Subject :
                         <textarea class="form-control form-control-sm" rows="2" name="keluhan" autocomplete="off" style="width: 100%">{{ old('keluhan', $data->keluhan) }}</textarea>
                       </div>
+                      <div class="form-inline pt-2">Object : 
+                        <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
+                        {{-- <div class="col-sm-10"> 
+                          <div class="form-inline">
+                            <img src="{{asset($getimage)}}" class="mx-auto d-block"/><br>
+                          </div>
+                        </div> --}}
+                      </div>
                       <div class="row text-sm"> 
                         <div class="col-sm-4"> 
                           Suhu
@@ -146,14 +154,6 @@
                           </select>
                         </div>
                       </div>
-                      <div class="form-inline pt-2">Object : 
-                        <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
-                        {{-- <div class="col-sm-10"> 
-                          <div class="form-inline">
-                            <img src="{{asset($getimage)}}" class="mx-auto d-block"/><br>
-                          </div>
-                        </div> --}}
-                      </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group row">
@@ -202,7 +202,7 @@
                                 Pemeriksaan
                                 <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanrad[]" id="pemeriksaanrad" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
                                   @foreach ($jnsperawatanrad as $key)
-                                    <option value="{{ $key->kd_jenis_prw }}"> {{ $key->kd_jenis_prw }} - {{$key->nm_perawatan}} </option>
+                                    <option value="{{ $key->kd_jenis_prw }}">{{$key->nm_perawatan}} || @money($key->total_byr)</option>
                                   @endforeach
                                 </select>
                               </div>
@@ -230,7 +230,7 @@
                                 pemeriksaan
                                 <select class="select2 form-control form-control-sm" multiple="multiple" name="pemeriksaanlab[]" id="pemeriksaanlab" data-placeholder="Pilih Pemeriksaan" data-dropdown-css-class="select2-purple">
                                   @foreach ($jnsperawatanlab as $key)
-                                    <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} </option>
+                                    <option value="{{ $key->kd_jenis_prw }}***{{$key->id_template}}"> {{$key->nm_perawatan}} - {{$key->Pemeriksaan}} || @money($key->total_byr)</option>
                                   @endforeach
                                 </select>
                               </div>
@@ -282,7 +282,7 @@
       document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Total</th><th>Aksi</th></tr>';
     }
 
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || @money($key->ralan) </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
     $('#hapusresep'+i).on('click', function() {
       $(this).parents("tr").remove();

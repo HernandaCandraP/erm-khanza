@@ -117,7 +117,7 @@
                       <div class="form-group row">
                         <div class="col-sm-12 p-2 bg-info h6">Hasil</div>
                         <div class="col-sm-12">
-                          <textarea class="form-control form-control-sm" rows="5" name="hasil" autocomplete="off" style="width: 100%">{{ old('hasil', $hasilrad->hasil ?? null) }}</textarea>
+                          <textarea class="form-control form-control-sm" rows="15" name="hasil" autocomplete="off" style="width: 100%">{{ old('hasil', $hasilrad->hasil ?? null) }}</textarea>
                         </div>
                       </div>
                     </div>

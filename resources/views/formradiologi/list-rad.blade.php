@@ -25,7 +25,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="example" class="table table-bordered table-striped">
                   <thead>
                   <tr>
                     <th>No.</th>
@@ -34,17 +34,27 @@
                     <th>No. RM</th>
                     <th>Tanggal Periksa</th>
                     <th>Jam Periksa</th>
+                    <th>Status</th>
                   </tr>
                   </thead>
                   <tbody>
                     @foreach ($pasienrad as $no => $key)
                       <tr>
                         <th scope="row"> {{$no+1}}. </th>
-                        <td><a href="{{ route('form-radiologi', ['no_rawat' => $key->no_rawat, 'tgl_periksa' => $key->tgl_periksa, 'jam' => $key->jam]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
+                        @if ($cekperiksa[$no] >= 1)
+                          <td><a href="{{ route('form-radiologi', ['no_rawat' => $key->no_rawat, 'tgl_periksa' => $key->tgl_periksa, 'jam' => $key->jam]) }}" class="btn btn-block btn-success btn-xs">{{$key->no_rawat}}</a></td>
+                        @else
+                          <td><a href="{{ route('form-radiologi', ['no_rawat' => $key->no_rawat, 'tgl_periksa' => $key->tgl_periksa, 'jam' => $key->jam]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
+                        @endif
                         <td>{{$key->nm_pasien}}</td>
                         <td>{{$key->no_rkm_medis}}</td>
                         <td>{{$key->tgl_periksa}}</td>
                         <td>{{$key->jam}}</td>
+                        @if ($cekperiksa[$no] >= 1)
+                          <th class="text-success">Sudah Dibaca</th>
+                        @else
+                          <th class="text-danger">Belum Dibaca</th>
+                        @endif
                       </tr> 
                     @endforeach
                   </tbody>
@@ -78,6 +88,11 @@
       }
     })
   })
+  $(document).ready(function (){
+    var table = $('#example').DataTable({
+        pageLength: 20
+    });
+  });
 </script>
 </body>
 </html>

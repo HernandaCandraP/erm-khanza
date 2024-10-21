@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     @include('template.head')
+    <link rel="stylesheet" href="{{asset('tampilan/plugins/daterangepicker/daterangepicker.css')}}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -17,126 +18,78 @@
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
-      <div class="row">
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="far fa-hospital"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">TOTAL PASIEN</span>
-                <span class="info-box-number">{{$totalpasien}}</span>
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Pencarian Berdasarkan Tanggal</h5>
               </div>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-warning"><i class="fa fa-users"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">PASIEN BULAN INI</span>
-                <span class="info-box-number">{{$pasienbulan}}</span>
+              <!-- /.card-header -->
+              <form action="{{route('homeadmin')}}" method="post" class="form-horizontal">
+              {{ csrf_field() }}
+              <div class="card-body row">
+                <div class="input-group col-lg-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="far fa-calendar-alt"></i>
+                    </span>
+                  </div>
+                  <input type="text" name="tanggal" class="form-control float-right" id="reservation">
+                </div>
+                <button type="submit" class="btn btn-success float-right ml-3" name="action" value="simpan">Cari Data</button>
               </div>
+              </form>
+              
+              <!-- /.card-body -->
             </div>
+            <!-- /.card -->
           </div>
-          <!-- /.col -->
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-danger"><i class="fa fa-user-plus"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">PASIEN POLI BULAN INI</span>
-                <span class="info-box-number">{{$polibulan}}</span>
-              </div>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-success"><i class="fas fa-user-clock"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">PASIEN POLI HARI INI</span>
-                <span class="info-box-number">{{$polihari}}</span>
-              </div>
-            </div>
-          </div>
-          <!-- /.col -->
-
+          
         </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-
+      </div>
+      
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-12 col-lg-6">
+          <div class="col-md-12 col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Antrian Poli Hari Ini</h5>
+                <h5 class="float-left">Pertentase Pengisian Dokter <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
               </div>
               <!-- /.card-header -->
-              <div class="card-body">
-                <table id="example3" class="table table-bordered table-striped">
-                  <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>No. Rawat</th>
-                    <th>No. RM</th>
-                    <th>Nama Lengkap</th>
-                    <th>Status</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($pasienterakhir as $no => $key)
-                    <tr>
-                        <th scope="row"> {{$no+1}}. </th>
-                        <th><a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
-                        <td>{{$key->no_rkm_medis}}</td>
-                        <td>
-                          {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
-                          {{$key->nm_pasien}}
-                        </td>
-                        <td>{{$key->stts}}</td>
-                    </tr> 
-                    @endforeach
-                  
-                  </tbody>
-                </table>
+              <div class="card-body row">
+                @foreach ($listdokter as $key => $value)
+                  <div class="col-md-6 card ">
+                    <div class="row">
+                      @if($value->nm_sps != '-')
+                        <div class="col-md-7">
+                          <b>{{$value->nm_dokter}}</b>
+                          <div><b>Poli {{$value->nm_sps}}</b></div>
+                          <div>Total Pasien :&emsp; {{$totalpolibulanperdokter[$key]}}</div>
+                          <div>Sudah Terisi :&emsp;{{$totalpolibulanperdokterinput[$key]}}</div>
+                        </div>
+                        <div class="col-md-5">
+                          <input readonly type="text" class="knob" value="{{$persentasepolibulanperdokter[$key]}}" data-width="100" data-height="100" data-fgColor="#059212">
+                        </div>                          
+                      @else
+                        <div class="col-md-7">
+                          <b>{{$value->nm_dokter}}</b>
+                          <div><b>IGD</b></div>
+                          <div>Total Pasien :&emsp; {{$totalpolibulanperdokter[$key]}}</div>
+                          <div>Sudah Terisi :&emsp;{{$totalpolibulanperdokterinput[$key]}}</div>
+                        </div>
+                        <div class="col-md-5">
+                          <input readonly type="text" class="knob" value="{{$persentasepolibulanperdokter[$key]}}" data-width="100" data-height="100" data-fgColor="#059212">
+                        </div>    
+                      @endif
+                    </div>
+                  </div>
+                @endforeach
               </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
           </div>
-          <div class="col-md-12 col-lg-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="float-left">Pasien Rawat Inap</h5>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>No.</th>
-                      <th>No. Rawat</th>
-                      <th>No. RM</th>
-                      <th>Nama Pasien</th>
-                      <th>Kamar</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($pasienranap as $no => $key)
-                      <tr>
-                          <th scope="row"> {{$no+1}}. </th>
-                          <td><a href="{{ route('formri-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></td>
-                          <td>{{$key->no_rkm_medis}}</td>
-                          <td>{{$key->nm_pasien}}</td>
-                          <td>{{$key->nm_bangsal}}</td>
-                      </tr> 
-                      @endforeach
-                    </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
+          
         </div>
       </div>
     </div>
@@ -154,12 +107,19 @@
 <!-- REQUIRED SCRIPTS -->
 @include('template.script_table')
 <script src="{{asset('tampilan/plugins/jquery-knob/jquery.knob.min.js')}}"></script>
+<!-- InputMask -->
+<script src="{{asset('tampilan/plugins/moment/moment.min.js')}}"></script>
+<script src="{{asset('tampilan/plugins/inputmask/jquery.inputmask.min.js')}}"></script>
+<!-- date-range-picker -->
+<script src="{{asset('tampilan/plugins/daterangepicker/daterangepicker.js')}}"></script>
+
 <script>
   $(function () {
     $('.knob').knob({
       draw: function () {
       }
     })
+    $('#reservation').daterangepicker()
   })
 </script>
 </body>

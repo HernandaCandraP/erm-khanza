@@ -13,15 +13,22 @@ class FormControllerRad extends Controller
         $pasienrad = DB::table('periksa_radiologi as pr')->select('pr.tgl_periksa', 'p.no_rkm_medis', 'p.nm_pasien','pr.no_rawat', 'pr.jam')->distinct()
             ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'pr.no_rawat')
             ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
-            ->where('pr.tgl_periksa', '>' ,  DB::raw('CURDATE() - INTERVAL 5 DAY'))
+            ->where('pr.tgl_periksa', '>' ,  DB::raw('CURDATE() - INTERVAL 7 DAY'))
             // ->where('pr.kd_dokter', Session::get('username'))
-            ->orderBy('pr.tgl_periksa', 'DESC')
+            ->orderBy('pr.jam', 'DESC')
             ->get();
 
-        // dd($pasienrad);
+        $cekperiksa = [];
+        foreach ($pasienrad as $key => $value) {
+            $hasilrad = DB::table('hasil_radiologi')->where([['no_rawat', $value->no_rawat], ['tgl_periksa', $value->tgl_periksa], ['jam', $value->jam]])->first();
+
+            $hasilrad = preg_replace('/\s+/', '', $hasilrad->hasil ?? null);
+            $cekperiksa[] = substr_count($hasilrad, 'TS,Yth,');
+        }
 
         return view('formradiologi/list-rad', [
             'pasienrad' => $pasienrad,
+            'cekperiksa' => $cekperiksa,
         ]);
     }
 

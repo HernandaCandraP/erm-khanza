@@ -22,9 +22,9 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('menu-rajal')}}" class="nav-link {{ Request::is('form*') ? 'active' : '' }}">
+            <a href="{{route('antrean')}}" class="nav-link {{ Request::is('antrean*') ? 'active' : '' }}">
               <i class="nav-icon  fas fa-laptop-house"></i>
-              <p>Pendaftaran</p>
+              <p>Antrean</p>
             </a>
           </li>
           <li class="nav-item">
@@ -79,6 +79,18 @@
               <i class="nav-icon fas fa-home"></i>
               <p>Admin</p>
             </a>
+            <li class="nav-item">
+              <a href="{{route('riwayatradiologi')}}" class="nav-link {{ Request::is('riwayatradiologi') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Riwayat Radiologi</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('persentasepoli')}}" class="nav-link {{ Request::is('persentasepoli') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Persentase Poli</p>
+              </a>
+            </li>
             <li class="nav-item">
               <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tasks"></i>

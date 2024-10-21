@@ -98,6 +98,9 @@
                       <textarea disabled class="form-control form-control-sm" rows="2" name="evaluasi" autocomplete="off" style="width: 100%">{{$value->evaluasi}}</textarea>
                     </div>
                   </div>
+                  <div class="col-sm-12 text-center">
+                    <a href="{{ route('form-rincianbiaya', ['no_rawat' => $value->no_rawat]) }}" class="btn btn-success btn-sm">Rincian Total Biaya</a>
+                  </div>
                 @endforeach
                 </div>
               </div>

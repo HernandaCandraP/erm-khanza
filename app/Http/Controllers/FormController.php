@@ -11,8 +11,8 @@ class FormController extends Controller
 {
     public function menurajal(Request $request){
         $username = Session::get('username');
-        $month = '2023-06'; // date('Y-m'); //
-        $date = '2023-06-15'; // date('Y-m-d'); //
+        $month = date('Y-m'); //'2023-06'; // 
+        $date = date('Y-m-d'); //'2023-06-15'; // 
         
         $kdpoli = Session::get('getpoli');
 
@@ -30,6 +30,13 @@ class FormController extends Controller
         ->where('pr.nip', '=', $username)
         ->orderby('a.jam_reg', 'desc')->get();
 
+        $awalmedisbedah = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.kd_dokter as petugasrs')->distinct()
+        ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+        ->leftjoin('penilaian_medis_ralan_bedah as pr', 'a.no_rawat','=', 'pr.no_rawat')
+        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+        ->where('pr.kd_dokter', '=', $username)
+        ->orderby('a.jam_reg', 'desc')->get();
+
         foreach ($pasienterakhir as $key => $value) {
             $pasienterakhir[$key]->stts = "Belum";
             if($ceksoapdokter->isNotEmpty()){
@@ -39,11 +46,19 @@ class FormController extends Controller
                     }
                 }
             }
+            if($awalmedisbedah->isNotEmpty()){
+                foreach ($awalmedisbedah as $keysoap => $ambedah) {
+                    if($value->no_rawat == $ambedah->no_rawat){
+                        $pasienterakhir[$key]->stts = "Sudah";
+                    }
+                }
+            }
         }
 
-        $rujukaninternal = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
+        $rujukaninternal = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts', 'p.nm_poli')
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('rujukan_internal_poli as int', 'int.no_rawat', '=', 'a.no_rawat')
+        ->leftjoin('poliklinik as p', 'p.kd_poli', '=', 'a.kd_poli')
         ->where('int.kd_dokter', $username)->where('a.tgl_registrasi', $date)
         ->orderby('a.jam_reg', 'desc')->get();
 
@@ -79,6 +94,16 @@ class FormController extends Controller
             $data->jam_rawat_lama = $request->jam_rawat;
         }else{
             $data = DB::table('pemeriksaan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
+        
+            // ambil riwayat alergi
+            $riwayatalergi = DB::table('reg_periksa as a')->select('a.no_rawat', 'pr.alergi')
+            ->join('pemeriksaan_ralan as pr', 'pr.no_rawat','=', 'a.no_rawat')
+            ->where('a.no_rkm_medis', $detailpasien[0]->no_rkm_medis)
+            ->where('pr.alergi', '!=', '')
+            ->where('pr.alergi', '!=', '-')
+            ->groupby('pr.alergi')
+            ->get();
+            
             // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
             if($data != null){
                 foreach ($data as $key => $value) {
@@ -95,6 +120,16 @@ class FormController extends Controller
                     $data->$key = "";
                 }
             }
+
+            // tampilkan alergi di soap
+            $alergi = '';
+            if($riwayatalergi != null){
+                foreach ($riwayatalergi as $key => $value) {
+                    $alergi .= $value->alergi . ', ';
+                }
+                $data->alergi = $alergi;
+            }
+
             $data->nip = $kd_dokter;
             $data->nama = Auth::guard('pegawai')->user()->nama;
         }
@@ -115,8 +150,8 @@ class FormController extends Controller
             dd('gambar belum ada');
         }
 
-        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
-        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan')->where('status', '1')->get();
+        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
+        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr')->where('status', '1')->get();
                 
         // $jnspenyakit = DB::table('penyakit as p')->select('p.kd_penyakit', 'p.nm_penyakit')->orderby('kd_penyakit', 'ASC')->get();
 
@@ -128,6 +163,116 @@ class FormController extends Controller
             // 'jnspenyakit' => $jnspenyakit,
             'jnsperawatanlab' => $jnsperawatanlab,
             'jnsperawatanrad' => $jnsperawatanrad,
+            'no_rawat' => $no_rawat
+        ]);
+    }
+
+    public function rincianbiaya(Request $request){
+        //biaya radiologi
+        $biayarad = DB::table('periksa_radiologi as pr')->select('pr.*', 'jpr.nm_perawatan', DB::raw('count(*) as total'))
+            ->leftjoin('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw', '=', 'pr.kd_jenis_prw')
+            ->where('pr.no_rawat', $request->no_rawat)
+            ->orderBy('jpr.nm_perawatan', 'DESC')
+            ->groupBy('pr.kd_jenis_prw') 
+            ->get();
+        
+        // Bacaan Rad
+        $bacaanrad = DB::table('hasil_radiologi')->where('no_rawat', $request->no_rawat)->orderBy('tgl_periksa', 'DESC')->get();
+        
+        $getgambar = DB::table('gambar_radiologi')->where('no_rawat', $request->no_rawat)->orderBy('tgl_periksa', 'DESC')->get();
+
+        $gambarrad = [];
+        if($getgambar->isNotEmpty()){
+            foreach ($getgambar as $key => $value) {
+                $gambarrad[] = str_replace("simrs-rsba", "", env('APP_URL')) .'budiasih/radiologi/'. $value->lokasi_gambar;
+            }
+        }
+
+        // biaya lab
+        $biayalab = DB::table('periksa_lab as pl')->select('pl.*', 'jpl.nm_perawatan', DB::raw('count(*) as total'))
+            ->leftjoin('jns_perawatan_lab as jpl', 'jpl.kd_jenis_prw', '=', 'pl.kd_jenis_prw')
+            ->where('pl.no_rawat', $request->no_rawat)
+            ->orderBy('jpl.nm_perawatan', 'DESC')
+            ->groupBy('pl.kd_jenis_prw') 
+            ->get();
+        
+        // bacaan lab
+        $bacaanlab =  DB::table('detail_periksa_lab as detail')->select('detail.*', 'jpl.nm_perawatan', 'b.pemeriksaan', 'b.satuan')
+            ->leftjoin('jns_perawatan_lab as jpl', 'jpl.kd_jenis_prw', '=', 'detail.kd_jenis_prw')
+            ->leftjoin('template_laboratorium as b', 'b.id_template', '=', 'detail.id_template')
+            ->orderBy('jpl.nm_perawatan', 'DESC')
+            ->where('no_rawat', $request->no_rawat)
+            ->get();
+
+        // biaya obat
+        $biayaobat = DB::table('detail_pemberian_obat as dpo')->select('dpo.*', 'db.nama_brng')
+            ->leftjoin('databarang as db', 'db.kode_brng', '=', 'dpo.kode_brng')
+            ->where('dpo.no_rawat', $request->no_rawat)
+            ->orderBy('db.nama_brng', 'DESC')
+            ->get();
+        
+        // biaya penanganan dokter
+        $biayapenanganandr = DB::table('rawat_jl_dr as dr')->select('dr.*', 'jns.nm_perawatan', DB::raw('count(*) as total'))
+            ->leftjoin('jns_perawatan as jns', 'dr.kd_jenis_prw','=', 'jns.kd_jenis_prw')
+            ->where('dr.no_rawat',  $request->no_rawat)
+            ->orderBy('jns.nm_perawatan', 'DESC')
+            ->groupBy('jns.kd_jenis_prw') 
+            ->get();
+        
+        // biaya penanganan perawat
+        $biayapenangananpr = DB::table('rawat_jl_pr as pr')->select('pr.*', 'jns.nm_perawatan', DB::raw('count(*) as total'))
+            ->leftjoin('jns_perawatan as jns', 'pr.kd_jenis_prw','=', 'jns.kd_jenis_prw')
+            ->where('pr.no_rawat',  $request->no_rawat)
+            ->orderBy('jns.nm_perawatan', 'DESC')
+            ->groupBy('jns.kd_jenis_prw') 
+            ->get();
+
+        // biaya administrasi
+        $detailpasien = DB::table('reg_periksa as a')->select('a.biaya_reg','b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
+        $no_rawat = $request->no_rawat;
+
+        // dd($request->all());
+        $hargatotal = 0;
+        foreach($biayarad as $key => $value) {
+            // print($value->nm_perawatan . "|| biaya : ". $value->biaya . "|| Total : ". $value->total ."|| Harga Total : ". $value->total * $value->biaya. "<br>");
+            $hargatotal += $value->total * $value->biaya;
+        }
+
+        foreach($biayalab as $key => $value) {
+            // print($value->nm_perawatan . "|| biaya : ". $value->biaya . "|| Total : ". $value->total ."|| Harga Total : ". $value->total * $value->biaya. "<br>");
+            $hargatotal += $value->total * $value->biaya;
+        }
+
+        foreach($biayaobat as $key => $value) {
+            // print($value->nama_brng . "|| harga : ". $value->biaya_obat ."|| Jumlah : ". $value->jml ."|| Harga Total : ". $value->total. "<br>");
+            $hargatotal += $value->total;
+        }
+
+        foreach($biayapenanganandr as $key => $value) {
+            // print($value->nm_perawatan . "|| harga : ". $value->biaya_rawat ."|| Jumlah : ". $value->total ."|| Harga Total : ". $value->total * $value->biaya_rawat. "<br>");
+            $hargatotal += $value->total * $value->biaya_rawat;
+        }
+
+        foreach($biayapenangananpr as $key => $value) {
+            // print($value->nm_perawatan . "|| harga : ". $value->biaya_rawat ."|| Jumlah : ". $value->total ."|| Harga Total : ". $value->total * $value->biaya_rawat. "<br>");
+            $hargatotal += $value->total * $value->biaya_rawat;
+        }
+
+        $hargatotal += $detailpasien[0]->biaya_reg;
+        
+        // dd($bacaanlab, $hargatotal);
+
+        return view('form/rincianbiaya', [
+            'detailpasien' => $detailpasien,
+            'biayarad' => $biayarad,
+            'biayalab' => $biayalab,
+            'biayaobat' => $biayaobat,
+            'biayapenanganandr' => $biayapenanganandr,
+            'biayapenangananpr' => $biayapenangananpr,
+            'hargatotal' => $hargatotal,
+            'bacaanrad' => $bacaanrad,
+            'bacaanlab' => $bacaanlab,
+            'gambarrad' => $gambarrad,
             'no_rawat' => $no_rawat
         ]);
     }
@@ -164,8 +309,8 @@ class FormController extends Controller
             // dd($penilaianralanparu, $ambilttv);
         }
 
-        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
-        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan')->where('status', '1')->get();
+        $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
+        $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr')->where('status', '1')->get();
         $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
         ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
         ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')

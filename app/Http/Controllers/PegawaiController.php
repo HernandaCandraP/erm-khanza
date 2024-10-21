@@ -29,8 +29,8 @@ class PegawaiController extends Controller
 
     public function dokter(){
         $username = Session::get('username');
-        $month = '2023-06'; // date('Y-m'); //
-        $date = '2023-06-15'; // date('Y-m-d'); //
+        $month = date('Y-m'); // '2023-06'; // 
+        $date = date('Y-m-d'); //'2023-06-15'; // 
 
         $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
         $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
@@ -53,12 +53,26 @@ class PegawaiController extends Controller
             ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->where('pr.nip', '=', $username)
             ->orderby('a.jam_reg', 'desc')->get();
+
+        $awalmedisbedah = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.kd_dokter as petugasrs')->distinct()
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->leftjoin('penilaian_medis_ralan_bedah as pr', 'a.no_rawat','=', 'pr.no_rawat')
+            ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->where('pr.kd_dokter', '=', $username)
+            ->orderby('a.jam_reg', 'desc')->get();
     
         foreach ($pasienterakhir as $key => $value) {
             $pasienterakhir[$key]->stts = "Belum";
             if($ceksoapdokter->isNotEmpty()){
                 foreach ($ceksoapdokter as $keysoap => $soapsudah) {
                     if($value->no_rawat == $soapsudah->no_rawat){
+                        $pasienterakhir[$key]->stts = "Sudah";
+                    }
+                }
+            }
+            if($awalmedisbedah->isNotEmpty()){
+                foreach ($awalmedisbedah as $keysoap => $ambedah) {
+                    if($value->no_rawat == $ambedah->no_rawat){
                         $pasienterakhir[$key]->stts = "Sudah";
                     }
                 }
@@ -99,42 +113,234 @@ class PegawaiController extends Controller
         ]);
     }
 
-    public function admin(){
-        $username = Session::get('username');
-        $month = '2023-06'; // date('Y-m'); //
-        $date = '2023-06-15'; // date('Y-m-d'); //
+    public function admin(Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
+            $enddate = date("Y-m-d");
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
 
-        $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
-        $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
+        $persentasepengisian = [];
+        $polibulanperdokterinput = [];
+        $polibulanperdokter= [];
+        $listdokter = DB::table('dokter as d')->select('d.nm_dokter', 'd.kd_dokter', 's.nm_sps')
+            ->leftjoin('spesialis as s', 's.kd_sps','=', 'd.kd_sps')
+            ->where('d.status', '1')->whereNotIn('d.kd_dokter', ['0105','0103','0082', '0110', 'dr.Lie', 'D0000037','0052', '0102'])->orderby('d.kd_sps', 'DESC')->orderby('d.nm_dokter', 'DESC')->get();
+        // dd($listdokter);
+        foreach ($listdokter as $key => $value) {
+            $username = $value->kd_dokter;
+            $polibulanperdokterinput[] = DB::table('reg_periksa as a')->select('a.*', DB::raw('count(*) as jumlah'))
+            ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_bedah as prb', 'a.no_rawat','=', 'prb.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_paru as prp', 'a.no_rawat','=', 'prp.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_kandungan as prk', 'a.no_rawat','=', 'prk.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_neurologi as prn', 'a.no_rawat','=', 'prn.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_anak as pra', 'a.no_rawat','=', 'pra.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_mata as prm', 'a.no_rawat','=', 'prm.no_rawat')
+            ->leftjoin('penilaian_medis_ralan_penyakit_dalam as prd', 'a.no_rawat','=', 'prd.no_rawat')
+            ->leftjoin('penilaian_medis_ralan as pru', 'a.no_rawat','=', 'pru.no_rawat')
+            ->leftjoin('penilaian_medis_igd as pmi', 'a.no_rawat','=', 'pmi.no_rawat')
+            ->where('a.kd_dokter', $username)
+            ->where(function ($query) use ($username) {
+                $query->where('pr.nip', $username)
+                    ->orWhere('prb.kd_dokter', $username)
+                    ->orWhere('prp.kd_dokter', $username)
+                    ->orWhere('prk.kd_dokter', $username)
+                    ->orWhere('prn.kd_dokter', $username)
+                    ->orWhere('pra.kd_dokter', $username)
+                    ->orWhere('prm.kd_dokter', $username)
+                    ->orWhere('prd.kd_dokter', $username)
+                    ->orWhere('pru.kd_dokter', $username)
+                    ->orWhere('pmi.kd_dokter', $username);
+                })
+            // ->where('a.tgl_registrasi', 'like', '%'.$month.'%')
+            ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->groupBy('a.no_rawat') 
+            ->get();
+
+            $polibulanperdokter[] = DB::table('reg_periksa as a')->select('a.*', DB::raw('count(*) as jumlah'))
+            // ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_bedah as prb', 'a.no_rawat','=', 'prb.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_paru as prp', 'a.no_rawat','=', 'prp.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_kandungan as prk', 'a.no_rawat','=', 'prk.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_neurologi as prn', 'a.no_rawat','=', 'prn.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_anak as pra', 'a.no_rawat','=', 'pra.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_mata as prm', 'a.no_rawat','=', 'prm.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan_penyakit_dalam as prd', 'a.no_rawat','=', 'prd.no_rawat')
+            // ->leftjoin('penilaian_medis_ralan as pru', 'a.no_rawat','=', 'pru.no_rawat')
+            // ->leftjoin('penilaian_medis_igd as pmi', 'a.no_rawat','=', 'pmi.no_rawat')
+            ->where('a.kd_dokter', $username)
+            // ->where('a.tgl_registrasi', 'like', '%'.$month.'%')
+            ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->groupBy('a.no_rawat') 
+            ->get();
+        }
+        $totalpolibulanperdokterinput = [];
+        $totalpolibulanperdokter = [];
+        $persentasepolibulanperdokter = [];
+        foreach ($polibulanperdokterinput as $key => $value) {
+            $totalinput = $polibulanperdokterinput[$key]->count();
+            $totalsemua = $polibulanperdokter[$key]->count();
+            $totalpolibulanperdokterinput[$key] = $totalinput;
+            $totalpolibulanperdokter[$key] = $totalsemua;
+            if($totalsemua != 0){
+                $persentasepolibulanperdokter[$key] = round(($totalinput / $totalsemua) * 100, 1);
+            }else{
+                $persentasepolibulanperdokter[$key] = 0;
+            }
+        }
+
+        // $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
+        // $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
         
-        $kdpoli = Session::get('getpoli');
-        $polibulan = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('stts', "!=", 'Belum')->where('tgl_registrasi', 'like', '%'.$month.'%')->count();
+        // $kdpoli = Session::get('getpoli');
+        // $polibulan = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('stts', "!=", 'Belum')->where('tgl_registrasi', 'like', '%'.$month.'%')->count();
 
-        $polihari = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('tgl_registrasi', 'like', '%'.$date.'%')->count();
+        // $polihari = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('tgl_registrasi', 'like', '%'.$date.'%')->count();
 
         // $pasienaktif = DB::table('reg_periksa as rp')->select('p.no_rkm_medis', DB::raw('count(*) as jumlah'), 'p.nm_pasien')->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')->where('kd_dokter', $username)->groupby('no_rkm_medis')->orderby('jumlah', 'desc')->take(10)->get();
 
-        $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
-            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
-            ->orderby('a.jam_reg', 'desc')->get();
+        return view('admin/home', [
+            // 'totalpasien' => $totalpasien, 
+            // 'pasienbulan' => $pasienbulan, 
+            // 'polibulan' => $polibulan, 
+            // 'polihari' => $polihari, 
 
-        // dd($kdpoli);
-        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal')
-            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
-            ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
-            ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
-            ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
-            ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
+            'listdokter' => $listdokter, 
+            'totalpolibulanperdokter' => $totalpolibulanperdokter, 
+            'totalpolibulanperdokterinput' => $totalpolibulanperdokterinput, 
+            'persentasepolibulanperdokter' => $persentasepolibulanperdokter, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+        ]);
+    }
+
+    public function persentasepoli(Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
+            $enddate = date("Y-m-d");
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
+        $polibulanperdokterinput = [];
+        $listsemuaperiksa = DB::table('reg_periksa as rp')->select('rp.no_rawat', 'rp.no_rkm_medis', 'rp.kd_poli', 'p.nm_poli',DB::raw('count(*) as jumlah'))
+            ->leftjoin('poliklinik as p', 'p.kd_poli','=', 'rp.kd_poli')
+            ->whereBetween('rp.tgl_registrasi', [$date, $enddate])
+            ->groupBy('p.kd_poli')
+            ->get();
+        
+        $listsudahperiksa = DB::table('reg_periksa as rp')->select('rp.no_rawat', 'rp.no_rkm_medis', 'rp.kd_poli', 'p.nm_poli', DB::raw('count(*) as jumlah'))
+            ->leftjoin('poliklinik as p', 'p.kd_poli','=', 'rp.kd_poli')
+            ->rightjoin('pemeriksaan_ralan as pr', 'rp.no_rawat','=', 'pr.no_rawat')
+            ->whereBetween('rp.tgl_registrasi', [$date, $enddate])
+            ->whereBetween('pr.tgl_perawatan', [$date, $enddate])
+            ->groupBy('rp.no_rawat') 
+            ->distinct()
             ->get();
 
-        return view('dokter/home', [
-            'totalpasien' => $totalpasien, 
-            'pasienbulan' => $pasienbulan, 
-            'polibulan' => $polibulan, 
-            'polihari' => $polihari, 
-            'pasienranap' => $pasienranap, 
-            // 'pasienaktif' => $pasienaktif, 
-            'pasienterakhir' => $pasienterakhir, 
+        $listpoli = DB::table('poliklinik')->orderby('nm_poli', 'DESC')->where('status', '1')->whereNotIn('kd_poli', ['U0011','-', 'U0010', 'U0012'])->get();
+
+        $kodepoli = [];
+        foreach ($listpoli as $keypoli => $valuepoli) {
+            $total = 0;
+            $totalsemua = 0;
+            // ambil pemeriksaan yang sudah diperiksa
+            foreach ($listsudahperiksa as $key => $sudah) {
+                if ($valuepoli->kd_poli == $sudah->kd_poli) {
+                    $total++;
+                }
+            }
+            // ambil total semua pemeriksaan
+            foreach ($listsemuaperiksa as $key => $semua) {
+                if ($valuepoli->kd_poli == $semua->kd_poli) {
+                    $totalsemua = $semua->jumlah;
+                }
+            }
+            // print($total. '<br>');
+            $kodepoli[$keypoli] = ['sudah' => $total, 'semua' => $totalsemua, 'nm_poli' => $valuepoli->nm_poli];
+        }
+
+        $persentaseinputpoli = [];  
+        foreach ($kodepoli as $key => $value) {
+            if($value['semua'] != 0){
+                $persentaseinputpoli[$key] = ['hasil' =>round(($value['sudah'] / $value['semua']) * 100, 1),
+                                             'sudah' =>$value['sudah'], 
+                                             'semua' =>$value['semua'],
+                                             'nm_poli' =>$value['nm_poli']];
+            }else{
+                $persentaseinputpoli[$key] = ['hasil' =>0, 
+                                             'sudah' =>$value['sudah'], 
+                                             'semua' =>$value['semua'],
+                                             'nm_poli' =>$value['nm_poli']];
+            }
+        }
+
+        return view('admin/persentasepoli', [
+            'persentaseinputpoli' => $persentaseinputpoli, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+        ]);
+    }
+
+    function riwayatradiologi(Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
+            $enddate = date("Y-m-d");
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
+        // $date = '2023-06-15'; // date('Y-m-d'); //
+        // $enddate = '2024-06-15'; // date('Y-m-d'); //
+        $hargatotal = 0;
+
+        $riwayatradiologi = DB::table('periksa_radiologi as pr')->select('pr.*', 'jpr.nm_perawatan')
+            ->leftjoin('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw', '=', 'pr.kd_jenis_prw')
+            ->whereBetween('pr.tgl_periksa', [$date, $enddate])
+            ->orderBy('pr.no_rawat', 'DESC')
+            ->get();
+        
+        $hasilrad = DB::table('hasil_radiologi')
+            ->whereBetween('tgl_periksa', [$date, $enddate])
+            ->orderBy('tgl_periksa', 'DESC')
+            ->get();
+
+        $totalbacaan= 0;
+        foreach($hasilrad as $key => $value) {
+            $string = preg_replace('/\s+/', '', $value->hasil);
+            $string2 = substr_count($string, 'TS,Yth,');
+            $totalbacaan += $string2;
+        }
+
+        foreach($riwayatradiologi as $key => $value) {
+            $hargatotal += $value->biaya;
+        }
+        
+        // dd($riwayatradiologi);
+
+        return view('admin/riwayatradiologi', [
+            'riwayatradiologi' => $riwayatradiologi, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+            'hargatotal' => $hargatotal, 
+            'totalbacaan' => $totalbacaan, 
         ]);
     }
 

@@ -119,31 +119,31 @@
                       <input type="text" name="kd_diagnosa_sekunder" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder', $dataresume->kd_diagnosa_sekunder) }}">
                     </div>
                   </div>
-                  <div class="form-group row" hidden>
+                  <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 2</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder2', $dataresume->diagnosa_sekunder2) }}">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder2', $dataresume->kd_diagnosa_sekunder2) }}" hidden>
+                      <input type="text" name="kd_diagnosa_sekunder2" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder2', $dataresume->kd_diagnosa_sekunder2) }}">
                     </div>
                   </div>
-                  <div class="form-group row" hidden>
+                  <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 3</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder3', $dataresume->diagnosa_sekunder3) }}">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder3', $dataresume->kd_diagnosa_sekunder3) }}" hidden>
+                      <input type="text" name="kd_diagnosa_sekunder3" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder3', $dataresume->kd_diagnosa_sekunder3) }}">
                     </div>
                   </div>
-                  <div class="form-group row" hidden>
+                  <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Diagnosa Sekunder 4</label>
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_sekunder4" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_sekunder4', $dataresume->diagnosa_sekunder4) }}">
                     </div>
                     <div class="col-sm-2">
-                      <input type="text" name="kd_diagnosa_sekunder4" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder4', $dataresume->kd_diagnosa_sekunder4) }}" hidden>
+                      <input type="text" name="kd_diagnosa_sekunder4" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_sekunder4', $dataresume->kd_diagnosa_sekunder4) }}">
                     </div>
                   </div>
                   <div class="form-group row">

@@ -19,7 +19,8 @@ Route::get('/', 'LoginController@index')->name('welcome');
 
 // Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/mutasi', 'HomeController@mutasi')->name('home');
+Route::get('/updateantrean', 'HomeController@updateantrean')->name('updatetask4');
 Route::get('/404', function () {
     return view('404');
 });
@@ -37,12 +38,16 @@ Route::get('/ambil_icd', 'PegawaiController@ambil_icd')->name('ambil_icd');
 
 //admin
 Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
-    Route::get('/admin', 'PegawaiController@admin')->name('homeadmin');
+    Route::match(array('GET','POST'),'/admin', 'PegawaiController@admin')->name('homeadmin');
+    Route::match(array('GET','POST'),'/riwayatradiologi', 'PegawaiController@riwayatradiologi')->name('riwayatradiologi');
+    Route::match(array('GET','POST'),'/persentasepoli', 'PegawaiController@persentasepoli')->name('persentasepoli');
     Route::get('/admin/profile', 'PegawaiController@profile')->name('homeadmin/profile');
     Route::post('/admin/profile/password', 'PegawaiController@gantipassword')->name('homeadmin/profile/password');
 
     Route::get('/admin/kelolalogin', 'LoginController@kelolalogin')->name('kelolalogin');
     Route::get('/admin/resetpassword', 'LoginController@resetpassword')->name('resetpassword');
+
+    Route::get('/admin/persentase', 'PegawaiController@persentase')->name('persentase');
 });
 
 // login dokter
@@ -73,6 +78,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/permintaanlab', 'FormController@permintaanlab')->name('form-permintaanlab');
     Route::get('/form/permintaanrad', 'FormController@permintaanrad')->name('form-permintaanrad');
     Route::get('/form/resep', 'FormController@rjresep')->name('form-resep');
+    Route::get('/form/rincianbiaya', 'FormController@rincianbiaya')->name('form-rincianbiaya');
 
     // Menu Rawat Inap
     Route::get('/menu-ranap', 'FormControllerRanap@menuranap')->name('menu-ranap');
@@ -87,6 +93,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/menu-ranap/listdata', 'FormControllerRanap@listdata')->name('formri-listdata');
     Route::post('/menu-ranap/tambah', 'FormControllerRanap@create')->name('formri-tambah');
     Route::get('/menu-ranap/hapus', 'FormControllerRanap@delete')->name('formri-hapus');
+    Route::get('/menu-ranap/rincianbiaya', 'FormControllerRanap@rincianbiaya')->name('formri-rincianbiaya');
 
     // Menu Radologi
     Route::get('/menu-radiologi', 'FormControllerRad@menuradiologi')->name('menu-radiologi');
@@ -100,5 +107,6 @@ Route::group(['middleware' => ['auth:pegawai', 'is_petugas']], function () {
     Route::get('/pegawai/profile', 'PegawaiController@profile')->name('homepegawai/profile');
     Route::post('/pegawai/profile/password', 'PegawaiController@gantipassword')->name('homepegawai/profile/password');
 
-    // Route::get('/pdt/mutasi', 'PetugasController@menurajal')->name('menu-rajal');
+    Route::get('/antrean', 'PetugasController@antrean')->name('antrean');
+    Route::get('/antrean/updateantrean', 'PetugasController@updateantrean')->name('updateantrean');
 });

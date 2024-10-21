@@ -81,7 +81,7 @@
                     <th>No. Rawat</th>
                     <th>No. RM</th>
                     <th>Nama Lengkap</th>
-                    <th>Poli</th>
+                    <th>Poli Pengirim</th>
                     <th>Status</th>
                   </tr>
                   </thead>
@@ -95,7 +95,7 @@
                           {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
                           {{$key->nm_pasien}}
                         </td>
-                        <td>{{Session::get('nmpoli')}}</td>
+                        <td>{{$key->nm_poli}}</td>
                         <th>
                           @if ($key->stts == 'Belum' )
                             <p class="text-danger">Belum Diperiksa</p>
