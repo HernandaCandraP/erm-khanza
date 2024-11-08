@@ -44,26 +44,26 @@
                     <th>No.</th>
                     <th>No Rawat</th>
                     <th>Tgl. Perawatan</th>
-                    <th>Jam</th>
-                    <th>Suhu(C)</th>
+                    <th>Dokter/Paramedis</th>
+                    {{-- <th>Jam</th> --}}
+                    {{-- <th>Suhu(C)</th>
                     <th>Tensi</th>
                     <th>Nadi(/menit)</th>
                     <th>Respirasi(/menit)</th>
                     <th>Tinggi(cm)</th>
                     <th>Berat(Kg)</th>
                     <th>SpO2(%)</th>
-                    <th>GCS(E,V,M)</th>
-                    <th>Kesadaran</th>
+                    <th>GCS(E,V,M)</th> --}}
+                    {{-- <th>Kesadaran</th> --}}
                     <th>Subject</th>
                     <th>Object</th>
-                    <th>Alergi</th>
-                    <th>L.P.(Cm)</th>
+                    {{-- <th>Alergi</th>
+                    <th>L.P.(Cm)</th> --}}
                     <th>Plan</th>
                     <th>Asesmen</th>
                     <th>Instruksi</th>
-                    <th>Evaluasi</th>
-                    <th>NIP</th>
-                    <th>Dokter/Paramedis</th>
+                    {{-- <th>Evaluasi</th>
+                    <th>NIP</th> --}}
                   </tr>
                   </thead>
                   <tbody>
@@ -71,27 +71,27 @@
                 <tr>
                     <th scope="row"> {{$no+1}}. </th>
                     <td><a class="btn text-primary" href="{{ route('form-soap', ['no_rawat' => $key->no_rawat, 'tgl_perawatan' => $key->tgl_perawatan, 'jam_rawat' => $key->jam_rawat]) }}">{{$key->no_rawat}}</a></td>
-                    <td>{{$key->tgl_perawatan}}</td>
-                    <td>{{$key->jam_rawat}}</td>
-                    <td>{{$key->suhu_tubuh}}</td>
+                    <td>{{$key->tgl_perawatan}} {{$key->jam_rawat}}</td>
+                    <td>{{$key->nama}}</td>
+                    {{-- <td>{{$key->jam_rawat}}</td> --}}
+                    {{-- <td>{{$key->suhu_tubuh}}</td>
                     <td>{{$key->tensi}}</td>
                     <td>{{$key->nadi}}</td>
                     <td>{{$key->respirasi}}</td>
                     <td>{{$key->tinggi}}</td>
                     <td>{{$key->berat}}</td>
                     <td>{{$key->spo2}}</td>
-                    <td>{{$key->gcs}}</td>
-                    <td>{{$key->kesadaran}}</td>
+                    <td>{{$key->gcs}}</td> --}}
+                    {{-- <td>{{$key->kesadaran}}</td> --}}
                     <td>{{$key->keluhan}}</td>
                     <td>{{$key->pemeriksaan}}</td>
-                    <td>{{$key->alergi}}</td>
-                    <td>{{$key->lingkar_perut}}</td>
+                    {{-- <td>{{$key->alergi}}</td>
+                    <td>{{$key->lingkar_perut}}</td> --}}
                     <td>{{$key->rtl}}</td>
                     <td>{{$key->penilaian}}</td>
                     <td>{{$key->instruksi}}</td>
-                    <td>{{$key->evaluasi}}</td>
-                    <td>{{$key->nip}}</td>
-                    <td>{{$key->nama}}</td>
+                    {{-- <td>{{$key->evaluasi}}</td>
+                    <td>{{$key->nip}}</td> --}}
                 </tr> 
                 @endforeach
                   

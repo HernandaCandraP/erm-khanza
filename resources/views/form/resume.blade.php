@@ -54,6 +54,7 @@
                 {{ csrf_field() }}
                 <div  class="card-body">
                   <div class="form-group row ">
+                    <label class="col-sm-12 col-form-label-sm text-danger"><h5>{{$cekriwayatresume == 0 ? "Resume Belum Tersimpan" :  ""}}</h5><hr></label>
                     <label class="col-sm-2 col-form-label-sm">Dokter Penanggung Jawab</label>
                     <div class="col-sm-5">
                       : &nbsp; {{ $dataresume->nama }}

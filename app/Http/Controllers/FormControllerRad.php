@@ -10,25 +10,99 @@ use Auth;
 class FormControllerRad extends Controller
 {
     public function menuradiologi (Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = date("Y-m-d", strtotime("-5 day")); // date('Y-m-d'); //
+            $enddate = date("Y-m-d");
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
         $pasienrad = DB::table('periksa_radiologi as pr')->select('pr.tgl_periksa', 'p.no_rkm_medis', 'p.nm_pasien','pr.no_rawat', 'pr.jam')->distinct()
             ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'pr.no_rawat')
             ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
-            ->where('pr.tgl_periksa', '>' ,  DB::raw('CURDATE() - INTERVAL 7 DAY'))
+            ->whereBetween('pr.tgl_periksa', [$date, $enddate])
+            // ->where('pr.tgl_periksa', '>' ,  DB::raw('CURDATE() - INTERVAL 7 DAY'))
             // ->where('pr.kd_dokter', Session::get('username'))
-            ->orderBy('pr.jam', 'DESC')
+            ->orderBy('pr.tgl_periksa', 'DESC')
             ->get();
-
+        
         $cekperiksa = [];
         foreach ($pasienrad as $key => $value) {
             $hasilrad = DB::table('hasil_radiologi')->where([['no_rawat', $value->no_rawat], ['tgl_periksa', $value->tgl_periksa], ['jam', $value->jam]])->first();
 
             $hasilrad = preg_replace('/\s+/', '', $hasilrad->hasil ?? null);
-            $cekperiksa[] = substr_count($hasilrad, 'TS,Yth,');
+            $hasilrad = strtolower($hasilrad);
+            $total = substr_count($hasilrad, 'yth');
+            $cekperiksa[] = $total;
         }
+        
+        $hasilrad = DB::table('hasil_radiologi as hr')->select('hr.*', 'rp.kd_pj')
+            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'hr.no_rawat')
+            ->whereBetween('hr.tgl_periksa', [$date, $enddate])
+            ->orderBy('hr.tgl_periksa', 'DESC')
+            ->get();
+
+        $totalbacaanBPJS= 0;
+        $totalbacaanUmum= 0;
+        foreach($hasilrad as $key => $value) {
+            $string = preg_replace('/\s+/', '', $value->hasil);
+            $string = strtolower($string);
+            $string2 = substr_count($string, 'yth');
+            if($value->kd_pj == "BPJ"){
+                $totalbacaanBPJS += $string2;
+            }elseif($value->kd_pj == "A02"){
+                $totalbacaanUmum += $string2;
+            }
+        }
+        
+        $totalPermintaan = DB::table('periksa_radiologi as pr')
+            ->selectRaw('COUNT(CASE WHEN rp.kd_pj = "BPJ" THEN 1 END) AS BPJS')
+            ->selectRaw('COUNT(CASE WHEN rp.kd_pj = "A02" THEN 1 END) AS Umum')
+            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'pr.no_rawat')
+            ->leftjoin('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw', '=', 'pr.kd_jenis_prw')
+            ->whereBetween('pr.tgl_periksa', [$date, $enddate])
+            ->get();
+        
+        // UMUM
+        if($totalbacaanUmum >= 1){
+            $persetaseUmum = round(($totalbacaanUmum / $totalPermintaan[0]->Umum) * 100, 1);
+            $persetaseUmum = ($persetaseUmum >= 100) ? 100 : $persetaseUmum;
+        }else{
+            $persetaseUmum = 0;
+        }
+        $bpjs[] = ['hasil' => $persetaseUmum, 
+                'bacaan' =>$totalbacaanUmum, 
+                'permintaan' =>$totalPermintaan[0]->Umum,
+                'jenis' => 'UMUM'];
+        
+        // BPJS
+        if($totalbacaanBPJS >= 1){
+            $persetaseBPJS = round(($totalbacaanBPJS / $totalPermintaan[0]->BPJS) * 100, 1);
+            $persetaseBPJS = ($persetaseBPJS >= 100) ? 100 : $persetaseBPJS;
+        }else{
+            $persetaseBPJS = 0;
+        }
+        $bpjs[] = ['hasil' => $persetaseBPJS, 
+                'bacaan' =>$totalbacaanBPJS, 
+                'permintaan' =>$totalPermintaan[0]->BPJS,
+                'jenis' => 'BPJS'];
+        
+        $bpjs[] = ['hasil' => ($persetaseBPJS + $persetaseUmum) / 2, 
+                'bacaan' => $totalbacaanBPJS + $totalbacaanUmum, 
+                'permintaan' =>$totalPermintaan[0]->BPJS + $totalPermintaan[0]->Umum,
+                'jenis' => 'TOTAL'];
 
         return view('formradiologi/list-rad', [
             'pasienrad' => $pasienrad,
             'cekperiksa' => $cekperiksa,
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+            'bpjs' => $bpjs, 
         ]);
     }
 

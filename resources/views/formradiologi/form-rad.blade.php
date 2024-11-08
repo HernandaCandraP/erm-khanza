@@ -22,7 +22,7 @@
           <!-- Horizontal Form -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">::[ Form Radiologi ]::</h3>
+                <h3 class="card-title"><a href="{{ url()->previous() }}" class="btn btn-primary"><i class="fa fa-arrow-left nav-icon"></i></a>Form Radiologi</h3>
               </div>
               <!-- /.card-header -->
               <form class="form-horizontal">

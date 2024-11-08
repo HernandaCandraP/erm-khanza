@@ -46,7 +46,7 @@
                       <a href="{{ route('form/listdata', ['no_rawat' => $detailpasien[0]->no_rawat, 'no_rkm_medis' => $detailpasien[0]->no_rkm_medis, 'tabel' => 'DataPemeriksaanRawatJalan']) }}" class="btn btn-warning btn-sm">List Data Soap Sekarang</a>
                     </div>
                     <div class="col-sm-3 pt-3">
-                      <a href="{{ route('form/listdata', ['no_rawat' => $detailpasien[0]->no_rawat, 'no_rkm_medis' => $detailpasien[0]->no_rkm_medis, 'tabel' => 'DataKontrolRawatJalan']) }}" class="btn btn-success btn-sm">4 Riwayat Kontrol Terakhir</a>
+                      <a href="{{ route('form/listdata', ['no_rawat' => $detailpasien[0]->no_rawat, 'no_rkm_medis' => $detailpasien[0]->no_rkm_medis, 'tabel' => 'DataKontrolRawatJalan']) }}" class="btn btn-success btn-sm">Riwayat Kontrol Terakhir</a>
                     </div>
                   </div>
                 </div>
@@ -170,7 +170,7 @@
                         </div>
                       </div>
                       <div class="form-inline">Asesmen :
-                        <textarea class="form-control form-control-sm" rows="2" name="penilaian" autocomplete="off" style="width: 100%">{{ old('penilaian', $data->penilaian) }}</textarea>
+                        <textarea class="form-control form-control-sm" rows="3" name="penilaian" autocomplete="off" style="width: 100%">{{ old('penilaian', $data->penilaian) }}</textarea>
                         {{-- <div class="select2-purple" style="width: 100%">
                           <select class="select2 form-control form-control-sm" multiple="multiple" name="diagnosa_utama[]" id="diagnosa_utama" data-placeholder="ICD - Diagnosa" data-dropdown-css-class="select2-purple">
                             @foreach ($jnspenyakit as $key)
@@ -347,10 +347,29 @@
         // alert("data yang anda pilih"+data+"");
         var element = evt.params.data.element;
         var $element = $(element);
-    
-        $element.detach();
-        $(this).append($element);
-        $(this).trigger("change");
+        
+        window.setTimeout(function () {  
+        if ($("select").find(":selected").length > 1) {
+          var $second = $("select").find(":selected").eq(-2);
+          
+          $element.detach();
+          $second.after($element);
+        } else {
+          $element.detach();
+          $("select").prepend($element);
+        }
+        
+        $("select").trigger("change");
+        }, 1);
+      });
+
+      $("select").on("select2:unselect", function (evt) {
+        if ($("select").find(":selected").length) {
+          var element = evt.params.data.element;
+          var $element = $(element);
+        $
+        ("select").find(":selected").after($element); 
+        }
       });
   }
 </script>

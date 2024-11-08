@@ -74,7 +74,7 @@
                       <tr>
                         <th scope="row"> {{$no+1}}. </th>
                         <td>{{$key->no_rawat}}</td>
-                        <td>{{$key->nm_perawatan}}</td>
+                        <td>{{$key->kd_jenis_prw}} {{$key->nm_perawatan}}</td>
                         <td>{{$key->status}}</td>
                         <td>{{$key->tgl_periksa}}</td>
                         <td>{{$key->jam}}</td>
@@ -84,23 +84,30 @@
                   </tbody>
                 </table>
                 <hr>
-                <h4>Total Pemeriksaan : {{$riwayatradiologi->count()}}</h4>
                 <h4>Total Pendapatan &nbsp;: @money($hargatotal)</h4>
-                <h4>Total Bacaan &nbsp;: {{$totalbacaan}}</h4>
 
                 <div class="card-body row">
-                  <div class="col-md-4">
-                    <b>Candra Harmindasatya, Sp. Rad</b>
+                  <div class="col-md-12">
+                    <b>dr. Candra Harmindasatya, Sp. Rad</b>
                     <div><b>Radiologi</b></div>
-                    <div>Total Peneriksaan :&emsp; {{$riwayatradiologi->count()}}</div>
-                    <div>Total bacaan :&emsp;{{$totalbacaan}}</div>
                   </div>
                   <div class="col-md-4">
-                    @if ($totalbacaan == 0)
-                      <input readonly type="text" class="knob" value="0" data-width="100" data-height="100" data-fgColor="#059212">
-                    @else
-                      <input readonly type="text" class="knob" value="{{ round(($totalbacaan / $riwayatradiologi->count()) * 100, 1)}}" data-width="100" data-height="100" data-fgColor="#059212">
-                    @endif
+                    <div><b>{{$bpjs[1]['jenis']}}</b></div>
+                    <div>Total Permintaan :&emsp; {{$bpjs[1]['permintaan']}}</div>
+                    <div>Total Bacaan :&emsp;{{$bpjs[1]['bacaan']}}</div>
+                    <input readonly type="text" class="knob" value="{{$bpjs[1]['hasil']}}" data-width="100" data-height="100" data-fgColor="#059212">
+                  </div>
+                  <div class="col-md-4">
+                    <div><b>{{$bpjs[0]['jenis']}}</b></div>
+                    <div>Total Permintaan :&emsp; {{$bpjs[0]['permintaan']}}</div>
+                    <div>Total Bacaan :&emsp;{{$bpjs[0]['bacaan']}}</div>
+                    <input readonly type="text" class="knob" value="{{$bpjs[0]['hasil']}}" data-width="100" data-height="100" data-fgColor="#059212">
+                  </div>
+                  <div class="col-md-4">
+                    <div><b>{{$bpjs[2]['jenis']}}</b></div>
+                    <div>Total Permintaan :&emsp; {{$bpjs[2]['permintaan']}}</div>
+                    <div>Total Bacaan :&emsp;{{$bpjs[2]['bacaan']}}</div>
+                    <input readonly type="text" class="knob" value="{{$bpjs[2]['hasil']}}" data-width="100" data-height="100" data-fgColor="#059212">
                   </div>
                 </div>
               </div>

@@ -30,8 +30,8 @@ class PetugasController extends Controller
 
     public function antrean(){
         $username = Session::get('username');
-        $month = '2023-06'; // date('Y-m'); //
-        $date = '2023-06-15'; // date('Y-m-d'); //
+        $month =  date('Y-m'); //'2023-06'; //
+        $date = date('Y-m-d'); //'2023-06-15'; // 
           
 
         $antrean = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'mb.status', 'mb.dikirim', 'mb.diterima','mb.kembali')

@@ -81,14 +81,26 @@
             </a>
             <li class="nav-item">
               <a href="{{route('riwayatradiologi')}}" class="nav-link {{ Request::is('riwayatradiologi') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-file"></i>
+                <i class="nav-icon fas fa-x-ray"></i>
                 <p>Riwayat Radiologi</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('persentasepoli')}}" class="nav-link {{ Request::is('persentasepoli') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-file"></i>
+                <i class="nav-icon fas fa-hospital-user"></i>
                 <p>Persentase Poli</p>
+              </a>
+            </li>
+            {{-- <li class="nav-item">
+              <a href="{{route('persentaseranap')}}" class="nav-link {{ Request::is('persentaseranap') ? 'active' : '' }}">
+                <i class="nav-icon fa fa-notes-medical"></i>
+                <p>Persentase Ranap</p>
+              </a>
+            </li> --}}
+            <li class="nav-item">
+              <a href="{{route('pemesananobat')}}" class="nav-link {{ Request::is('admin/pemesananobat') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-capsules"></i>
+                <p>Pemesanan Obat</p>
               </a>
             </li>
             <li class="nav-item">

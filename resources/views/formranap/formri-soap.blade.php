@@ -330,10 +330,29 @@
         // alert("data yang anda pilih"+data+"");
         var element = evt.params.data.element;
         var $element = $(element);
-    
-        $element.detach();
-        $(this).append($element);
-        $(this).trigger("change");
+        
+        window.setTimeout(function () {  
+        if ($("select").find(":selected").length > 1) {
+          var $second = $("select").find(":selected").eq(-2);
+          
+          $element.detach();
+          $second.after($element);
+        } else {
+          $element.detach();
+          $("select").prepend($element);
+        }
+        
+        $("select").trigger("change");
+        }, 1);
+      });
+
+      $("select").on("select2:unselect", function (evt) {
+        if ($("select").find(":selected").length) {
+          var element = evt.params.data.element;
+          var $element = $(element);
+        $
+        ("select").find(":selected").after($element); 
+        }
       });
   }
 </script>

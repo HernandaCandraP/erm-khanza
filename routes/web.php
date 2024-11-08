@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::match(array('GET','POST'),'/admin', 'PegawaiController@admin')->name('homeadmin');
     Route::match(array('GET','POST'),'/riwayatradiologi', 'PegawaiController@riwayatradiologi')->name('riwayatradiologi');
     Route::match(array('GET','POST'),'/persentasepoli', 'PegawaiController@persentasepoli')->name('persentasepoli');
+    Route::match(array('GET','POST'),'/persentaseranap', 'PegawaiController@persentaseranap')->name('persentaseranap');
     Route::get('/admin/profile', 'PegawaiController@profile')->name('homeadmin/profile');
     Route::post('/admin/profile/password', 'PegawaiController@gantipassword')->name('homeadmin/profile/password');
 
@@ -48,6 +49,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/admin/resetpassword', 'LoginController@resetpassword')->name('resetpassword');
 
     Route::get('/admin/persentase', 'PegawaiController@persentase')->name('persentase');
+    Route::match(array('GET','POST'),'/admin/pemesananobat', 'PegawaiController@pemesananobat')->name('pemesananobat');
 });
 
 // login dokter
@@ -96,7 +98,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/menu-ranap/rincianbiaya', 'FormControllerRanap@rincianbiaya')->name('formri-rincianbiaya');
 
     // Menu Radologi
-    Route::get('/menu-radiologi', 'FormControllerRad@menuradiologi')->name('menu-radiologi');
+    Route::match(array('GET','POST'),'/menu-radiologi', 'FormControllerRad@menuradiologi')->name('menu-radiologi');
     Route::get('/menu-radiologi/form', 'FormControllerRad@formradiologi')->name('form-radiologi');
     Route::post('/menu-radiologi/tambah', 'FormControllerRad@create')->name('formrad-tambah');
 });

@@ -25,7 +25,7 @@
                 <h5 class="float-left">Pencarian Berdasarkan Tanggal</h5>
               </div>
               <!-- /.card-header -->
-              <form action="{{route('homeadmin')}}" method="post" class="form-horizontal">
+              <form action="{{route('persentasepoli')}}" method="post" class="form-horizontal">
               {{ csrf_field() }}
               <div class="card-body row">
                 <div class="input-group col-lg-4">
@@ -62,8 +62,8 @@
                     <div class="row">
                         <div class="col-md-7">
                           <div><b>{{$value['nm_poli']}}</b></div>
-                          <div>Total Semua Pasien Poli :&emsp;{{$value['semua']}}</div>
-                          <div>Pemeriksaan Sudah Terisi:&emsp;{{$value['sudah']}}</div>
+                          <div>Total Semua :&emsp;{{$value['semua']}}</div>
+                          <div>Pemeriksaan Terisi:&emsp;{{$value['sudah']}}</div>
                         </div>
                         <div class="col-md-5">
                           <input readonly type="text" class="knob" value="{{$value['hasil']}}" data-width="100" data-height="100" data-fgColor="#059212">
