@@ -79,10 +79,10 @@
                         <input type="text" name="jam_rawat_lama" class="form-control form-control-sm" value="{{$data->jam_rawat_lama ?? null}}" hidden>
                         <input type="text" name="tabel" class="form-control form-control-sm" value="DataPemeriksaanRawatJalan" hidden>
                       </div>
-                      <div class="form-inline">Subject :
+                      <div class="form-inline"><b>Subject :</b>
                         <textarea class="form-control form-control-sm" rows="2" name="keluhan" autocomplete="off" style="width: 100%">{{ old('keluhan', $data->keluhan) }}</textarea>
                       </div>
-                      <div class="form-inline pt-2">Object : 
+                      <div class="form-inline pt-3"><b>Object : </b>
                         <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
                         {{-- <div class="col-sm-10"> 
                           <div class="form-inline">
@@ -169,7 +169,10 @@
                           <input type="text" name="alergi" class="form-control form-control-sm" autocomplete="off" value="{{ old('alergi', $data->alergi) }}">
                         </div>
                       </div>
-                      <div class="form-inline">Asesmen :
+                    </div>
+                    <div class="col-sm-12">
+                      <hr>
+                      <div class="form-inline"><b>Asesmen :</b>
                         <textarea class="form-control form-control-sm" rows="3" name="penilaian" autocomplete="off" style="width: 100%">{{ old('penilaian', $data->penilaian) }}</textarea>
                         {{-- <div class="select2-purple" style="width: 100%">
                           <select class="select2 form-control form-control-sm" multiple="multiple" name="diagnosa_utama[]" id="diagnosa_utama" data-placeholder="ICD - Diagnosa" data-dropdown-css-class="select2-purple">
@@ -184,19 +187,19 @@
                           </select>
                         </div>
                       </div>
-                      <div class="pt-2">Plan : 
-                        <textarea class="form-control form-control-sm" rows="2" name="rtl" autocomplete="off" style="width: 100%">{{ old('rtl', $data->rtl) }}</textarea>
+                      <div class="pt-3"><b>Plan : </b> &emsp;<button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modal-lg">Riwayat Obat &nbsp;<i class="fas fa-exclamation"></i> </button>
+                        <textarea class="form-control form-control-sm" rows="4" name="rtl" autocomplete="off" style="width: 100%">{{ old('rtl', $data->rtl) }}</textarea>
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
                           <div class="col-sm-12">
                             <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat</div>
                           </div>
                       </div>
-                      <div class="form-group">Instruksi :
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group pt-3"><b>Instruksi :</b>
                         <textarea class="form-control form-control-sm" rows="2" name="instruksi" autocomplete="off" style="width: 100%">{{ old('instruksi', $data->instruksi) }}</textarea>
                       </div>
-
-                      
                       <div class="form-group">
                         <div class="card card-primary collapsed-card">
                           <div class="card-header">
@@ -286,6 +289,55 @@
   @include('template.footer')
   </footer>
 </div>
+
+<div class="modal fade" id="modal-lg">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Riwayat Resep</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body justify-content-between">
+        <table id="example1" class="table table-bordered text-sm">
+          <tbody>
+        @foreach ($datalistnorawatperresep as $key => $value)
+          <tr>
+            <th rowspan="{{$value->total +1}}"> {{$key+1}}. </th>
+            <th rowspan="{{$value->total +1}}">{{$value->no_resep}}<br>
+              <button type="button" value="{{$value->no_resep}}#*#{{$datalistnorawatlengkap}}" class="btn btn-success btn-sm copyresep">
+                Copy Resep
+              </button>
+            </th>
+            <th>Kode Obat</th>
+            <th>Nama Obat</th>
+            <th>Jumlah</th>
+            <th>Pakai</th>
+          </tr> 
+          @foreach ($datalistnorawatlengkap as $keylengkap => $valuelengkap)
+            @if ($valuelengkap->no_resep == $value->no_resep)
+            <tr>
+              <td>{{$valuelengkap->kode_brng}}</td>
+              <td>{{$valuelengkap->nama_brng}}</td>
+              <td>{{$valuelengkap->jml}}</td>
+              <td>{{$valuelengkap->aturan_pakai}}</td>
+            </tr>
+            @endif
+          @endforeach
+        @endforeach
+          </tbody>
+        </table>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- end form -->
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 <!-- ./wrapper -->
 
 <!-- SCRIPTS -->
@@ -294,10 +346,10 @@
   var i=1;
   $(".addmore").on('click',function(){
     if(i == 1){
-      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
+      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
     }
 
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || @money($key->ralan) </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || @money($key->ralan) </option>@endforeach</select></td><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
     $('.select2').select2();
 
@@ -308,6 +360,33 @@
     i++;
 
     myFunction();
+  });
+
+  $(".copyresep").click(function() {
+    var str = $(this).val();
+    var index = str.substring(0, str.indexOf("#*#"));
+    var collectdata = str.split("#*#")[1];
+    collectdata= JSON.parse(collectdata)
+    
+    collectdata.forEach(function(element){
+      if(element['no_resep'] == index){
+        var $kode_brng = element["kode_brng"];
+        if(i == 1){
+          document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
+        }
+        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || '+element["ralan"]+' </td><td><input id="jumlah'+i+'" class="form-control" value="'+element["jml"]+'" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+        $('.select2').select2();
+
+        $('#hapusresep'+i).on('click', function() {
+          $(this).parents("tr").remove();
+          return false;
+        });
+        i++;
+      }
+    });
+    myFunction();
+    $('#modal-lg').modal('hide');
   });
   
   $(document).ready(function() {

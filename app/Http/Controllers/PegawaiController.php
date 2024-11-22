@@ -237,6 +237,7 @@ class PegawaiController extends Controller
         $listsemuaperiksa = DB::table('reg_periksa as rp')->select('rp.no_rawat', 'rp.no_rkm_medis', 'rp.kd_poli', 'p.nm_poli',DB::raw('count(*) as jumlah'))
             ->leftjoin('poliklinik as p', 'p.kd_poli','=', 'rp.kd_poli')
             ->whereBetween('rp.tgl_registrasi', [$date, $enddate])
+            ->where('rp.stts', '!=', 'batal')
             ->groupBy('p.kd_poli')
             ->get();
         
@@ -250,6 +251,7 @@ class PegawaiController extends Controller
                     ->orWhereBetween('igd.tanggal', [$date, $enddate]);
                 })
             ->groupBy('rp.no_rawat') 
+            ->where('rp.stts', '!=', 'batal')
             ->distinct()
             ->get();
 
@@ -497,17 +499,77 @@ class PegawaiController extends Controller
         // $enddate = '2024-06-15'; // date('Y-m-d'); //
         $hargatotal = 0;
 
+        // //total permintaan
+        // $riwayatradiologi = DB::table('periksa_radiologi as pr')->select('pr.*', 'jpr.nm_perawatan')
+        //     ->leftjoin('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw', '=', 'pr.kd_jenis_prw')
+        //     ->whereBetween('pr.tgl_periksa', [$date, $enddate])
+        //     ->orderBy('pr.no_rawat', 'DESC')
+        //     ->get();
+
+        // //total pasien menghitung pasien bpjs atau umum
+        // $hasilrad = DB::table('hasil_radiologi as hr')->select('hr.*', 'rp.kd_pj')
+        //     ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'hr.no_rawat')
+        //     ->whereBetween('hr.tgl_periksa', [$date, $enddate])
+        //     ->orderBy('hr.tgl_periksa', 'DESC')
+        //     ->get();
+
+        //total pemeriksaan
         $riwayatradiologi = DB::table('periksa_radiologi as pr')->select('pr.*', 'jpr.nm_perawatan')
             ->leftjoin('jns_perawatan_radiologi as jpr', 'jpr.kd_jenis_prw', '=', 'pr.kd_jenis_prw')
             ->whereBetween('pr.tgl_periksa', [$date, $enddate])
             ->orderBy('pr.no_rawat', 'DESC')
             ->get();
+
+        $riwayatradiologigroupnorawat = DB::table('periksa_radiologi as pr')->select('pn.png_jawab', 'hr.hasil','pr.tgl_periksa', 'p.no_rkm_medis', 'p.nm_pasien', 'rp.kd_pj','pr.no_rawat', 'pr.jam', DB::raw('count(*) as jumlah'))->distinct()
+            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'pr.no_rawat')
+            ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
+            ->leftjoin('penjab as pn', 'pn.kd_pj', '=', 'rp.kd_pj')
+            ->leftjoin('hasil_radiologi as hr', function($join)
+                {
+                    $join->on('pr.no_rawat', '=',  'hr.no_rawat');
+                    $join->on('pr.tgl_periksa','=', 'hr.tgl_periksa');
+                    $join->on('pr.jam','=', 'hr.jam');
+                })
+            ->whereBetween('pr.tgl_periksa', [$date, $enddate])
+            ->groupBY('pr.tgl_periksa','pr.no_rawat', 'pr.jam')
+            ->orderBy('pr.tgl_periksa', 'DESC')
+            ->get();
+
         
+        // hitung text yang mengandung yth
+        $cekperiksa = [];
+        $gambarrad = [];
+        foreach ($riwayatradiologigroupnorawat as $key => $value) {
+            $hasilrad = DB::table('hasil_radiologi')->where([['no_rawat', $value->no_rawat], ['tgl_periksa', $value->tgl_periksa], ['jam', $value->jam]])->first();
+
+            $hasilrad = preg_replace('/\s+/', '', $hasilrad->hasil ?? null);
+            $hasilrad = strtolower($hasilrad);
+            $total = substr_count($hasilrad, 'yth');
+            $cekperiksa[] = $total;
+
+            // ambil gambar
+            $getgambar = DB::table('gambar_radiologi')
+            ->where([['no_rawat', $value->no_rawat], ['tgl_periksa', $value->tgl_periksa], ['jam', $value->jam]])
+            ->orderBy('tgl_periksa', 'DESC')
+            ->get();
+
+            if($getgambar->isNotEmpty()){
+                foreach ($getgambar as $keygambar => $valuegambar) {
+                    $gambarrad[$key][$keygambar] = str_replace("simrs-rsba", "", env('APP_URL')) .'budiasih/radiologi/'. $valuegambar->lokasi_gambar;
+                }
+            }else{
+                $gambarrad[$key][0] = null;
+            }
+        }
+
+        //total pasien menghitung pasien bpjs atau umum
         $hasilrad = DB::table('hasil_radiologi as hr')->select('hr.*', 'rp.kd_pj')
             ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'hr.no_rawat')
             ->whereBetween('hr.tgl_periksa', [$date, $enddate])
             ->orderBy('hr.tgl_periksa', 'DESC')
             ->get();
+
+        // dd($riwayatradiologi, $riwayatradiologigroupnorawat, $gambarrad, $cekperiksa);
 
         $totalbacaanBPJS= 0;
         $totalbacaanUmum= 0;
@@ -569,6 +631,9 @@ class PegawaiController extends Controller
             'tanggalakhir' => $tanggalakhir, 
             'hargatotal' => $hargatotal, 
             'bpjs' => $bpjs, 
+            'riwayatradiologigroupnorawat' => $riwayatradiologigroupnorawat, 
+            'cekperiksa' => $cekperiksa, 
+            'gambarrad' => $gambarrad
         ]);
     }
 

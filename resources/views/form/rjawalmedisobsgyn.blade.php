@@ -119,7 +119,8 @@
                   <div class="card card-primary card-outline">
                     <div class="card-header">
                       <h6 class="card-title text-sm">
-                        <b>II. Pemeriksaan Fisik</b>
+                        <b>II. Pemeriksaan Fisik</b> &emsp;
+                        <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal-lg">Cek Penilaian Petugas &nbsp;<i class="fas fa-exclamation"></i> </button>
                       </h6>
                     </div>
                     <div class="card-body">
@@ -467,6 +468,101 @@
   <footer class="main-footer">
   @include('template.footer')
   </footer>
+</div>
+
+<div class="modal fade" id="modal-lg">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Penilaian Petugas</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- form -->
+      <div class="modal-body justify-content-between">
+        @if ($ambilttv)
+          <div class="form-group row">
+            <div class="d-inline"><b>II. PEMERIKSAAN KEBIDANAN :</b></div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline-block"><b>TFU</b> : <u>{{$ambilttv->tfu}}</u> cm &emsp;</div>
+            <div class="d-inline-block"><b>TBJ</b> : <u>{{$ambilttv->tbj}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Letak</b> : <u>{{$ambilttv->letak}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Presentasi</b> : <u>{{$ambilttv->presentasi}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Perurunan</b> : <u>{{$ambilttv->penurunan}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Kontraksi/HIS</b> : <u>{{$ambilttv->his}}</u> x/10'&emsp;</div>
+            <div class="d-inline-block"><b>Kekuatan</b> : <u>{{$ambilttv->kekuatan}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Lamanya</b> : <u>{{$ambilttv->lama}}</u> detik&emsp;</div>
+            <div class="d-inline-block"><b>Gerak janin x/30 menit, DJJ</b> : <u>{{$ambilttv->bjj}}</u> mnt <u>{{$ambilttv->ket_bjj}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Portio</b> : <u>{{$ambilttv->portio}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Pembukaan Serviks</b> : <u>{{$ambilttv->serviks}}</u> cm &emsp;</div>
+            <div class="d-inline-block"><b>Ketuban</b> : <u>{{$ambilttv->ketuban}}</u> kep/bok &emsp;</div>
+            <div class="d-inline-block"><b>Hodge</b> : <u>{{$ambilttv->hodge}}</u> &emsp;</div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline"><b>Pemeriksaan penunjang: &emsp;</b></div>
+            <div class="d-inline-block"><b>Inspekulo</b> : <u>{{$ambilttv->inspekulo}}</u>, Hasil: <u>{{$ambilttv->ket_inspekulo}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Laboratorium</b> : <u>{{$ambilttv->lab}}</u>, Hasil: <u>{{$ambilttv->ket_lab}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Lakmus</b> : <u>{{$ambilttv->lakmus}}</u>, Hasil: <u>{{$ambilttv->ket_lakmus}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>CTG</b> : <u>{{$ambilttv->ctg}}</u>, Hasil: <u>{{$ambilttv->ket_ctg}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>USG</b> : <u>{{$ambilttv->usg}}</u>, Hasil: <u>{{$ambilttv->ket_usg}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Pemeriksaan Panggul</b> : <u>{{$ambilttv->panggul}}</u>&emsp;</div>
+          </div>
+          <div class="form-group row pt-3">
+            <div class="d-inline"><b>III. RIWAYAT KESEHATAN :</b></div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline-block"><b>Riwayat Menstruasi : &emsp;</b></div>
+            <div class="d-inline-block"><b>Umur Menarche</b> : <u>{{$ambilttv->umur}}</u> tahun, lamanya: <u>{{$ambilttv->lama}}</u> hari, banyaknya : <u>{{$ambilttv->banyaknya}}</u> pembalut &emsp;</div>
+            <div class="d-inline-block"><b>Haid terakhir</b> : <u>{{$ambilttv->haid}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Siklus</b> : <u>{{$ambilttv->siklus}}</u>, hari (<u>{{$ambilttv->ket_siklus}}</u>) &emsp;</div>
+            <div class="d-inline-block"><b>Masalah yang dirasakan saat menstruasi</b> : <u>{{$ambilttv->ket_siklus1}}</u> &emsp;</div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline-block"><b>Riwayat Perkawinan :&emsp;</b></div>
+            <div class="d-inline-block"><b>Status menikah : </b><u>{{$ambilttv->status}}</u> <u>{{$ambilttv->kali}}</u>kali &emsp;</div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline-block"><b>Riwayat Kehamilan Tetap :&emsp;</b></div>
+            <div class="d-inline-block"><b>HPHT</b> : <u>{{$ambilttv->hpht}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Usia hamil</b> : <u>{{$ambilttv->usia_kehamilan}}</u> bln/mgg&emsp;</div>
+            <div class="d-inline-block"><b>TP</b> : <u>{{$ambilttv->tp}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Riwayat imunisasi</b> : <u>{{$ambilttv->imunisasi}}</u> kali &emsp;</div>
+            <div class="d-inline-block"><b>G</b> : <u>{{$ambilttv->g}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>P</b> : <u>{{$ambilttv->p}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>A</b> : <u>{{$ambilttv->a}}</u>&emsp;</div>
+            <div class="d-inline-block"><b>Hidup</b> : <u>{{$ambilttv->hidup}}</u>&emsp;</div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline-block"><b>Riwayat KB: </b> <u>{{$ambilttv->kb}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Lamanya</b> : <u>{{$ambilttv->ket_kb}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Komplikasi</b> : <u>{{$ambilttv->komplikasi}}</u> <u>{{$ambilttv->ket_komplikasi}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Kapan berhenti KB</b> : <u>{{$ambilttv->berhenti}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Alasan</b> : <u>{{$ambilttv->alasan}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Riwayat Ginekologi</b> : <u>{{$ambilttv->ginekologi}}</u>&emsp;</div>
+          </div>
+          <div class="form-group row">
+            <div class="d-inline-block"><b>Riwayat Kebiasaan : &emsp;</b></div>
+            <div class="d-inline-block"><b>Obat / Vitamin</b> : <u>{{$ambilttv->kebiasaan}}</u> <u>{{$ambilttv->ket_kebiasaan}}</u> &emsp;</div>
+            <div class="d-inline-block"><b>Merokok</b> : <u>{{$ambilttv->kebiasaan1}}</u> <u>{{$ambilttv->ket_kebiasaan1}}</u> batang/hari &emsp;</div>
+            <div class="d-inline-block"><b>Alkohol</b> : <u>{{$ambilttv->kebiasaan2}}</u> <u>{{$ambilttv->ket_kebiasaan2}}</u> gelas/hari&emsp;</div>
+            <div class="d-inline-block"><b>Obat Tidur/Narkoba</b> : <u>{{$ambilttv->kebiasaan3}}</u> &emsp;</div>
+          </div>
+        @else
+          <div class="form-group row p-4">
+            <h4>Data Pemeriksaan Awal Kebidanan Belum Terisi</h4>
+          </div>
+        @endif
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      <!-- end form -->
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
 </div>
 <!-- ./wrapper -->
 

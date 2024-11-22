@@ -83,6 +83,38 @@
                     @endforeach
                   </tbody>
                 </table>
+                <table id="example1" class="table table-bordered text-sm" hidden>
+                  <tbody>
+                    @foreach ($riwayatradiologigroupnorawat as $key => $value)
+                      <tr>
+                        <th rowspan="{{$value->jumlah +1}}">{{$key+1}}. </th>
+                        <th rowspan="{{$value->jumlah +1}}">{{$value->no_rawat}} <br>{{$value->no_rkm_medis}} <br>{{$value->nm_pasien}}</th>
+                        <td rowspan="{{$value->jumlah +1}}">{{$value->hasil}}</td>
+                        <td rowspan="{{$value->jumlah +1}}">Bacaan: {{$cekperiksa[$key]}}</td>
+                        <td rowspan="{{$value->jumlah +1}}">{{$value->png_jawab}}</td>
+                        <td rowspan="{{$value->jumlah +1}}">
+                          @if($gambarrad[$key])   
+                            @foreach ($gambarrad[$key] as $keygambar => $valuegambar)
+                                <img src="{{$valuegambar}}" class="img-fluid w-100"/><br>
+                            @endforeach 
+                          @else
+                            <div class="col-sm-6">Gambar Radiologi tidak tersedia, silahkan hubungi petugas radiologi</div> 
+                          @endif
+                        </td>
+                        <th>Perawatan</th>
+                        <th>Harga</th>
+                      </tr> 
+                      @foreach ($riwayatradiologi as $keylengkap => $valuelengkap)
+                        @if ($valuelengkap->no_rawat == $value->no_rawat && $valuelengkap->tgl_periksa == $value->tgl_periksa && $valuelengkap->jam == $value->jam)
+                        <tr>
+                          <td>{{$valuelengkap->kd_jenis_prw}} {{$valuelengkap->nm_perawatan}}</td>
+                          <td>@money($valuelengkap->biaya)</td>
+                        </tr>
+                        @endif
+                      @endforeach
+                    @endforeach
+                  </tbody>
+                </table>
                 <hr>
                 <h4>Total Pendapatan &nbsp;: @money($hargatotal)</h4>
 
