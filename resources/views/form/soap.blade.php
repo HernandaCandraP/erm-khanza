@@ -192,13 +192,13 @@
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
                           <div class="col-sm-12">
-                            <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat</div>
+                            <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
                           </div>
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group pt-3"><b>Instruksi :</b>
-                        <textarea class="form-control form-control-sm" rows="2" name="instruksi" autocomplete="off" style="width: 100%">{{ old('instruksi', $data->instruksi) }}</textarea>
+                        <textarea class="form-control form-control-sm" rows="5" name="instruksi" autocomplete="off" style="width: 100%">{{ old('instruksi', $data->instruksi) }}</textarea>
                       </div>
                       <div class="form-group">
                         <div class="card card-primary collapsed-card">
@@ -349,7 +349,7 @@
       document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
     }
 
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || @money($key->ralan) </option>@endforeach</select></td><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
     $('.select2').select2();
 
@@ -369,12 +369,13 @@
     collectdata= JSON.parse(collectdata)
     
     collectdata.forEach(function(element){
+      // console.log(element)
       if(element['no_resep'] == index){
         var $kode_brng = element["kode_brng"];
         if(i == 1){
           document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
         }
-        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || '+element["ralan"]+' </td><td><input id="jumlah'+i+'" class="form-control" value="'+element["jml"]+'" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
         $('.select2').select2();
 
@@ -387,6 +388,38 @@
     });
     myFunction();
     $('#modal-lg').modal('hide');
+  });
+
+  // check obat kosong atau tidak
+  $('form').on('keyup change paste', 'input, select, textarea', function(){
+    if (!isNaN(this.id)) {
+      console.log( this.id );
+      console.log( this.value );
+      var resepid = "resep" + this.id;
+      var resep = document.getElementById(resepid);
+      console.log(resep.value);
+      console.log(resepid);
+      $.ajax({
+        url: "{{route('cekstokobat')}}",
+        type: "GET",
+        // masukkan request ke data
+        data:{jumlah:$(this).val(), id:$(resep).val(), idinput:$(this).attr('id')}, 
+        dataType: "json",
+        success: function (data) {
+            // jika jumlah input melebihi stok
+            if(data.msg != ""){
+              alert(data.msg);
+              var idinput = "#" + data.idinput;
+              $(idinput).val(data.stok);
+              console.log(data.stok);
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle errors, if any
+            console.log(error);
+        }
+      });
+    }
   });
   
   $(document).ready(function() {

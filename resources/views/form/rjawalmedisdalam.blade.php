@@ -92,18 +92,18 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">Keluhan Utama : 
-                            <textarea class="form-control form-control-sm" rows="1" name="keluhan_utama" autocomplete="off" style="width: 100%">{{ old('keluhan_utama', $penilaianralandalam->keluhan_utama) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="keluhan_utama" autocomplete="off" style="width: 100%">{{ old('keluhan_utama', $penilaianralandalam->keluhan_utama) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penggunaan Obat : 
-                            <textarea class="form-control form-control-sm" rows="1" name="rpo" autocomplete="off" style="width: 100%">{{ old('rpo', $penilaianralandalam->rpo) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="rpo" autocomplete="off" style="width: 100%">{{ old('rpo', $penilaianralandalam->rpo) }}</textarea>
                           </div>
                         </div>
                         <div class="col-sm-6">
                           <div class="form-inline">Riwayat Penyakit Sekarang : 
-                            <textarea class="form-control form-control-sm" rows="1" name="rps" autocomplete="off" style="width: 100%">{{ old('rps', $penilaianralandalam->rps) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="rps" autocomplete="off" style="width: 100%">{{ old('rps', $penilaianralandalam->rps) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penyakit Dahulu : 
-                            <textarea class="form-control form-control-sm" rows="1" name="rpd" autocomplete="off" style="width: 100%">{{ old('rpd', $penilaianralandalam->rpd) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="rpd" autocomplete="off" style="width: 100%">{{ old('rpd', $penilaianralandalam->rpd) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Alergi :  
                             <input type="text" name="alergi" class="form-control form-control-sm" autocomplete="off" style="width: 70%" value="{{ old('alergi', $penilaianralandalam->alergi) }}">
@@ -331,7 +331,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-12 pt-1">
                           <div class="form-inline">
-                            <textarea class="form-control form-control-sm" rows="2" name="diagnosis" autocomplete="off" style="width: 100%">{{ old('diagnosis', $penilaianralandalam->diagnosis) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="4" name="diagnosis" autocomplete="off" style="width: 100%">{{ old('diagnosis', $penilaianralandalam->diagnosis) }}</textarea>
                           </div>
                         </div>
                         <div class="col-sm-6 pt-1" hidden>
@@ -356,17 +356,17 @@
                             <textarea class="form-control form-control-sm" rows="2" name="permasalahan" autocomplete="off" style="width: 100%">{{ old('permasalahan', $penilaianralandalam->permasalahan) }}</textarea>
                           </div>
                         </div>
-                        <div class="col-sm-6 pt-1">
+                        <div class="col-sm-12 pt-1">
                           <div class="form-inline">Terapi/Pengobatan :
-                            <textarea class="form-control form-control-sm" rows="2" name="terapi" autocomplete="off" style="width: 100%">{{ old('terapi', $penilaianralandalam->terapi) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="4" name="terapi" autocomplete="off" style="width: 100%">{{ old('terapi', $penilaianralandalam->terapi) }}</textarea>
                           </div>
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
-                          <div class="col-sm-12">
-                            <div type="text" class="btn btn-warning addmore float-right">+ Tambah Obat</div>
-                          </div>
+                          {{-- <div class="col-sm-12"> --}}
+                            <div type="text" class="btn btn-warning addmore form-control">+ Tambah Obat</div>
+                          {{-- </div> --}}
                         </div>
-                        <div class="col-sm-6 pt-1">
+                        <div class="col-sm-12 pt-4">
                           <div class="form-inline">Tindakan/Rencana Tindakan
                             <textarea class="form-control form-control-sm" rows="2" name="tindakan" autocomplete="off" style="width: 100%">{{ old('tindakan', $penilaianralandalam->tindakan) }}</textarea>
                           </div>

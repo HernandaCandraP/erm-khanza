@@ -37,6 +37,13 @@ class FormController extends Controller
         ->where('pr.kd_dokter', '=', $username)
         ->orderby('a.jam_reg', 'desc')->get();
 
+        $awalmedisdalam = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.kd_dokter as petugasrs')->distinct()
+        ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+        ->leftjoin('penilaian_medis_ralan_penyakit_dalam as pr', 'a.no_rawat','=', 'pr.no_rawat')
+        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+        ->where('pr.kd_dokter', '=', $username)
+        ->orderby('a.jam_reg', 'desc')->get();
+
         foreach ($pasienterakhir as $key => $value) {
             $pasienterakhir[$key]->stts = "Belum";
             if($ceksoapdokter->isNotEmpty()){
@@ -49,6 +56,13 @@ class FormController extends Controller
             if($awalmedisbedah->isNotEmpty()){
                 foreach ($awalmedisbedah as $keysoap => $ambedah) {
                     if($value->no_rawat == $ambedah->no_rawat){
+                        $pasienterakhir[$key]->stts = "Sudah";
+                    }
+                }
+            }
+            if($awalmedisdalam->isNotEmpty()){
+                foreach ($awalmedisdalam as $keysoap => $amdalam) {
+                    if($value->no_rawat == $amdalam->no_rawat){
                         $pasienterakhir[$key]->stts = "Sudah";
                     }
                 }
@@ -111,19 +125,19 @@ class FormController extends Controller
                     // ambil data ttv sebelumnya
 
                     // dokter yang meminta data soap diambil semua dari riwayat petugas
-                    if($kd_dokter == '0058' || $kd_dokter == '0087' || $kd_dokter == 'dokteragus' || $kd_dokter == '0060'){
+                    // if($kd_dokter == '0058' || $kd_dokter == '0087' || $kd_dokter == 'dokteragus' || $kd_dokter == '0060'){
                         if($key == 'penilaian' || $key == 'rtl'){
                             $data->$key = "";
                         }else{
                             $data->$key = $value;
                         }
-                    }else{
-                        if($key == 'suhu_tubuh' || $key == 'tensi' || $key == 'nadi' || $key == 'respirasi' || $key == 'tinggi' || $key == 'berat' || $key == 'spo2' || $key == 'gcs' || $key == 'lingkar_perut' || $key == 'alergi' ){
-                            $data->$key = $value;
-                        }else{
-                            $data->$key = "";
-                        }
-                    }
+                    // }else{
+                    //     if($key == 'suhu_tubuh' || $key == 'tensi' || $key == 'nadi' || $key == 'respirasi' || $key == 'tinggi' || $key == 'berat' || $key == 'spo2' || $key == 'gcs' || $key == 'lingkar_perut' || $key == 'alergi' ){
+                    //         $data->$key = $value;
+                    //     }else{
+                    //         $data->$key = "";
+                    //     }
+                    // }
                 }
             }else{
                 $data = $data = DB::table('pemeriksaan_ralan')->first();
@@ -157,10 +171,13 @@ class FormController extends Controller
         }         
         
         // ambil seluruh riwayat resep
-        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.ralan')
+        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.ralan', 'gb.stok')
             ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
             ->leftjoin('databarang as db', 'db.kode_brng', '=', 'rd.kode_brng')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'rd.kode_brng')
+            ->where('gb.stok', '>', '0')
             ->orderby('ro.no_resep', 'DESC')
+            ->where('ro.status', 'ralan')
             ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
 
         // ambil total obat per resep untuk menghitung colspan
@@ -168,6 +185,7 @@ class FormController extends Controller
             ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
             ->orderby('ro.no_resep', 'DESC')
             ->groupby('ro.no_resep')
+            ->where('ro.status', 'ralan')
             ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
 
         $getsps = Session::get('nm_sps');
@@ -792,6 +810,17 @@ class FormController extends Controller
                 ->where('nip', $kd_dokter)
                 ->orderby('jam_rawat', 'DESC')->first();
 
+            // Cek apakah awalmedisbedah terisi
+            $cekawalmedisbedah = DB::table('penilaian_medis_ralan_bedah')->select('keluhan_utama', 'rps', 'ket_lokalis', 'diagnosis', 'tindakan')
+            ->where('no_rawat', $request->no_rawat)
+            ->where('kd_dokter', $kd_dokter)->first();
+
+            // Cek apakah awalmedisdalam terisi
+            $cekawalmedisdalam = DB::table('penilaian_medis_ralan_penyakit_dalam')->select('keluhan_utama', 'rps', 'lainnya', 'diagnosis', 'tindakan')
+            ->where('no_rawat', $request->no_rawat)
+            ->where('kd_dokter', $kd_dokter)->first();
+
+            // dd($cekawalmedisbedah);
             $penunjanglab = DB::table('permintaan_lab as pl')->select('jpl.nm_perawatan')
                 ->join('permintaan_pemeriksaan_lab as ppl', 'pl.noorder','=', 'ppl.noorder')
                 ->join('jns_perawatan_lab as jpl', 'jpl.kd_jenis_prw','=', 'ppl.kd_jenis_prw')
@@ -834,8 +863,20 @@ class FormController extends Controller
                 }
             }
             $dataresume->pemeriksaan_penunjang = $listpenunjanglab . $listpenunjangrad;
-            $dataresume->keluhan_utama = $keluhanutama->keluhan ?? '';
-            $dataresume->jalannya_penyakit = $keluhanutama->pemeriksaan ?? '';
+
+            // cek jika awalmedis bedah terisi maka keluhan utama ditampilkan dari awal medis bedah
+            if($cekawalmedisbedah){
+                $dataresume->keluhan_utama = $cekawalmedisbedah->keluhan_utama ?? '';
+                $dataresume->jalannya_penyakit = $cekawalmedisbedah->rps ."\n". $cekawalmedisbedah->ket_lokalis ?? '';
+            }
+            elseif($cekawalmedisdalam){
+                $dataresume->keluhan_utama = $cekawalmedisdalam->keluhan_utama ?? '';
+                $dataresume->jalannya_penyakit = $cekawalmedisdalam->rps ."\n". $cekawalmedisdalam->lainnya ?? '';
+            }
+            else{
+                $dataresume->keluhan_utama = $keluhanutama->keluhan ?? '';
+                $dataresume->jalannya_penyakit = $keluhanutama->pemeriksaan ?? '';
+            }
 
             // cek diagnosa 
             if($cekdiagnosa->isNotEmpty()){
@@ -852,7 +893,27 @@ class FormController extends Controller
                     $dataresume->kd_diagnosa_sekunder2 = $cekdiagnosa[2]->kd_penyakit;
                 }
             }else{
-                if($keluhanutama->penilaian ?? ''){
+                if($cekawalmedisbedah->diagnosis ?? ''){
+                    $diagnosa = explode("\n", $cekawalmedisbedah->diagnosis);
+                    $dataresume->diagnosa_utama = $diagnosa[0] ?? "";
+                    $dataresume->diagnosa_sekunder = $diagnosa[1] ?? "";
+                    $dataresume->diagnosa_sekunder2 = $diagnosa[2] ?? "";
+                    $dataresume->diagnosa_sekunder3 = $diagnosa[3] ?? "";
+                    $dataresume->diagnosa_sekunder4 = $diagnosa[4] ?? "";
+                    
+                    $dataresume->prosedur_utama = $cekawalmedisbedah->tindakan;
+                }
+                if($cekawalmedisdalam->diagnosis ?? ''){
+                    $diagnosa = explode("\n", $cekawalmedisdalam->diagnosis);
+                    $dataresume->diagnosa_utama = $diagnosa[0] ?? "";
+                    $dataresume->diagnosa_sekunder = $diagnosa[1] ?? "";
+                    $dataresume->diagnosa_sekunder2 = $diagnosa[2] ?? "";
+                    $dataresume->diagnosa_sekunder3 = $diagnosa[3] ?? "";
+                    $dataresume->diagnosa_sekunder4 = $diagnosa[4] ?? "";
+                    
+                    $dataresume->prosedur_utama = $cekawalmedisdalam->tindakan;
+                }
+                elseif($keluhanutama->penilaian ?? ''){
                     $diagnosa = explode("\n", $keluhanutama->penilaian);
                     $dataresume->diagnosa_utama = $diagnosa[0] ?? "";
                     $dataresume->diagnosa_sekunder = $diagnosa[1] ?? "";
@@ -1005,9 +1066,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanParu') {
             $permintaan = $this->permintan($request);
-            $request->terapi .= $permintaan['terapi'];
-            $request->lab .= $permintaan['lab'];
-            $request->rad .= $permintaan['rad'];
+            $request->terapi = $permintaan['terapi'];
+            $request->lab = $permintaan['lab'];
+            $request->rad = $permintaan['rad'];
             // dd($request->all());
             $PenilaianAwalMedisRawatJalanParu = [
                 'no_rawat' => $request->no_rawat,
@@ -1049,9 +1110,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanBedah') {
             $permintaan = $this->permintan($request);
-            $request->terapi .= $permintaan['terapi'];
-            $request->lab .= $permintaan['lab'];
-            $request->rad .= $permintaan['rad'];
+            $request->terapi = $permintaan['terapi'];
+            $request->lab = $permintaan['lab'];
+            $request->rad = $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanBedah = [
                 'no_rawat' => $request->no_rawat,
@@ -1096,9 +1157,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanSyaraf') {
             $permintaan = $this->permintan($request);
-            $request->terapi .= $permintaan['terapi'];
-            $request->lab .= $permintaan['lab'];
-            $request->rad .= $permintaan['rad'];
+            $request->terapi = $permintaan['terapi'];
+            $request->lab = $permintaan['lab'];
+            $request->rad = $permintaan['rad'];
             
             $PenilaianAwalMedisRawatJalanSyaraf = [
                 'no_rawat' => $request->no_rawat,
@@ -1149,7 +1210,7 @@ class FormController extends Controller
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanObsgyn') {
             $permintaan = $this->permintan($request);
             $request->tata = $permintaan['terapi'];
-            $request->penunjang .= $permintaan['lab'];
+            $request->penunjang = $permintaan['lab'];
 
             $PenilaianAwalMedisRawatJalanObsgyn = [
                 'no_rawat' => $request->no_rawat,
@@ -1205,8 +1266,8 @@ class FormController extends Controller
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanAnak') {
             $permintaan = $this->permintan($request);
             $request->tata = $permintaan['terapi'];
-            $request->penunjang .= $permintaan['lab'] . ", ";
-            $request->penunjang .= $permintaan['rad'];
+            $request->penunjang = $permintaan['lab'] . ", ";
+            $request->penunjang = $permintaan['rad'];
             
             $PenilaianAwalMedisRawatJalanAnak = [
                 'no_rawat' => $request->no_rawat,
@@ -1251,9 +1312,9 @@ class FormController extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanMata') {
             $permintaan = $this->permintan($request);
-            $request->terapi .= $permintaan['terapi'];
-            $request->lab .= $permintaan['lab'];
-            $request->rad .= $permintaan['rad'];
+            $request->terapi = $permintaan['terapi'];
+            $request->lab = $permintaan['lab'];
+            $request->rad = $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanMata = [
                 'no_rawat' => $request->no_rawat,
@@ -1319,9 +1380,9 @@ class FormController extends Controller
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanDalam') {
             // dd($request->all());
             $permintaan = $this->permintan($request);
-            $request->terapi .= $permintaan['terapi'];
-            $request->lab .= $permintaan['lab'];
-            $request->rad .= $permintaan['rad'];
+            $request->terapi = $permintaan['terapi'];
+            $request->lab = $permintaan['lab'];
+            $request->rad = $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanDalam = [
                 'no_rawat' => $request->no_rawat,
@@ -1368,8 +1429,8 @@ class FormController extends Controller
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanUmum') {
             $permintaan = $this->permintan($request);
             $request->tata = $permintaan['terapi'];
-            $request->penunjang .= $permintaan['lab'] . ", ";
-            $request->penunjang .= $permintaan['rad'];
+            $request->penunjang = $permintaan['lab'] . ", ";
+            $request->penunjang = $permintaan['rad'];
 
             $PenilaianAwalMedisRawatJalanUmum = [
                 'no_rawat' => $request->no_rawat,
@@ -1461,7 +1522,8 @@ class FormController extends Controller
                 $request->jam_peresepan = $request->jam_rawat;
                 $request->tgl_peresepan =  $request->tgl_perawatan2;
                 $this->create($request);
-                
+                return redirect()->back();
+                dd($request->all());
                 // Menambahkan obat ke plan
                 $listResep = " Resep : \r\n";
                 foreach ($request->jumlah as $key => $value) {
@@ -1596,8 +1658,8 @@ class FormController extends Controller
 
             $data = date('Ymd', strtotime($request->tgl_peresepan));
             // dd($data);
-            $noorder = DB::table('resep_obat')->where('tgl_peresepan', $request->tgl_peresepan)->orderby('no_resep', 'DESC');
-
+            $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
+            
             if($noorder->count() == 0){
                 $noorderResep = $data . sprintf("%04s", 1);
             }else{

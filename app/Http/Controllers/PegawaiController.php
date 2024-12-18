@@ -60,6 +60,13 @@ class PegawaiController extends Controller
             ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->where('pr.kd_dokter', '=', $username)
             ->orderby('a.jam_reg', 'desc')->get();
+
+        $awalmedisdalam = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.kd_dokter as petugasrs')->distinct()
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->leftjoin('penilaian_medis_ralan_penyakit_dalam as pr', 'a.no_rawat','=', 'pr.no_rawat')
+            ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->where('pr.kd_dokter', '=', $username)
+            ->orderby('a.jam_reg', 'desc')->get();
     
         foreach ($pasienterakhir as $key => $value) {
             $pasienterakhir[$key]->stts = "Belum";
@@ -73,6 +80,13 @@ class PegawaiController extends Controller
             if($awalmedisbedah->isNotEmpty()){
                 foreach ($awalmedisbedah as $keysoap => $ambedah) {
                     if($value->no_rawat == $ambedah->no_rawat){
+                        $pasienterakhir[$key]->stts = "Sudah";
+                    }
+                }
+            }
+            if($awalmedisdalam->isNotEmpty()){
+                foreach ($awalmedisdalam as $keysoap => $amdalam) {
+                    if($value->no_rawat == $amdalam->no_rawat){
                         $pasienterakhir[$key]->stts = "Sudah";
                     }
                 }
@@ -691,6 +705,21 @@ class PegawaiController extends Controller
         } else {
             echo "hasil kosong";
         }
+    }
+
+    function cekstokobat(Request $request){
+        $stokobat = DB::table('databarang as db')->select( 'db.nama_brng', 'gb.stok')
+        ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'db.kode_brng')
+        ->where('db.kode_brng', $request->id)
+        ->first();
+
+        $msg ="";
+        if($stokobat != null){
+            if($stokobat->stok < $request->jumlah ){
+                $msg = 'Stok ' .$stokobat->nama_brng. ' Sisa ' .$stokobat->stok;
+            }
+        }
+        return response()->json(array('msg'=> $msg, 'idinput'=>$request->idinput, 'stok'=>$stokobat->stok), 200);
     }
 
     public function tampilguru(){

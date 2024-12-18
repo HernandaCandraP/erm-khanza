@@ -100,6 +100,12 @@ class FormControllerRanap extends Controller
                 ->join('icd9 as i', 'i.kode','=', 'pp.kode')
                 ->where('pp.no_rawat', $request->no_rawat)->where('pp.status', 'Ranap')->orderby('pp.prioritas', 'ASC')->get();
 
+            // cek resep pulang
+            $cekreseppulang = DB::table('permintaan_resep_pulang as rp')->select('dpr.*', 'db.nama_brng')
+                ->leftjoin('detail_permintaan_resep_pulang as dpr', 'dpr.no_permintaan','=', 'rp.no_permintaan')
+                ->leftjoin('databarang as db', 'db.kode_brng', '=', 'dpr.kode_brng')
+                ->where('rp.no_rawat', $request->no_rawat)->get();
+
             $listpenunjanglab= "";
             if($penunjanglab->isNotEmpty()){
                 $listpenunjanglab .= "Penunjang Laboratorium : ";
@@ -170,8 +176,17 @@ class FormControllerRanap extends Controller
                     $dataresume->kd_prosedur_utama = $cekprosedur[0]->kode;
                 }
             }
-       }
-       //  dd($dataresume);
+
+            // cek apakah adara resep pulang
+            $reseppulang = "";
+            if ($cekreseppulang->isNotEmpty()) {
+                foreach ($cekreseppulang as $key => $value) {
+                    $reseppulang .= $value->nama_brng . " jumlah: " . $value->jml . " (" . $value->dosis . ")\r\n";
+                }
+                $dataresume->obat_pulang = $reseppulang;
+            }
+        }
+        // dd($dataresume);
         return view('formranap/resume', [
             'detailpasien' => $detailpasien, 
             'dataresume' => $dataresume,
@@ -383,10 +398,13 @@ class FormControllerRanap extends Controller
         }         
         
         // ambil seluruh riwayat resep
-        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.ralan')
+        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.ralan', 'gb.stok')
             ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
             ->leftjoin('databarang as db', 'db.kode_brng', '=', 'rd.kode_brng')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'rd.kode_brng')
+            ->where('gb.stok', '>', '0')
             ->orderby('ro.no_resep', 'DESC')
+            ->where('ro.status', 'ranap')
             ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
 
         // ambil total obat per resep untuk menghitung colspan
@@ -394,6 +412,7 @@ class FormControllerRanap extends Controller
             ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
             ->orderby('ro.no_resep', 'DESC')
             ->groupby('ro.no_resep')
+            ->where('ro.status', 'ranap')
             ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
 
         $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
@@ -717,6 +736,24 @@ class FormControllerRanap extends Controller
                     $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlah[$key] . " Aturan Pakai " . $request->aturan_pakai[$key] . "\r\n";
                 }
                 $request->rtl = $request->rtl . $listResep;
+
+            }elseif($request->jumlahpulang != null || $request->reseppulang){
+                $request->tabel = 'ResepPulangDokterRawatInap';
+                $request->jam_peresepan = date('H:i:s');
+                $request->tgl_peresepan =  date('Y-m-d');
+                $this->create($request);
+
+                if($request->rtl != '-'){
+                    $request->rtl .= "\r\n";
+                }
+                
+                // Menambahkan obat ke plan
+                $listResep = " Resep Pulang: \r\n";
+                foreach ($request->jumlahpulang as $key => $value) {
+                    $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->reseppulang[$key])->first();
+                    $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlahpulang[$key] . " Aturan Pakai " . $request->aturan_pakai_pulang[$key] . "\r\n";
+                }
+                $request->rtl = $request->rtl . $listResep;
             }
             if($request->pemeriksaanrad != null){
                 $request->tabel = 'PermintaanRadiologiRawatInap';
@@ -1024,7 +1061,7 @@ class FormControllerRanap extends Controller
         elseif ($request->tabel == 'ResepDokterRawatInap') {
             $data = date('Ymd', strtotime($request->tgl_peresepan));
             // dd($data);
-            $noorder = DB::table('resep_obat')->where('tgl_peresepan', $request->tgl_peresepan)->orderby('no_resep', 'DESC');
+            $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
 
             if($noorder->count() == 0){
                 $noorderResep = $data . sprintf("%04s", 1);
@@ -1060,6 +1097,47 @@ class FormControllerRanap extends Controller
             ];
             DB::table('resep_obat')->insert($resep_obat);
             DB::table('resep_dokter')->insert($resepdokter);
+            $request->session()->flash('success', 'Berhasil menyimpan Resep');
+            return redirect()->back();
+        }
+        elseif ($request->tabel == 'ResepPulangDokterRawatInap') {
+            $data = date('Ymd', strtotime($request->tgl_peresepan));
+            // dd($data);
+            $noorder = DB::table('permintaan_resep_pulang')->where('no_permintaan',  'like', '%' . $data . '%')->orderby('no_permintaan', 'DESC');
+
+            if($noorder->count() == 0){
+                $noorderResepPulang = 'RP'. $data . sprintf("%04s", 1);
+            }else{
+                $justnoorder = substr($noorder->first()->no_permintaan, 2);
+                $noorderResepPulang = $justnoorder+1;
+                $noorderResepPulang = 'RP'.$noorderResepPulang;
+            }
+            $resepdokterpulang = [];
+            if($request->jumlahpulang){
+                foreach ($request->jumlahpulang as $key => $value) {
+                    // jika aturan pakai kosong, ubah menjadi '-'
+                    if($request->aturan_pakai_pulang[$key] == null)
+                    {
+                        $dtresepdokterpulang = ['no_permintaan'=>$noorderResepPulang, 'kode_brng'=> $request->reseppulang[$key], 'jml' => $request->jumlahpulang[$key], 'dosis' => '-'];
+                    }else{
+                        $dtresepdokterpulang = ['no_permintaan'=>$noorderResepPulang, 'kode_brng'=> $request->reseppulang[$key], 'jml' => $request->jumlahpulang[$key], 'dosis' => $request->aturan_pakai_pulang[$key]];
+                    }
+                    array_push($resepdokterpulang, $dtresepdokterpulang);
+                }
+            }
+
+            $resep_obat = [
+                'no_permintaan' => $noorderResepPulang,
+                'tgl_permintaan' => $request->tgl_peresepan,
+                'jam' => $request->jam_peresepan,
+                'no_rawat' => $request->no_rawat,
+                'kd_dokter' => $request->nip,
+                'status' => 'Belum',
+                'tgl_validasi' => '0000-00-00',
+                'jam_validasi' => '00:00:00',
+            ];
+            DB::table('permintaan_resep_pulang')->insert($resep_obat);
+            DB::table('detail_permintaan_resep_pulang')->insert($resepdokterpulang);
             $request->session()->flash('success', 'Berhasil menyimpan Resep');
             return redirect()->back();
         }

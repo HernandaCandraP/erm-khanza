@@ -35,6 +35,8 @@ Route::get('/login', 'LoginController@index')->name('login');
 Route::post('/postlogin', 'LoginController@postlogin')->name('postlogin');
 Route::post('/logout', 'LoginController@logout')->name('logout');
 Route::get('/ambil_icd', 'PegawaiController@ambil_icd')->name('ambil_icd');
+Route::get('/cekstokobat', 'PegawaiController@cekstokobat')->name('cekstokobat');
+
 
 //admin
 Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
