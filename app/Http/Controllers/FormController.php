@@ -11,7 +11,7 @@ class FormController extends Controller
 {
     public function menurajal(Request $request){
         $username = Session::get('username');
-        $month = date('Y-m'); //'2023-06'; // 
+        $month =  date('Y-m'); //'2023-06'; //
         $date = date('Y-m-d'); //'2023-06-15'; // 
         
         $kdpoli = Session::get('getpoli');
@@ -403,14 +403,17 @@ class FormController extends Controller
             $penilaianralanbedah->nama = Auth::guard('pegawai')->user()->nama;
 
             // ambil data ttv dari keperawatan umum
-            $ambilttv = DB::table('penilaian_awal_keperawatan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tanggal', 'DESC')->first();
+            $ambilttv = DB::table('pemeriksaan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
+            // dd($ambilttv);
             if($ambilttv != null){
-                $penilaianralanbedah->suhu = $ambilttv->suhu;
-                $penilaianralanbedah->td = $ambilttv->td;
+                $penilaianralanbedah->suhu = $ambilttv->suhu_tubuh;
+                $penilaianralanbedah->td = $ambilttv->tensi;
                 $penilaianralanbedah->nadi = $ambilttv->nadi;
-                $penilaianralanbedah->rr = $ambilttv->rr;
-                $penilaianralanbedah->bb = $ambilttv->bb;
+                $penilaianralanbedah->rr = $ambilttv->respirasi;
+                $penilaianralanbedah->bb = $ambilttv->berat;
                 $penilaianralanbedah->gcs = $ambilttv->gcs;
+                $penilaianralanbedah->keluhan_utama = $ambilttv->keluhan;
+                $penilaianralanbedah->rps = $ambilttv->pemeriksaan;
             }
         }
         $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
@@ -655,14 +658,17 @@ class FormController extends Controller
             $penilaianralandalam->nama = Auth::guard('pegawai')->user()->nama;
 
             // ambil data ttv dari keperawatan umum
-            $ambilttv = DB::table('penilaian_awal_keperawatan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tanggal', 'DESC')->first();
+            $ambilttv = DB::table('pemeriksaan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
+            // dd($ambilttv);
             if($ambilttv != null){
-                $penilaianralandalam->suhu = $ambilttv->suhu;
-                $penilaianralandalam->td = $ambilttv->td;
+                $penilaianralandalam->suhu = $ambilttv->suhu_tubuh;
+                $penilaianralandalam->td = $ambilttv->tensi;
                 $penilaianralandalam->nadi = $ambilttv->nadi;
-                $penilaianralandalam->rr = $ambilttv->rr;
-                $penilaianralandalam->bb = $ambilttv->bb;
+                $penilaianralandalam->rr = $ambilttv->respirasi;
+                $penilaianralandalam->bb = $ambilttv->berat;
                 $penilaianralandalam->gcs = $ambilttv->gcs;
+                $penilaianralandalam->keluhan_utama = $ambilttv->keluhan;
+                $penilaianralandalam->rps = $ambilttv->pemeriksaan;
             }
             // dd($ambilttv, $penilaianralandalam);
         }
@@ -1018,8 +1024,10 @@ class FormController extends Controller
     {      
         // dd($request->all());
         if($request->niplama != $request->nip && $request->action == 'update'){
-            $request->session()->flash('error', "Data Tidak Dapat Disimpan, Dokter Penangung Jawab Tidak Sama");
-            return redirect()->back();
+            if($request->tabel != 'DataResumeMedisPasienRawatJalan'){
+                $request->session()->flash('error', "Data Tidak Dapat Disimpan, Dokter Penangung Jawab Tidak Sama");
+                return redirect()->back();
+            }
         }elseif($request->niplama != $request->nip && $request->action == 'update_with_time'){
             $request->session()->flash('error', "Data Tidak Dapat Disimpan, Dokter Penangung Jawab Tidak Sama");
             return redirect()->back();
@@ -1522,8 +1530,6 @@ class FormController extends Controller
                 $request->jam_peresepan = $request->jam_rawat;
                 $request->tgl_peresepan =  $request->tgl_perawatan2;
                 $this->create($request);
-                return redirect()->back();
-                dd($request->all());
                 // Menambahkan obat ke plan
                 $listResep = " Resep : \r\n";
                 foreach ($request->jumlah as $key => $value) {

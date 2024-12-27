@@ -53,7 +53,7 @@
           <div class="col-md-12 col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Pertentase Pengisian Dokter <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
+                <h5 class="float-left">Persentase Pengisian Rawat Jalan Dokter <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
               </div>
               <!-- /.card-header -->
               <div class="card-body row">

@@ -420,7 +420,90 @@
 <!-- SCRIPTS -->
 @include('template.script_table')
 <script>
-  $(function () {
+  var i=1;
+  $(".addmore").on('click',function(){
+    if(i == 1){
+      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
+    }
+
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresep'+i).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    i++;
+
+    myFunction();
+  });
+
+  $(".copyresep").click(function() {
+    var str = $(this).val();
+    var index = str.substring(0, str.indexOf("#*#"));
+    var collectdata = str.split("#*#")[1];
+    collectdata= JSON.parse(collectdata)
+    
+    collectdata.forEach(function(element){
+      // console.log(element)
+      if(element['no_resep'] == index){
+        var $kode_brng = element["kode_brng"];
+        if(i == 1){
+          document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
+        }
+        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+
+        $('.select2').select2();
+
+        $('#hapusresep'+i).on('click', function() {
+          $(this).parents("tr").remove();
+          return false;
+        });
+        i++;
+      }
+    });
+    myFunction();
+    $('#modal-lg').modal('hide');
+  });
+
+  // check obat kosong atau tidak
+  $('form').on('keyup change paste', 'input, select, textarea', function(){
+    if (!isNaN(this.id)) {
+      console.log( this.id );
+      console.log( this.value );
+      var resepid = "resep" + this.id;
+      var resep = document.getElementById(resepid);
+      console.log(resep.value);
+      console.log(resepid);
+      $.ajax({
+        url: "{{route('cekstokobat')}}",
+        type: "GET",
+        // masukkan request ke data
+        data:{jumlah:$(this).val(), id:$(resep).val(), idinput:$(this).attr('id')}, 
+        dataType: "json",
+        success: function (data) {
+            // jika jumlah input melebihi stok
+            if(data.msg != ""){
+              alert(data.msg);
+              var idinput = "#" + data.idinput;
+              $(idinput).val(data.stok);
+              console.log(data.stok);
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle errors, if any
+            console.log(error);
+        }
+      });
+    }
+  });
+  
+  $(document).ready(function() {
+    myFunction();
+  });
+
+  var myFunction = function(){
     //Initialize Select2 Elements
     $('.select2').select2()
 
@@ -428,47 +511,56 @@
     $('.select2bs4').select2({
       theme: 'bootstrap4'
     })
-  })
+    $('#diagnosa_utama').select2({
+        minimumInputLength: 3,  // bebas semau kita, tapi w saranin 3 angka lebih biar lebih cepat
+        maximumSelectionLength: 4,
+        allowClear: true,
+        placeholder: 'Input nama',
+        ajax: {
+          dataType: 'json',
+          url: '{{route("ambil_icd")}}',  // ini data yang akan kita ambil untuk di load
+          delay: 5,  // ini bebas mau di pake atau tidak
+          data: function(params) {
+            return {
+              search: params.term
+            }
+          },
+          processResults: function (data, page) {
+          return {
+            results: data
+          };
+        },
+      }
+      }).on('select2:select', function (evt) {
+          var data = $("#diagnosa_utama option:selected").text();
+        // alert("data yang anda pilih"+data+"");
+        var element = evt.params.data.element;
+        var $element = $(element);
+        
+        window.setTimeout(function () {  
+        if ($("select").find(":selected").length > 1) {
+          var $second = $("select").find(":selected").eq(-2);
+          
+          $element.detach();
+          $second.after($element);
+        } else {
+          $element.detach();
+          $("select").prepend($element);
+        }
+        
+        $("select").trigger("change");
+        }, 1);
+      });
 
-
-  var i=1;
-  $(".addmore").on('click',function(){
-    if(i == 1){
-      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
-    }
-
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $(".addmorerad").on('click',function(){
-    // if(i == 1){
-    //   document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
-    // }
-
-    document.getElementById("permintaanlab").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $("#hapusresep").on('click', function() {
-    $(this).parents("tr").remove();
-    return false;
-  });
+      $("select").on("select2:unselect", function (evt) {
+        if ($("select").find(":selected").length) {
+          var element = evt.params.data.element;
+          var $element = $(element);
+        $
+        ("select").find(":selected").after($element); 
+        }
+      });
+  }
 </script>
 </body>
 </html>
-
