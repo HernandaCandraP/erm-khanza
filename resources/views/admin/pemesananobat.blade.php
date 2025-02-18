@@ -21,7 +21,9 @@
           <div class="col-md-12 col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">List Obat</b></h5>
+                @include('template.alert')
+                <h5 class="float-left">List Obat &emsp;</b></h5>
+                <a href="{{ route('selisihobat', ['aksi' => 'CekSelisihHarga']) }}" class="btn btn-sm btn-info" role="button">Cek Selisih Harga Obat</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -55,27 +57,55 @@
 
           <div class="col-md-12 col-lg-12">
             <div class="card">
-              @if ($kode_brng)
+              @if ($hargaobat)
               <div class="card-body">
-                <h3>SUPLIER {{$kode_brng}} - <b>{{$nama_brng}}</b></h3>
+                <h3>SUPLIER {{$hargaobat->kode_brng}} - <b>{{$hargaobat->nama_brng}}</b></h3>
+                <h5>Harga Dasar: @money($hargaobat->dasar)</h5>
+                <h5>Harga Beli: @money($hargaobat->h_beli)</h5>
+                <h5>Harga Jual: @money($hargaobat->ralan)</h5>
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
                     <th>No.</th>
                     <th>Kode Suplier</th>
-                    <th>Nama Suplier</th>
-                    <th>Tanggal Pesan</th>
+                    {{-- <th>Nama Suplier</th> --}}
+                    <th>Tanggal Faktur</th>
+                    <th>Barang Datang</th>
+                    <th>Total Harga</th>
+                    <th>Diskon</th>
+                    <th>Setelah Diskon</th>
+                    <th>PPN</th>
+                    <th>Total PCS</th>
                     <th>Harga (/pcs)</th>
+                    <th>Harga Jual 30% (/pcs)</th>
+                    <th>Harga Jual 30% +7%</th>
                   </tr>
                   </thead>
                   <tbody>
-                    @foreach ($pemesanan as $no => $key)
+                    @php $no = 1 @endphp
+                    @foreach ($pemesanan as $key)
                       <tr>
-                        <th scope="row"> {{$no+1}}. </th>
+                        <th scope="row"> {{$no++}} </th>
                         <td>{{$key->kode_suplier}}</td>
-                        <td>{{$key->nama_suplier}}</td>
-                        <td>{{$key->tgl_pesan}}</td>
-                        <td>{{$key->pcs}}</td>
+                        {{-- <td>{{$key->nama_suplier}}</td> --}}
+                        <td>{{$key->tgl_faktur}}</td>
+                        <td>{{$key->jumlah}} @'{{$key->h_pesan}}</td>
+                        <td>@money($key->subtotal)</td>
+                        <td>{{$key->dis}}%</td>
+                        <td>@money($key->total)</td>
+                        @if ($key->ppn == 0)
+                          <td>(0%)<br> @money($key->hargappn)</td>
+                        @else
+                          <td>(11%)<br> @money($key->hargappn)</td>
+                        @endif
+                        <td>{{$key->jumlah2}}</td>
+                        <td>@money($key->pcs)</td>
+                        <td>@money($key->hargajual)
+                          <a href="{{ route('updatehargaobat', ['kode_brng' => $hargaobat->kode_brng, 'hargajual' => $key->hargajual]) }}" class="btn btn-sm btn-warning" role="button">Update Harga</a>
+                        </td>
+                        <td>@money($key->hargajuallagi)
+                          <a href="{{ route('updatehargaobat', ['kode_brng' => $hargaobat->kode_brng, 'hargajual' => $key->hargajuallagi]) }}" class="btn btn-sm btn-warning" role="button">Update Harga</a>
+                        </td>
                       </tr> 
                     @endforeach
                   </tbody>

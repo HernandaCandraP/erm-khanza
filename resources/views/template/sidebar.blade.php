@@ -80,6 +80,12 @@
               <p>Admin</p>
             </a>
             <li class="nav-item">
+              <a href="{{route('penilaianperawat')}}" class="nav-link {{ Request::is('admin/penilaianperawat') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-user-nurse"></i>
+                <p>Penilaian Perawat</p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="{{route('riwayatradiologi')}}" class="nav-link {{ Request::is('riwayatradiologi') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-x-ray"></i>
                 <p>Riwayat Radiologi</p>
@@ -101,6 +107,12 @@
               <a href="{{route('pemesananobat')}}" class="nav-link {{ Request::is('admin/pemesananobat') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-capsules"></i>
                 <p>Pemesanan Obat</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('admin-biayarajal')}}" class="nav-link {{ Request::is('admin/biayarajal') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-hourglass-half"></i>
+                <p>Pembayaran Pasien</p>
               </a>
             </li>
             <li class="nav-item">

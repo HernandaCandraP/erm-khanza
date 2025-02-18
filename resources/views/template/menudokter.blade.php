@@ -9,6 +9,9 @@
   <a href="{{ route('form-resume', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('form/resume') ? 'active' : '' }}">Resume</a>
 </div>
 {{-- <div class="col-sm-2 pt-2">
+  <a href="{{ route('form-resumegabung', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('form/resumegabung') ? 'active' : '' }}">Resume Rawat Gabung</a>
+</div> --}}
+{{-- <div class="col-sm-2 pt-2">
   <a href="{{ route('form-permintaanlab', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('form/permintaanlab') ? 'active' : '' }}">Permintaan Lab</a>
 </div>
 <div class="col-sm-2 pt-2">

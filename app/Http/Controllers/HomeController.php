@@ -13,7 +13,7 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function mutasi()
+    public function mutasi(Request $request)
     {
         $username = Session::get('username');
         $month = date('Y-m'); //'2023-06'; // 
@@ -29,7 +29,20 @@ class HomeController extends Controller
             ->where('mb.dikirim', '!=', '0000-00-00 00:00:00')
             ->orderby('a.jam_reg', 'ASC')->get();
 
-        // dd($pasienranap);
+        // dd($antrean);
+        foreach ($antrean as $key => $value) {
+            if ($value->diterima <= $value->dikirim ){
+                $request->merge(['status' => 'taskid4', 'no_rawat' => $value->no_rawat]);
+                $this->updateantrean($request);
+            }
+            else if ($value->jam_rawat == null ){
+                // tidak menjalankan fungsi karena pemeriksaan soap masih kosong
+            }
+            else if($value->tgl_perawatan." ". $value->jam_rawat <= $value->diterima){
+                $request->merge(['no_rawat' => $value->no_rawat, 'tgl_perawatan' => $value->tgl_perawatan, 'jam_rawat' => $value->jam_rawat, 'status' => "taskid5"]);
+                $this->updateantrean($request);
+            }
+        }
 
 
         return view('petugas/antrean-edit', [

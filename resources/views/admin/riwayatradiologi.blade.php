@@ -102,7 +102,7 @@
                               <td rowspan="{{$value->jumlah +1}}">
                                 @if($gambarrad[$key])   
                                   @foreach ($gambarrad[$key] as $keygambar => $valuegambar)
-                                      <img src="{{$valuegambar}}" class="img-fluid w-100"/><br>
+                                      Gambar {{$keygambar+1}}<img src="{{$valuegambar}}" class="img-fluid w-100"/><br>
                                   @endforeach 
                                 @else
                                   <div class="col-sm-6">Gambar Radiologi tidak tersedia, silahkan hubungi petugas radiologi</div> 

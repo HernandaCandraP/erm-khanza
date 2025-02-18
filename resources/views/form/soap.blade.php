@@ -33,7 +33,11 @@
                     <div class="col-sm-6">
                       <div class="row">
                         <div class="col-5 text-right"><b>Nama</b></div>
-                        <div class="col-7">&nbsp; {{$detailpasien[0]->nm_pasien}}</div>
+                        <div class="col-7">&nbsp; {{$detailpasien[0]->nm_pasien}}  
+                          @if ($detailpasien[0]->internal)
+                            <a href="{{ route('form-resumegabung', ['no_rawat' => $no_rawat]) }}" class="btn btn-danger btn-sm">Resume Internal</a>
+                          @endif
+                        </div>
                         <div class="col-5 text-right"><b>No. RM</b></div>
                         <div class="col-7">&nbsp; {{$detailpasien[0]->no_rkm_medis}}</div>
                         <div class="col-5 text-right"><b>No. Rawat</b></div>
@@ -80,10 +84,10 @@
                         <input type="text" name="tabel" class="form-control form-control-sm" value="DataPemeriksaanRawatJalan" hidden>
                       </div>
                       <div class="form-inline"><b>Subject :</b>
-                        <textarea class="form-control form-control-sm" rows="2" name="keluhan" autocomplete="off" style="width: 100%">{{ old('keluhan', $data->keluhan) }}</textarea>
+                        <textarea class="form-control form-control-sm" rows="2" name="keluhan" autocomplete="off" style="width: 100%" required>{{ old('keluhan', $data->keluhan) }}</textarea>
                       </div>
                       <div class="form-inline pt-3"><b>Object : </b>
-                        <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%">{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
+                        <textarea class="form-control form-control-sm" rows="2" name="pemeriksaan" autocomplete="off" style="width: 100%" required>{{ old('pemeriksaan', $data->pemeriksaan) }}</textarea>
                         {{-- <div class="col-sm-10"> 
                           <div class="form-inline">
                             <img src="{{asset($getimage)}}" class="mx-auto d-block"/><br>
@@ -94,14 +98,14 @@
                         <div class="col-sm-4"> 
                           Suhu
                           <div class="input-group-append" >
-                            <input type="text" name="suhu_tubuh" class="form-control form-control-sm" style="width: 80%" value="{{ old('suhu_tubuh', $data->suhu_tubuh) }}">
+                            <input type="text" name="suhu_tubuh" class="form-control form-control-sm" style="width: 80%" value="{{ old('suhu_tubuh', $data->suhu_tubuh) }}" required>
                             <span class="input-group-text text-sm">°C</span>
                           </div>
                         </div>
                         <div class="col-sm-4"> 
                           Tensi
                           <div class="input-group-append" >
-                            <input type="text" name="tensi" class="form-control form-control-sm" style="width: 80%" value="{{ old('tensi', $data->tensi) }}">
+                            <input type="text" name="tensi" class="form-control form-control-sm" style="width: 80%" value="{{ old('tensi', $data->tensi) }}" required>
                             <span class="input-group-text text-sm">mmHg</span>
                           </div>
                         </div>
@@ -122,14 +126,14 @@
                         <div class="col-sm-3"> 
                           RR
                           <div class="input-group-append" >
-                            <input type="text" name="respirasi" class="form-control form-control-sm" style="width: 80%" value="{{ old('respirasi', $data->respirasi) }}">
+                            <input type="text" name="respirasi" class="form-control form-control-sm" style="width: 80%" value="{{ old('respirasi', $data->respirasi) }}" required>
                             <span class="input-group-text text-sm">/menit</span>
                           </div>
                         </div>
                         <div class="col-sm-4"> 
                           Nadi
                           <div class="input-group-append" >
-                            <input type="text" name="nadi" class="form-control form-control-sm" style="width: 80%" value="{{ old('nadi', $data->nadi) }}">
+                            <input type="text" name="nadi" class="form-control form-control-sm" style="width: 80%" value="{{ old('nadi', $data->nadi) }}" required>
                             <span class="input-group-text text-sm">x/menit</span>
                           </div>
                         </div>
@@ -173,7 +177,7 @@
                     <div class="col-sm-12">
                       <hr>
                       <div class="form-inline"><b>Asesmen :</b>
-                        <textarea class="form-control form-control-sm" rows="3" name="penilaian" autocomplete="off" style="width: 100%">{{ old('penilaian', $data->penilaian) }}</textarea>
+                        <textarea class="form-control form-control-sm" rows="3" name="penilaian" autocomplete="off" style="width: 100%" required>{{ old('penilaian', $data->penilaian) }}</textarea>
                         {{-- <div class="select2-purple" style="width: 100%">
                           <select class="select2 form-control form-control-sm" multiple="multiple" name="diagnosa_utama[]" id="diagnosa_utama" data-placeholder="ICD - Diagnosa" data-dropdown-css-class="select2-purple">
                             @foreach ($jnspenyakit as $key)
@@ -198,7 +202,7 @@
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group pt-3"><b>Instruksi :</b>
-                        <textarea class="form-control form-control-sm" rows="5" name="instruksi" autocomplete="off" style="width: 100%">{{ old('instruksi', $data->instruksi) }}</textarea>
+                        <textarea class="form-control form-control-sm" rows="5" name="instruksi" autocomplete="off" style="width: 100%" required>{{ old('instruksi', $data->instruksi) }}</textarea>
                       </div>
                       <div class="form-group">
                         <div class="card card-primary collapsed-card">

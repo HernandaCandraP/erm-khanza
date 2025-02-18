@@ -51,7 +51,12 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/admin/resetpassword', 'LoginController@resetpassword')->name('resetpassword');
 
     Route::get('/admin/persentase', 'PegawaiController@persentase')->name('persentase');
+    Route::get('/admin/penilaianperawat', 'PegawaiController@penilaianperawat')->name('penilaianperawat');
+
     Route::match(array('GET','POST'),'/admin/pemesananobat', 'PegawaiController@pemesananobat')->name('pemesananobat');
+    Route::get('/admin/selisihobat', 'PegawaiController@selisihobat')->name('selisihobat');
+    // Route::get('/admin/updatehargaobat', 'PegawaiController@updatehargaobat')->name('updatehargaobat');
+    Route::match(array('GET','POST'), '/admin/biayarajal', 'PegawaiController@biayarajal')->name('admin-biayarajal');
 });
 
 // login dokter
@@ -79,6 +84,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/penanganandokter', 'FormController@rjpenanganandokter')->name('form-penanganandokter');
     Route::get('/form/diagnosa', 'FormController@rjdiagnosa')->name('form-diagnosa');
     Route::get('/form/resume', 'FormController@rjresume')->name('form-resume');
+    Route::get('/form/resumegabung', 'FormController@rjresumegabung')->name('form-resumegabung');
     Route::get('/form/permintaanlab', 'FormController@permintaanlab')->name('form-permintaanlab');
     Route::get('/form/permintaanrad', 'FormController@permintaanrad')->name('form-permintaanrad');
     Route::get('/form/resep', 'FormController@rjresep')->name('form-resep');

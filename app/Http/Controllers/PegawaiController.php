@@ -179,16 +179,6 @@ class PegawaiController extends Controller
             ->get();
 
             $polibulanperdokter[] = DB::table('reg_periksa as a')->select('a.*', DB::raw('count(*) as jumlah'))
-            // ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_bedah as prb', 'a.no_rawat','=', 'prb.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_paru as prp', 'a.no_rawat','=', 'prp.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_kandungan as prk', 'a.no_rawat','=', 'prk.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_neurologi as prn', 'a.no_rawat','=', 'prn.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_anak as pra', 'a.no_rawat','=', 'pra.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_mata as prm', 'a.no_rawat','=', 'prm.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan_penyakit_dalam as prd', 'a.no_rawat','=', 'prd.no_rawat')
-            // ->leftjoin('penilaian_medis_ralan as pru', 'a.no_rawat','=', 'pru.no_rawat')
-            // ->leftjoin('penilaian_medis_igd as pmi', 'a.no_rawat','=', 'pmi.no_rawat')
             ->where('a.kd_dokter', $username)
             // ->where('a.tgl_registrasi', 'like', '%'.$month.'%')
             ->whereBetween('a.tgl_registrasi', [$date, $enddate])
@@ -210,26 +200,100 @@ class PegawaiController extends Controller
             }
         }
 
-        // $totalpasien = DB::table('pasien')->select('no_rkm_medis')->count();
-        // $pasienbulan = DB::table('pasien')->select('no_rkm_medis')->where('tgl_daftar', 'like', '%'.$month.'%')->count();
-        
-        // $kdpoli = Session::get('getpoli');
-        // $polibulan = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('stts', "!=", 'Belum')->where('tgl_registrasi', 'like', '%'.$month.'%')->count();
-
-        // $polihari = DB::table('reg_periksa')->select('no_rawat')->where('kd_poli', $kdpoli)->where('tgl_registrasi', 'like', '%'.$date.'%')->count();
-
-        // $pasienaktif = DB::table('reg_periksa as rp')->select('p.no_rkm_medis', DB::raw('count(*) as jumlah'), 'p.nm_pasien')->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')->where('kd_dokter', $username)->groupby('no_rkm_medis')->orderby('jumlah', 'desc')->take(10)->get();
-
         return view('admin/home', [
-            // 'totalpasien' => $totalpasien, 
-            // 'pasienbulan' => $pasienbulan, 
-            // 'polibulan' => $polibulan, 
-            // 'polihari' => $polihari, 
-
             'listdokter' => $listdokter, 
             'totalpolibulanperdokter' => $totalpolibulanperdokter, 
             'totalpolibulanperdokterinput' => $totalpolibulanperdokterinput, 
             'persentasepolibulanperdokter' => $persentasepolibulanperdokter, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+        ]);
+    }
+
+    public function penilaianperawat(Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
+            $enddate = date("Y-m-d");
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
+        $persentasepengisian = [];
+        $polibulanperperawatinput = [];
+        $polibulanperperawat= [];
+
+        // ambil list perawat beserta poli
+        $listperawat = [
+                '02.02.09.139' => ['U0003', 'U0005'], //rista bedah dalam
+                '02.02.12.207' => ['U0017'], //ratna jantung
+                '02.03.18.266' => ['U0004', 'U0003'], //gustin anak & bedah
+                '02.02.20.310' => ['U0006', 'U0007'], //ima mata & obgyn
+                '02.02.00.024' => ['U0008'], //lilik syaraf
+                '058' => ['IGDK'], //susiana igd
+                '289' => ['IGDK'], //lilis igd
+                '408' => ['IGDK'], //bachtiar igd
+                '308' => ['IGDK'], //okakan igd
+                '02.02.21.335' => ['IGDK'], //alfi igd
+                '176' => ['IGDK'], //muslimah igd
+                '02.02.00.022' => ['IGDK'], //hadi igd
+                '347' => ['IGDK'], //kusmiran igd
+                '053' => ['IGDK'], //nurkolis igd
+            ];
+
+        foreach ($listperawat as $nip => $poli) {
+            $namaperawat[$nip] = DB::table('petugas as p')->select('p.nama', 'p.nip')
+            ->where('p.nip', $nip)
+            ->first();
+
+            // dd($namaperawat);
+
+            $polibulanperperawatinput[$nip] = DB::table('reg_periksa as a')->select('a.*', DB::raw('count(*) as jumlah'))
+            ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
+            ->leftjoin('penilaian_awal_keperawatan_igd as pak', 'a.no_rawat','=', 'pak.no_rawat')
+            ->whereIn('a.kd_poli', $poli)
+            // ->where('a.status_lanjut', 'Ralan')
+            ->where(function ($query) use ($nip) {
+                $query->orwhere('pr.nip', $nip)
+                    ->orWhere('pak.nip', $nip);
+                })
+            ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->groupBy('a.no_rawat') 
+            ->get();
+
+            $polibulanperperawat[$nip] = DB::table('reg_periksa as a')->select('a.*', DB::raw('count(*) as jumlah'))
+            ->whereIn('a.kd_poli', $poli)
+            // ->where('a.status_lanjut', 'Ralan')
+            ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->groupBy('a.no_rawat') 
+            ->get();
+        }
+
+        $totalpolibulanperperawatinput = [];
+        $totalpolibulanperperawat = [];
+        $persentasepolibulanperperawat = [];
+        foreach ($polibulanperperawatinput as $key => $value) {
+            $totalinput = $polibulanperperawatinput[$key]->count();
+            $totalsemua = $polibulanperperawat[$key]->count();
+            $totalpolibulanperperawatinput[$key] = $totalinput;
+            $totalpolibulanperperawat[$key] = $totalsemua;
+            if($totalsemua != 0){
+                $persentasepolibulanperperawat[$key] = round(($totalinput / $totalsemua) * 100, 1);
+            }else{
+                $persentasepolibulanperperawat[$key] = 0;
+            }
+        }
+
+        return view('admin/penilaianperawat', [
+            'namaperawat' => $namaperawat, 
+            'listperawat' => $listperawat, 
+            'totalpolibulanperperawat' => $totalpolibulanperperawat, 
+            'totalpolibulanperperawatinput' => $totalpolibulanperperawatinput, 
+            'persentasepolibulanperperawat' => $persentasepolibulanperperawat, 
             'tanggalawal' => $tanggalawal, 
             'tanggalakhir' => $tanggalakhir, 
         ]);
@@ -652,36 +716,195 @@ class PegawaiController extends Controller
     }
 
     function pemesananobat(Request $request){
+        // $date = date("Y-m-d", strtotime("-3 MONTH")); // date('Y-m-d'); //
+        $date = '2024-11-01'; 
+        $enddate = date("Y-m-d");
+
         // ambil data obat
-        $obat = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.letak_barang','jenis.nama')
+        $obat = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.letak_barang','jenis.nama', 'db.dasar', 'db.h_beli', 'db.ralan')
             ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
             ->where('db.status', '=', '1')->orderby('db.nama_brng')->get();
         $pemesanan = [];
-        $nama_brng = null;
-        $kode_brng = null;
+        $hargaobat = [];
 
         if($request->kode_brng){
-            $nama_brng = $request->nama_brng ?? null;
-            $kode_brng = $request->kode_brng ?? null;
             $pemesanan = DB::table('detailpesan as dp')->select(
-                    DB::raw("dp.*, ds.kode_suplier, ds.nama_suplier, p.tgl_pesan, ( 
-                        dp.total / dp.jumlah2 ) AS pcs")
-                )->distinct()
+                    'dp.*', 'ds.kode_suplier', 'ds.nama_suplier', 'p.tgl_faktur', 'p.ppn', 'dp.total', 'dp.jumlah2',
+                    DB::raw("
+                    (CASE WHEN p.ppn = 0 THEN dp.total WHEN p.ppn > 0 THEN (dp.total)+((dp.total*11)/100) END) AS hargappn,
+                    (CASE WHEN p.ppn = 0 THEN dp.total / dp.jumlah2 WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+(((dp.total / dp.jumlah2)*11)/100) END) AS pcs,
+                    (CASE WHEN p.ppn = 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.3) WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11) + ((dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11))*0.3 END) AS hargajual,
+                                        (CASE WHEN p.ppn = 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.391) WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11) + ((dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11))*0.391 END) AS hargajuallagi")
+                )
                 ->leftjoin('pemesanan as p', 'p.no_faktur', '=', 'dp.no_faktur')
                 ->leftjoin('datasuplier as ds', 'ds.kode_suplier', '=', 'p.kode_suplier')
                 ->where('kode_brng', "?")
-                ->orderBy('pcs', 'ASC')
-                ->orderBy('p.tgl_pesan', 'DESC')
-                ->groupBy('kode_suplier', 'pcs')
+                ->orderBy('p.tgl_faktur', 'DESC')
                 ->setBindings([$request->kode_brng])
-                ->get();
+                ->whereBetween('p.tgl_faktur', [$date, $enddate])
+                ->get()
+                ->sortByDesc('pcs');
+
+            $hargaobat = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.letak_barang', 'db.dasar', 'db.h_beli', 'db.ralan')
+                ->where('db.kode_brng', $request->kode_brng)->first();
         }
-        
+
         return view('admin/pemesananobat', [
             'obat' => $obat, 
             'pemesanan' => $pemesanan, 
-            'kode_brng' => $kode_brng, 
-            'nama_brng' => $nama_brng, 
+            'hargaobat' => $hargaobat,
+        ]);
+    }
+
+    function selisihobat(Request $request){
+        // $date = date("Y-m-d", strtotime("-1 year")); 
+        // $date = date("Y-m-d", strtotime("-4 MONTH")); 
+        $date = '2024-11-01'; 
+        $enddate = date("Y-m-d");
+        
+        // ambil data obat
+        $obat = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.letak_barang','jenis.nama', 'db.dasar', 'db.h_beli', 'db.ralan')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->where('db.status', '=', '1')->orderby('db.nama_brng')->get();
+
+        $selisihharagaobat = [];
+        // foreach ($obat as $key => $value) {
+        //     // dd($value->kode_brng);
+        //     $getharga = DB::table('detailpesan as dp')->select(
+        //         'db.nama_brng', 'db.dasar', 'db.h_beli', 'db.ralan', 'dp.*', 'ds.kode_suplier', 'ds.nama_suplier', 'p.tgl_faktur', 'p.ppn', 'dp.total', 'dp.jumlah2',
+        //         DB::raw("
+        //             (CASE WHEN p.ppn = 0 THEN dp.total WHEN p.ppn > 0 THEN (dp.total)+((dp.total*11)/100) END) AS hargappn,
+        //             (CASE WHEN p.ppn = 0 THEN dp.total / dp.jumlah2 WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+(((dp.total / dp.jumlah2)*11)/100) END) AS pcs,
+        //             (CASE WHEN p.ppn = 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.3) WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11) + ((dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11))*0.3 END) AS hargajual")
+        //     )
+        //     ->leftjoin('pemesanan as p', 'p.no_faktur', '=', 'dp.no_faktur')
+        //     ->leftjoin('datasuplier as ds', 'ds.kode_suplier', '=', 'p.kode_suplier')
+        //     ->leftjoin('databarang as db', 'db.kode_brng', '=', 'dp.kode_brng')
+        //     ->where('dp.kode_brng', "?")
+        //     ->orderBy('p.tgl_faktur', 'DESC')
+        //     // ->setBindings([$value->kode_brng])
+        //     ->setBindings(['TABB0000414'])
+        //     ->first();
+            
+        //     $selisihharagaobat[] = $getharga;
+        // }
+
+        foreach ($obat as $key => $value) {
+            // dd($value->kode_brng);
+            $getharga = DB::table('detailpesan as dp')->select(
+                'db.nama_brng', 'db.dasar', 'db.h_beli', 'db.ralan', 'dp.*', 'ds.kode_suplier', 'ds.nama_suplier', 'p.tgl_faktur', 'p.ppn', 'dp.total', 'dp.jumlah2',
+                DB::raw("
+                    (CASE WHEN p.ppn = 0 THEN dp.total WHEN p.ppn > 0 THEN (dp.total)+((dp.total*11)/100) END) AS hargappn,
+                    (CASE WHEN p.ppn = 0 THEN dp.total / dp.jumlah2 WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+(((dp.total / dp.jumlah2)*11)/100) END) AS pcs,
+                    (CASE WHEN p.ppn = 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.3) WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11) + ((dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11))*0.3 END) AS hargajual,
+                    (CASE WHEN p.ppn = 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.391) WHEN p.ppn > 0 THEN (dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11) + ((dp.total / dp.jumlah2)+((dp.total / dp.jumlah2)*0.11))*0.391 END) AS hargajuallagi")
+            )
+            ->leftjoin('pemesanan as p', 'p.no_faktur', '=', 'dp.no_faktur')
+            ->leftjoin('datasuplier as ds', 'ds.kode_suplier', '=', 'p.kode_suplier')
+            ->leftjoin('databarang as db', 'db.kode_brng', '=', 'dp.kode_brng')
+            ->where('dp.kode_brng', "?")
+            ->orderBy('p.tgl_faktur', 'DESC')
+            ->setBindings([$value->kode_brng])
+            // ->setBindings(['ALK000001'])
+            ->whereBetween('p.tgl_faktur', [$date, $enddate])
+            ->take(6)
+            ->get()
+            ->sortByDesc('pcs');
+
+            // ambil harga teringgi dari 6 bulan terakhir
+            if($getharga){
+                foreach ($getharga as $hargaobat) {
+                    $selisihharagaobat[] = $hargaobat;
+
+                    // update harga
+                    if($request->aksi == 'UpdateHarga'){
+                        $request->merge(['kode_brng' => $hargaobat->kode_brng, 'hargajual' => $hargaobat->hargajual]);
+                        $this->updatehargaobat($request);
+                    }
+                    break;
+                }
+            }
+        }
+
+        // dd($selisihharagaobat[481]);
+        
+        return view('admin/selisihobat', [
+            'selisihharagaobat' => $selisihharagaobat,
+        ]);
+    }
+
+    function updatehargaobat(Request $request){
+        $hargajual = number_format($request->hargajual , 0, ',', '');
+
+        $validate = $request->validate([
+            'kode_brng' => ['required', 'max:50'],
+            'hargajual' => ['required'],
+        ]);
+// dd($hargajual);
+        $data = DB::table('databarang')->where('kode_brng','=', $request->kode_brng)
+            ->update([
+                'ralan' => $hargajual,
+                'kelas1' => $hargajual,
+                'kelas2' => $hargajual,
+                'kelas3' => $hargajual,
+                'utama' => $hargajual,
+                'vip' => $hargajual,
+                'vvip' => $hargajual,
+                'beliluar' => $hargajual,
+                'jualbebas' => $hargajual,
+                'karyawan' => $hargajual,
+            ]);
+
+        $request->session()->flash('success', 'Obat: ' .$request->kode_brng. ' Berhasil Diupdate');
+        return redirect()->back();
+    }
+
+    public function biayarajal(Request $request){
+
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = date("Y-m-d", strtotime("-1 day")); // date('Y-m-d'); //
+            $enddate = date("Y-m-d");
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+        
+        $detailpasien = DB::table('reg_periksa as c')
+            ->select('a.besar_bayar','b.nm_pasien', 'b.no_rkm_medis', 'b.umur', 'c.kd_pj', 'c.no_rawat', 'poli.nm_poli', 'p.totalpiutang',
+                DB::raw('(CASE WHEN c.kd_pj = "A02" THEN "UMUM" ELSE "BPJS" END) AS pj')
+            )
+            ->leftjoin('poliklinik as poli', 'poli.kd_poli','=', 'c.kd_poli')
+            ->leftjoin('detail_nota_jalan as a', 'a.no_rawat','=', 'c.no_rawat')
+            ->leftjoin('pasien as b', 'b.no_rkm_medis','=', 'c.no_rkm_medis')
+            ->leftjoin('detail_piutang_pasien as p', 'p.no_rawat','=', 'c.no_rawat')
+            ->whereBetween('c.tgl_registrasi', [$date, $enddate])
+            ->where('c.status_lanjut', 'Ralan')
+            ->get();
+
+        $detailpasienranap = DB::table('reg_periksa as c')
+            ->select('d.besar_bayar','b.nm_pasien', 'b.no_rkm_medis', 'b.umur', 'c.kd_pj', 'c.no_rawat', 'p.totalpiutang', 'k.kelas', 'bsl.nm_bangsal',
+                DB::raw('(CASE WHEN c.kd_pj = "A02" THEN "UMUM" ELSE "BPJS" END) AS pj')
+            )
+            ->leftjoin('detail_nota_inap as d', 'd.no_rawat','=', 'c.no_rawat')
+            ->leftjoin('pasien as b', 'b.no_rkm_medis','=', 'c.no_rkm_medis')
+            ->leftjoin('detail_piutang_pasien as p', 'p.no_rawat','=', 'c.no_rawat')
+            ->leftjoin('kamar_inap as ki', 'ki.no_rawat', '=', 'c.no_rawat')
+            ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
+            ->leftjoin('bangsal as bsl', 'bsl.kd_bangsal', '=', 'k.kd_bangsal')
+            ->whereBetween('c.tgl_registrasi', [$date, $enddate])
+            ->where('c.status_lanjut', 'Ranap')
+            ->get();
+
+        // dd($detailpasienranap);
+        return view('admin/biayarajal', [
+            'detailpasien' => $detailpasien,
+            'detailpasienranap' => $detailpasienranap,
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
         ]);
     }
 
