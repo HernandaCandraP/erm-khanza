@@ -188,7 +188,9 @@
                     </div>
                   </div>
                   <div class="col-sm-12 text-center">
-                    <a href="{{ route('formri-rincianbiaya', ['no_rawat' => $value->no_rawat]) }}" class="btn btn-success btn-sm">Rincian Total Biaya</a>
+                    @if (Auth::guard('pegawai')->user()->level != 'Apotek')
+                      <a href="{{ route('formri-rincianbiaya', ['no_rawat' => $value->no_rawat]) }}" class="btn btn-success btn-sm">Rincian Total Biaya</a>
+                    @endif
                   </div>
                 @endforeach
                 </div>

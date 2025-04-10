@@ -19,7 +19,9 @@
       <div class="container-fluid">
         <div class="row">
 
-          @include('template.menudokterranap', ['no_rawat' => $no_rawat])
+          @if (Auth::guard('pegawai')->user()->level != 'Apotek')
+            @include('template.menudokterranap', ['no_rawat' => $no_rawat])
+          @endif
           <div class="col-md-12 mt-4">
           <!-- Horizontal Form -->
             <div class="card card-primary">

@@ -199,6 +199,10 @@
                             <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
                           </div>
                       </div>
+
+                      <div class="p-3">
+                        <a href="{{route('resepracikan')}}?no_rawat= {!!$detailpasien[0]->no_rawat!!}" type="button" class="btn btn-danger" target="_blank">Obat Racikan</a>
+                      </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group pt-3"><b>Instruksi :</b>

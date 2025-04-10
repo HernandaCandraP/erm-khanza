@@ -84,6 +84,8 @@
                     <th>No Rawat</th>
                     <th>Nama Pasien</th>
                     <th>Kelas</th>
+                    <th>Dx. Awal</th>
+                    <th>Dx. Akhir</th>
                     <th>PJ</th>
                     <th>Pembayaran Inap</th>
                     <th>Total Putang BPJS</th>
@@ -97,6 +99,8 @@
                         <td>{{$key->no_rawat}}</td>
                         <td>{{$key->nm_pasien}}</td>
                         <td>{{$key->kelas}} - {{$key->nm_bangsal}}</td>
+                        <td>{{$key->diagnosa_awal}}</td>
+                        <td>{{$key->diagnosa_akhir}}</td>
                         <td>{{$key->pj}}</td>
                         <td>{{$key->besar_bayar}}</td>
                         <td>{{$key->totalpiutang}}</td>

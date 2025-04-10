@@ -161,6 +161,8 @@ class PegawaiController extends Controller
             ->leftjoin('penilaian_medis_ralan as pru', 'a.no_rawat','=', 'pru.no_rawat')
             ->leftjoin('penilaian_medis_igd as pmi', 'a.no_rawat','=', 'pmi.no_rawat')
             ->where('a.kd_dokter', $username)
+            ->where('a.status_lanjut', 'Ralan')
+            ->where('a.stts', '!=' , 'Batal')
             ->where(function ($query) use ($username) {
                 $query->orwhere('pr.nip', $username)
                     ->orWhere('prb.kd_dokter', $username)
@@ -180,6 +182,8 @@ class PegawaiController extends Controller
 
             $polibulanperdokter[] = DB::table('reg_periksa as a')->select('a.*', DB::raw('count(*) as jumlah'))
             ->where('a.kd_dokter', $username)
+            ->where('a.status_lanjut', 'Ralan')
+            ->where('a.stts', '!=' , 'Batal')
             // ->where('a.tgl_registrasi', 'like', '%'.$month.'%')
             ->whereBetween('a.tgl_registrasi', [$date, $enddate])
             ->groupBy('a.no_rawat') 
@@ -306,8 +310,8 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
-            $enddate = date("Y-m-d");
+            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //'2024-11-15'; //
+            $enddate = date("Y-m-d"); // '2024-12-15'; //
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }
@@ -333,7 +337,7 @@ class PegawaiController extends Controller
             ->distinct()
             ->get();
 
-        $listpoli = DB::table('poliklinik')->orderby('nm_poli', 'DESC')->where('status', '1')->whereNotIn('kd_poli', ['U0011','-', 'U0010', 'U0012'])->get();
+        $listpoli = DB::table('poliklinik')->orderby('nm_poli', 'DESC')->where('status', '1')->whereNotIn('kd_poli', ['U0011','-', 'U0010', 'U0012', 'U0013', 'U0007'])->get();
 
         $kodepoli = [];
         foreach ($listpoli as $keypoli => $valuepoli) {
@@ -403,8 +407,60 @@ class PegawaiController extends Controller
                                 'semua' =>$semuapermintaanobat,
                                 'nm_poli' => 'Farmasi'];
 
+        // Ranap Per Kelas
+        $listsudahperiksaranap = DB::table('reg_periksa as rp')->select('ki.*','k.kelas','rp.no_rawat', 'rp.no_rkm_medis', DB::raw('count(*) as jumlah'))
+            ->leftjoin('pemeriksaan_ranap as pr', 'rp.no_rawat','=', 'pr.no_rawat')
+            ->leftjoin('kamar_inap as ki', 'ki.no_rawat', '=', 'rp.no_rawat')
+            ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
+            ->whereBetween('rp.tgl_registrasi', [$date, $enddate])
+            ->where('rp.status_lanjut', 'Ranap')
+            // ->where('pr.tgl_perawatan', [$date, $enddate])
+            ->whereNotNull('ki.tgl_keluar')
+            ->groupBy('rp.no_rawat') 
+            ->where('rp.stts', '!=', 'batal')
+            ->distinct()
+            ->get();
+        
+        $lamavip = $totalpemeriksaanvip = $lama1 = $totalpemeriksaan1 = $lama2 = $totalpemeriksaan2 = $lama3 = $totalpemeriksaan3 = 0;
+        foreach ($listsudahperiksaranap as $key => $value) {
+            if($value->kelas == 'Kelas VIP'){
+                $lamavip += $value->lama;
+                $totalpemeriksaanvip += $value->jumlah;
+            }elseif($value->kelas == 'Kelas 1'){
+                $lama1 += $value->lama;
+                $totalpemeriksaan1 += $value->jumlah;
+            }elseif($value->kelas == 'Kelas 2'){
+                $lama2 += $value->lama;
+                $totalpemeriksaan2 += $value->jumlah;
+            }elseif($value->kelas == 'Kelas 3'){
+                $lama3 += $value->lama;
+                $totalpemeriksaan3 += $value->jumlah;
+            }
+        }
+
+        $persentaseinputranap[0] = ['hasil' => $lamavip > 0 ? round(($totalpemeriksaanvip / ($lamavip *3)) * 100, 1) : 0,
+                                    'lamaperawatan' =>$lamavip, 
+                                    'totalsoap' =>$totalpemeriksaanvip,
+                                    'nm_poli' =>"VIP"];
+
+        $persentaseinputranap[1] = ['hasil' =>$lamavip > 0 ? round(($totalpemeriksaan1 / ($lama1 *3)) * 100, 1) : 0,
+                                    'lamaperawatan' =>$lama1, 
+                                    'totalsoap' =>$totalpemeriksaan1,
+                                    'nm_poli' =>"Kelas 1"];
+
+        $persentaseinputranap[2] = ['hasil' =>$lamavip > 0 ? round(($totalpemeriksaan2 / ($lama2 *3)) * 100, 1) : 0,
+                                    'lamaperawatan' =>$lama2, 
+                                    'totalsoap' =>$totalpemeriksaan2,
+                                    'nm_poli' =>"Kelas 2"];
+
+        $persentaseinputranap[3] = ['hasil' =>$lamavip > 0 ? round(($totalpemeriksaan3 / ($lama3 *3)) * 100, 1) : 0,
+                                    'lamaperawatan' =>$lama3, 
+                                    'totalsoap' =>$totalpemeriksaan3,
+                                    'nm_poli' =>"Kelas 3"];
+
         return view('admin/persentasepoli', [
             'persentaseinputpoli' => $persentaseinputpoli, 
+            'persentaseinputranap' => $persentaseinputranap, 
             'tanggalawal' => $tanggalawal, 
             'tanggalakhir' => $tanggalakhir, 
         ]);
@@ -886,7 +942,7 @@ class PegawaiController extends Controller
             ->get();
 
         $detailpasienranap = DB::table('reg_periksa as c')
-            ->select('d.besar_bayar','b.nm_pasien', 'b.no_rkm_medis', 'b.umur', 'c.kd_pj', 'c.no_rawat', 'p.totalpiutang', 'k.kelas', 'bsl.nm_bangsal',
+            ->select('d.besar_bayar','b.nm_pasien', 'b.no_rkm_medis', 'b.umur', 'c.kd_pj', 'c.no_rawat', 'p.totalpiutang', 'k.kelas', 'bsl.nm_bangsal', 'ki.diagnosa_awal', 'ki.diagnosa_akhir',
                 DB::raw('(CASE WHEN c.kd_pj = "A02" THEN "UMUM" ELSE "BPJS" END) AS pj')
             )
             ->leftjoin('detail_nota_inap as d', 'd.no_rawat','=', 'c.no_rawat')
@@ -895,7 +951,7 @@ class PegawaiController extends Controller
             ->leftjoin('kamar_inap as ki', 'ki.no_rawat', '=', 'c.no_rawat')
             ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
             ->leftjoin('bangsal as bsl', 'bsl.kd_bangsal', '=', 'k.kd_bangsal')
-            ->whereBetween('c.tgl_registrasi', [$date, $enddate])
+            ->whereBetween('ki.tgl_keluar', [$date, $enddate])
             ->where('c.status_lanjut', 'Ranap')
             ->get();
 

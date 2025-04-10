@@ -70,6 +70,19 @@
           @endif
           <!-- End dokter -->
 
+          <!-- apotek -->
+          @if(Str::length(Auth::guard('pegawai')->user()) > 0)
+          @if(Auth::guard('pegawai')->user()->level == "Apotek")
+          <li class="nav-item">
+            <a href="{{route('homeapotek')}}" class="nav-link {{ Request::is('apotek*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file-medical"></i>
+              <p>Rawat Inap</p>
+            </a>
+          </li>
+          @endif
+          @endif
+        <!-- End dokter -->
+
           <hr>
           <!-- Admin -->
           @if(Str::length(Auth::guard('pegawai')->user()) > 0)

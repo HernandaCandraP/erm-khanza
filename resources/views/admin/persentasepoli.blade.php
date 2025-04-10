@@ -53,7 +53,7 @@
           <div class="col-md-12 col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Pertentase Pengisian Dokter <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
+                <h5 class="float-left">Pertentase Pengisian Poli <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
               </div>
               <!-- /.card-header -->
               <div class="card-body row">
@@ -67,6 +67,26 @@
                         </div>
                         <div class="col-md-5">
                           <input readonly type="text" class="knob" value="{{$value['hasil']}}" data-width="100" data-height="100" data-fgColor="#059212">
+                        </div>      
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+              <div class="card-body row">
+                @foreach ($persentaseinputranap as $key => $value)
+                  <div class="col-md-6 card ">
+                    <div class="row">
+                        <div class="col-md-7">
+                          <div><b>{{$value['nm_poli']}}</b></div>
+                          <div>Lama Perawatan :&emsp;{{$value['lamaperawatan']}}</div>
+                          <div>Total Pemeriksaan :&emsp;{{$value['totalsoap']}}</div>
+                        </div>
+                        <div class="col-md-5">
+                          @if ($value['hasil'] > 100)
+                            <input readonly type="text" class="knob" value="100" data-width="100" data-height="100" data-fgColor="#001eff">
+                          @else
+                            <input readonly type="text" class="knob" value="{{$value['hasil']}}" data-width="100" data-height="100" data-fgColor="#001eff">
+                          @endif
                         </div>      
                     </div>
                   </div>

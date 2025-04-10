@@ -65,10 +65,13 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/dokter/profile', 'PegawaiController@profile')->name('homedokter/profile');
     Route::post('/dokter/profile/password', 'PegawaiController@gantipassword')->name('homedokter/profile/password');
 
+    Route::get('/apotek', 'ApotekController@apotek')->name('homeapotek');
+
     Route::get('/pasien/ralan', 'PasienController@show')->name('pasien/ralan');    
     Route::get('/form/soap', 'FormController@formsoap')->name('form-soap');
     Route::get('/form/listdata', 'FormController@listdata')->name('form/listdata');
     Route::post('/form/tambah', 'FormController@create')->name('form/tambah');
+    Route::get('/form/resepracikan', 'FormController@resepracikan')->name('resepracikan');
     Route::get('/form/hapus', 'FormController@delete')->name('form/hapus');
 
     Route::get('/form', 'FormController@menurajal')->name('menu-rajal');

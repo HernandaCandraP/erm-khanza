@@ -211,7 +211,7 @@ class FormController extends Controller
         }elseif($getsps == 'Jantung' ){
             $getimage = 'image/jantung.jpg';
         }else{
-            dd('gambar belum ada');
+            // dd('gambar belum ada');
         }
 
         $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
@@ -227,6 +227,137 @@ class FormController extends Controller
             'status' => $request->status,
             'jnsperawatanlab' => $jnsperawatanlab,
             'jnsperawatanrad' => $jnsperawatanrad,
+            'no_rawat' => $no_rawat,
+            'datalistnorawatperresep' => $datalistnorawatperresep,
+            'datalistnorawatlengkap' => $datalistnorawatlengkap
+        ]);
+    }
+
+    public function resepracikan(Request $request){
+        // get session nama & kode poli
+        $kd_dokter = Session::get('username');
+        $nmpoli = Session::get('nmpoli');
+
+
+        $metoderacik = DB::table('metode_racik as mr')->select('mr.*')->get();
+
+
+        $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'a.tgl_registrasi', 'a.kd_poli', 'int.kd_dokter as internal')
+            // ->leftjoin('rujukan_internal_poli as int', 'int.no_rawat', '=', 'a.no_rawat')
+            ->leftJoin('rujukan_internal_poli as int', function($leftJoin)use($kd_dokter)
+            {
+                $leftJoin->on('a.no_rawat', '=', 'int.no_rawat');
+                $leftJoin->on(DB::raw('int.kd_dokter'), '=', DB::raw("'".$kd_dokter."'"));    
+            })
+            ->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('a.no_rawat', $request->no_rawat)->get();
+        $no_rawat = $request->no_rawat;
+        $kdpoli = $detailpasien[0]->kd_poli;
+
+        // dd($detailpasien);
+
+        $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
+
+        // dd($detailpasien);
+
+        // get list semua dokter
+        // $listdokter = DB::table('dokter')->where('status', '1')->get();
+
+        if ($no_rawat != null && $request->tgl_perawatan != null && $request->jam_rawat != null) {
+            $data = DB::table('pemeriksaan_ralan')->select('pemeriksaan_ralan.*', 'pegawai.nama')->where([['no_rawat', '=',$no_rawat], ['tgl_perawatan', '=',$request->tgl_perawatan], ['jam_rawat', '=',$request->jam_rawat]])->leftjoin('pegawai', 'pegawai.nik', 'pemeriksaan_ralan.nip')->first();
+            $data->tgl_perawatan_lama = $request->tgl_perawatan;
+            $data->jam_rawat_lama = $request->jam_rawat;
+        }else{
+            $data = DB::table('pemeriksaan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
+        
+            // ambil riwayat alergi
+            $riwayatalergi = DB::table('reg_periksa as a')->select('a.no_rawat', 'pr.alergi')->distinct()
+            ->join('pemeriksaan_ralan as pr', 'pr.no_rawat','=', 'a.no_rawat')
+            ->where('a.no_rkm_medis', $detailpasien[0]->no_rkm_medis)
+            ->where('pr.alergi', '!=', '')
+            ->where('pr.alergi', '!=', '-')
+            ->groupby('pr.alergi')
+            ->limit(1)
+            ->get();
+            
+            // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
+            if($data != null){
+                foreach ($data as $key => $value) {
+                    // ambil data ttv sebelumnya
+
+                    // dokter yang meminta data soap diambil semua dari riwayat petugas
+                    // if($kd_dokter == '0058' || $kd_dokter == '0087' || $kd_dokter == 'dokteragus' || $kd_dokter == '0060'){
+                        if($key == 'penilaian' || $key == 'rtl'){
+                            $data->$key = "";
+                        }else{
+                            $data->$key = $value;
+                        }
+                    // }else{
+                    //     if($key == 'suhu_tubuh' || $key == 'tensi' || $key == 'nadi' || $key == 'respirasi' || $key == 'tinggi' || $key == 'berat' || $key == 'spo2' || $key == 'gcs' || $key == 'lingkar_perut' || $key == 'alergi' ){
+                    //         $data->$key = $value;
+                    //     }else{
+                    //         $data->$key = "";
+                    //     }
+                    // }
+                }
+            }else{
+                $data = $data = DB::table('pemeriksaan_ralan')->first();
+                foreach ($data as $key => $value) {
+                    $data->$key = "";
+                }
+            }
+
+            // tampilkan alergi di soap
+            $alergi = '';
+            if($riwayatalergi != null){
+                foreach ($riwayatalergi as $key => $value) {
+                    $alergi .= $value->alergi . ', ';
+                }
+                $data->alergi = $alergi;
+            }
+
+            $data->nip = $kd_dokter;
+            $data->nama = Auth::guard('pegawai')->user()->nama;
+        }
+
+        // ambil obat terakhir
+        $listnorawat = DB::table('reg_periksa')->select('no_rawat')
+            ->where('no_rkm_medis', $detailpasien[0]->no_rkm_medis)
+            ->where('kd_poli', $kdpoli)
+            ->orderby('tgl_registrasi', 'DESC')->limit(10)->get();
+    
+        $arraylistnorawat = [];
+        foreach ($listnorawat as $key => $value) {
+            array_push($arraylistnorawat, $value->no_rawat);
+        }         
+        
+        // ambil seluruh riwayat resep
+        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.ralan', 'gb.stok')
+            ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
+            ->leftjoin('databarang as db', 'db.kode_brng', '=', 'rd.kode_brng')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'rd.kode_brng')
+            ->where('gb.stok', '>', '0')
+            ->orderby('ro.no_resep', 'DESC')
+            ->where('ro.status', 'ralan')
+            ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
+
+        // ambil total obat per resep untuk menghitung colspan
+        $datalistnorawatperresep = DB::table('resep_obat as ro')->select('ro.no_resep', DB::raw('count(*) as total'))
+            ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
+            ->orderby('ro.no_resep', 'DESC')
+            ->groupby('ro.no_resep')
+            ->where('ro.status', 'ralan')
+            ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
+
+        return view('form/resepracikan', [
+            'metoderacik' => $metoderacik,
+            'detailpasien' => $detailpasien,
+            'data' => $data,
+            'resepdokter' => $resepdokter,
+            'status' => $request->status,
             'no_rawat' => $no_rawat,
             'datalistnorawatperresep' => $datalistnorawatperresep,
             'datalistnorawatlengkap' => $datalistnorawatlengkap
@@ -982,7 +1113,8 @@ class FormController extends Controller
                 ->orderby('jam_rawat', 'DESC')->first();
             
             if($keluhanutama == ''){
-                dd("redirct back");
+                $request->session()->flash('error', "Dokter pengirim belum mengisi resume");
+                return redirect()->back();
             }
             
             $penunjanglab = DB::table('permintaan_lab as pl')->select('jpl.nm_perawatan')
@@ -1035,7 +1167,8 @@ class FormController extends Controller
 
             // dd($keluhanutama, $dataresume);
         }else{
-            dd("resume awal masih kosong, redirect back");
+            $request->session()->flash('error', "Dokter belum mengisi data SOAP pasien");
+            return redirect()->back();
         }
 
         return view('form/resumegabung', [
@@ -1792,7 +1925,7 @@ class FormController extends Controller
                 return redirect()->back();
             }
 
-            $data = date('Ymd', strtotime($request->tgl_peresepan));
+            $data = date('Ymd', strtotime($request->tgl_perawatan2));
             // dd($data);
             $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
             
@@ -1822,8 +1955,8 @@ class FormController extends Controller
                 'jam' => '00:00:00',
                 'no_rawat' => $request->no_rawat,
                 'kd_dokter' => $request->nip,
-                'tgl_peresepan' => $request->tgl_peresepan,
-                'jam_peresepan' => $request->jam_peresepan,
+                'tgl_peresepan' => $request->tgl_perawatan2,
+                'jam_peresepan' => $request->jam_rawat,
                 'status' => 'ralan',
                 'tgl_penyerahan' => '0000-00-00',
                 'jam_penyerahan' => '00:00:00',
@@ -1831,6 +1964,61 @@ class FormController extends Controller
             DB::table('resep_obat')->insert($resep_obat);
             DB::table('resep_dokter')->insert($resepdokter);
             $request->session()->flash('success', 'Berhasil menyimpan Resep');
+            return redirect()->back();
+        }
+        elseif ($request->tabel == 'ResepRacikanDokter') {
+            // dd($request->all());
+            $reg_periksa = DB::table('reg_periksa')->where('no_rawat', $request->no_rawat)->first();
+            if($reg_periksa->status_bayar == 'Sudah Bayar'){
+                $request->session()->flash('error', 'Data billing sudah terferifikasi,  Silahkan hubungi bagian kasir / keuangan');
+                return redirect()->back();
+            }
+
+            $data = date('Ymd', strtotime($request->tgl_perawatan2));
+            // dd($data);
+            $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
+            
+            if($noorder->count() == 0){
+                $noorderResep = $data . sprintf("%04s", 1);
+            }else{
+                $noorderResep = $noorder->first()->no_resep+1;
+            }
+            // dd($noorderResep);
+            $resepdokter = [];
+            if($request->jumlah){
+                foreach ($request->jumlah as $key => $value) {
+                    $dtresepdokter = ['no_resep'=>$noorderResep, 'no_racik'=>$request->no_racik, 'kode_brng'=> $request->resep[$key], 'p1' => '1', 'p2' => '1', 'jml' => $request->jumlah[$key]];
+                    array_push($resepdokter, $dtresepdokter);
+                }
+            }
+            // dd($resepdokter);
+
+            $resep_obat = [
+                'no_resep' => $noorderResep,
+                'tgl_perawatan' => '0000-00-00',
+                'jam' => '00:00:00',
+                'no_rawat' => $request->no_rawat,
+                'kd_dokter' => $request->nip,
+                'tgl_peresepan' => $request->tgl_perawatan2,
+                'jam_peresepan' => $request->jam_rawat,
+                'status' => 'ralan',
+                'tgl_penyerahan' => '0000-00-00',
+                'jam_penyerahan' => '00:00:00',
+            ];
+
+            $resep_dokter_racikan = [
+                'no_resep' => $noorderResep,
+                'no_racik' => '1',
+                'nama_racik' => $request->nama_racik,
+                'kd_racik' => $request->kd_racik,
+                'jml_dr' => $request->jml_dr,
+                'aturan_pakai' => $request->aturan_pakai,
+                'keterangan' => $request->keterangan,
+            ];
+            DB::table('resep_obat')->insert($resep_obat);
+            DB::table('resep_dokter_racikan')->insert($resep_dokter_racikan);
+            DB::table('resep_dokter_racikan_detail')->insert($resepdokter);
+            $request->session()->flash('success', 'Berhasil menyimpan Resep Racikan');
             return redirect()->back();
         }
         elseif ($request->tabel == 'PenangananDokter') {

@@ -67,12 +67,14 @@ class LoginController extends Controller
                 }
 
                 $getspecialis = DB::table('dokter as d')->select('d.kd_dokter', 'd.nm_dokter','s.nm_sps', 's.kd_sps')->join('spesialis as s', 's.kd_sps','=', 'd.kd_sps')->where('d.kd_dokter', $username)->first();
-                Session::put('kd_sps', $getspecialis->kd_sps);
-                Session::put('nm_sps', $getspecialis->nm_sps);
+                Session::put('kd_sps', $getspecialis->kd_sps ?? null);
+                Session::put('nm_sps', $getspecialis->nm_sps ?? null);
 
                 return redirect('dokter');
             }else if(Auth::guard('pegawai')->user()->level == "Admin"){
                 return redirect('admin');
+            }else if(Auth::guard('pegawai')->user()->level == "Apotek"){
+                return redirect('/apotek');
             }
         }
         return redirect()->back()->withErrors(['msg' =>['Username dan password tidak cocok']]);

@@ -18,11 +18,13 @@ class FormControllerRanap extends Controller
             ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
             ->leftjoin('ranap_gabung as rg', 'rg.no_rawat', '=', 'ki.no_rawat')
             ->leftjoin('reg_periksa as rp2', 'rp2.no_rawat', '=', 'rg.no_rawat2')
-            ->leftjoin('pasien as p2', 'p2.no_rkm_medis', '=', 'rp2.no_rkm_medis')
-            ->where('dr.kd_dokter', Session::get('username'))
-            ->get();
-        
-        // dd($pasienranap);
+            ->leftjoin('pasien as p2', 'p2.no_rkm_medis', '=', 'rp2.no_rkm_medis');
+
+        if(Session::get('kd_sps') == '-'){
+            $pasienranap = $pasienranap->get();
+        }else{
+            $pasienranap = $pasienranap->where('dr.kd_dokter', Session::get('username'))->get();
+        }
         
         // $username = Session::get('username');
         $month = date('Y-m'); //'2023-06'; //

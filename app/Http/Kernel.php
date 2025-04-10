@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
         'is_petugas' => \App\Http\Middleware\IsPetugas::class,
         'is_dokter' => \App\Http\Middleware\IsDokter::class,
+        'is_apotek' => \App\Http\Middleware\IsApotek::class,
         'preventBackHistory' => \App\Http\Middleware\PreventBackHistory::class,
     ];
 
