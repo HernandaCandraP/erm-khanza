@@ -186,11 +186,11 @@
                       </div>
 
                       <hr>
-                      <div class="pt-3"><b>Resep Pulang : </b></button>
+                      <div class="pt-3" hidden><b>Resep Pulang : </b></button>
                         <table id="reseppulang" class="table table-bordered table-striped text-sm">
                             
                         </table>
-                        <div class="col-sm-12">
+                        <div class="col-sm-12" hidden>
                           <div type="text" class="form-control btn btn-danger addreseppulang">+ Tambah Obat Resep Pulang</div>
                         </div>
                       </div>

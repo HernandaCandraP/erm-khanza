@@ -103,7 +103,7 @@
                     <div class="col-sm-2">
                       Jml Racik
                       <div class="input-group-append" >
-                        <input type="text" name="jml_dr" class="form-control form-control-sm" style="width: 100%" required>
+                        <input type="number" name="jml_dr" min="1" class="form-control form-control-sm" style="width: 100%" required>
                       </div>
                     </div>
                     <div class="col-sm-6 pt-3">
@@ -207,10 +207,10 @@
   var i=1;
   $(".addmore").on('click',function(){
     if(i == 1){
-      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th hidden>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
+      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah Kapasitas</th><th hidden>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
     }
 
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" size="6" required/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+i+'" type="number" min="1" class="form-control jumlah'+i+'" name="jumlah[]" value="" size="6" required/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
     $('.select2').select2();
 
@@ -252,36 +252,36 @@
   });
 
   // check obat kosong atau tidak
-  $('form').on('keyup change paste', 'input, select, textarea', function(){
-    if (!isNaN(this.id)) {
-      console.log( this.id );
-      console.log( this.value );
-      var resepid = "resep" + this.id;
-      var resep = document.getElementById(resepid);
-      console.log(resep.value);
-      console.log(resepid);
-      $.ajax({
-        url: "{{route('cekstokobat')}}",
-        type: "GET",
-        // masukkan request ke data
-        data:{jumlah:$(this).val(), id:$(resep).val(), idinput:$(this).attr('id')}, 
-        dataType: "json",
-        success: function (data) {
-            // jika jumlah input melebihi stok
-            if(data.msg != ""){
-              alert(data.msg);
-              var idinput = "#" + data.idinput;
-              $(idinput).val(data.stok);
-              console.log(data.stok);
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle errors, if any
-            console.log(error);
-        }
-      });
-    }
-  });
+  // $('form').on('keyup change paste', 'input, select, textarea', function(){
+  //   if (!isNaN(this.id)) {
+  //     console.log( this.id );
+  //     console.log( this.value );
+  //     var resepid = "resep" + this.id;
+  //     var resep = document.getElementById(resepid);
+  //     console.log(resep.value);
+  //     console.log(resepid);
+  //     $.ajax({
+  //       url: "{{route('cekstokobat')}}",
+  //       type: "GET",
+  //       // masukkan request ke data
+  //       data:{jumlah:$(this).val(), id:$(resep).val(), idinput:$(this).attr('id')}, 
+  //       dataType: "json",
+  //       success: function (data) {
+  //           // jika jumlah input melebihi stok
+  //           if(data.msg != ""){
+  //             alert(data.msg);
+  //             var idinput = "#" + data.idinput;
+  //             $(idinput).val(data.stok);
+  //             console.log(data.stok);
+  //           }
+  //       },
+  //       error: function (xhr, status, error) {
+  //           // Handle errors, if any
+  //           console.log(error);
+  //       }
+  //     });
+  //   }
+  // });
   
   $(document).ready(function() {
     myFunction();

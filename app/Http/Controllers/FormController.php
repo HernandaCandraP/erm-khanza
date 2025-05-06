@@ -1987,7 +1987,9 @@ class FormController extends Controller
             $resepdokter = [];
             if($request->jumlah){
                 foreach ($request->jumlah as $key => $value) {
-                    $dtresepdokter = ['no_resep'=>$noorderResep, 'no_racik'=>$request->no_racik, 'kode_brng'=> $request->resep[$key], 'p1' => '1', 'p2' => '1', 'jml' => $request->jumlah[$key]];
+                    $kps = DB::table('databarang')->select('kapasitas')->where('kode_brng',  $request->resep[$key])->first();
+                    $totalkps = ($request->jumlah[$key] * $request->jml_dr) / $kps->kapasitas;
+                    $dtresepdokter = ['no_resep'=>$noorderResep, 'no_racik'=>$request->no_racik, 'kode_brng'=> $request->resep[$key], 'p1' => '1', 'p2' => '1', 'kandungan'=> $request->jumlah[$key], 'jml' => $totalkps];
                     array_push($resepdokter, $dtresepdokter);
                 }
             }

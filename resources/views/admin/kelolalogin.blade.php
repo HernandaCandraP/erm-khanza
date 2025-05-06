@@ -1,3 +1,75 @@
+{{-- <html>
+<head>
+    <title>Html-Qrcode Demo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<body>
+    <div id="qr-reader" style="width:500px"></div>
+    <div id="qr-reader-results"></div>
+    <input type="text" name="nameOfTheInputElement"/>
+
+    <button>Set text content for all p elements</button>
+
+<p>This is a paragraph.</p>
+<p>This is another paragraph.</p>
+
+<table id="datapasien" class="table table-striped table-bordered table-list-search">
+</table>
+</body>
+
+<script src="{{asset('tampilan/html5-qrcode.min.js')}}"></script>
+<script>
+    function docReady(fn) {
+        // see if DOM is already available
+        if (document.readyState === "complete"
+            || document.readyState === "interactive") {
+            // call on next available tick
+            setTimeout(fn, 1);
+        } else {
+            document.addEventListener("DOMContentLoaded", fn);
+        }
+    }
+
+    docReady(function () {
+        var resultContainer = document.getElementById('qr-reader-results');
+        var lastResult, countResults = 0;
+        function onScanSuccess(decodedText, decodedResult) {
+            if (decodedText !== lastResult) {
+                ++countResults;
+                lastResult = decodedText;
+                // Handle on success condition with the decoded message.
+                console.log(`Scan result ${decodedText}`, decodedResult);
+                $("p").text(`Scan result ${decodedText}`);
+
+                $.ajax({
+                  url: "{{route('getpasien')}}",
+                  type: "GET",
+                  // masukkan request ke data
+                  data:{norm:`${decodedText}`}, 
+                  dataType: "json",
+                  success: function (data) {
+                      var markup = '';
+                      $.each(data, function(key, value) {
+                          markup += '<tr> <td>' + value.no_rkm_medis	 + '</td> <td>' + value.nm_pasien + '</td> <td>' + value.pekerjaan+ ' '  + value.nip + '</td> <tr>';
+                      });
+
+                      $('table[id="datapasien"]').html(markup);
+                  },
+                  error: function (xhr, status, error) {
+                      // Handle errors, if any
+                      console.log(error);
+                  }
+                });
+            }
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+    });
+</script>
+</head>
+</html> --}}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

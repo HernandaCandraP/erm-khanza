@@ -16,6 +16,10 @@
 // });
 // Route::get('/', 'TextMiningController@index')->name('welcome');
 Route::get('/', 'LoginController@index')->name('welcome');
+  
+
+// Route::get('/webcam', 'WebcamController@index');
+// Route::post('/webcam', 'WebcamController@store')->name('webcam.capture');
 
 // Auth::routes();
 
@@ -57,6 +61,15 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/admin/selisihobat', 'PegawaiController@selisihobat')->name('selisihobat');
     // Route::get('/admin/updatehargaobat', 'PegawaiController@updatehargaobat')->name('updatehargaobat');
     Route::match(array('GET','POST'), '/admin/biayarajal', 'PegawaiController@biayarajal')->name('admin-biayarajal');
+
+    Route::get('/absensi/rekapadmin', 'WebcamController@rekapadmin')->name('absensi.rekapadmin');
+    Route::match(array('GET','POST'),'/absensi/detailrekapadmin', 'WebcamController@detailrekapadmin')->name('absensi.detailrekapadmin');
+
+    Route::get('/barcode', 'BarcodeController@barcode')->name('barcode');
+    Route::get('/getpasien', 'BarcodeController@getpasien')->name('getpasien');
+    Route::get('/riwayatperiksa', 'BarcodeController@riwayatperiksa')->name('riwayatperiksa');
+    Route::post('/simpanregistrasi', 'BarcodeController@simpanregistrasi')->name('registrasi.simpan');
+    Route::get('/cetakkartu', 'BarcodeController@cetakkartu')->name('cetakkartu');
 });
 
 // login dokter
@@ -116,9 +129,12 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
 
 // login pegawai
 Route::group(['middleware' => ['auth:pegawai', 'is_petugas']], function () {
-    Route::get('/pegawai', 'PegawaiController@index')->name('homepegawai');
+    Route::get('/pegawai', 'WebcamController@index')->name('homepegawai');
+    Route::post('/pegawai/webcam', 'WebcamController@store')->name('webcam.capture');
     Route::get('/pegawai/profile', 'PegawaiController@profile')->name('homepegawai/profile');
     Route::post('/pegawai/profile/password', 'PegawaiController@gantipassword')->name('homepegawai/profile/password');
+
+    Route::get('/absensi/rekap', 'WebcamController@rekap')->name('absensi.rekap');
 
     Route::get('/antrean', 'PetugasController@antrean')->name('antrean');
     Route::get('/antrean/updateantrean', 'PetugasController@updateantrean')->name('updateantrean');

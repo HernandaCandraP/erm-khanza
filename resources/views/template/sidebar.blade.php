@@ -22,6 +22,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{{route('absensi.rekap')}}" class="nav-link {{ Request::is('absensi*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-clock"></i>
+              <p>Riwayat Absensi</p>
+            </a>
+          </li>
+          {{-- <li class="nav-item">
             <a href="{{route('antrean')}}" class="nav-link {{ Request::is('antrean*') ? 'active' : '' }}">
               <i class="nav-icon  fas fa-laptop-house"></i>
               <p>Antrean</p>
@@ -32,7 +38,7 @@
               <i class="nav-icon fas fa-stethoscope"></i>
               <p>Poli</p>
             </a>
-          </li>
+          </li> --}}
           @endif
           @endif
           <!-- End Petugas -->
@@ -132,6 +138,24 @@
               <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>Kelola Login</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('absensi.rekapadmin')}}" class="nav-link {{ Request::is('absensi*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-user"></i>
+                <p>Pegawai</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('barcode')}}" class="nav-link {{ Request::is('barcode*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-credit-card"></i>
+                <p>Barcode</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('cetakkartu')}}" class="nav-link {{ Request::is('cetakkartu*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-print"></i>
+                <p>Cetak Kartu</p>
               </a>
             </li>
           @endif

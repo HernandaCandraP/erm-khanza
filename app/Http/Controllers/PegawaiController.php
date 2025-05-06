@@ -8,22 +8,26 @@ use DB;
 use App\Pegawai;
 use App\Rules\MatchOldPasswordPegawai;
 use Session;
+use Carbon\Carbon;
 
 use Auth;
 
 class PegawaiController extends Controller
 {
     public function index(){
-        $pegawai = "hello";
-
-        return view('pegawai/home', [
+//         $nik = Auth::guard('pegawai')->user()->nik;
+//         $getid = DB::table('pegawai')->select('id')->where('nik', $nik)->first();
+//         $presensimasuk = DB::table('temporary_presensi')->where('id', $getid->id)->get();
+//         $ldate = date('H:i:s');
+// dd($ldate);
+        return view('pegawai/webcam', [
             // 'detailmapel' => $detailmapel, 
             // 'totalkelas' => $totalkelas, 
             // 'totalsiswa' => $totalsiswa, 
             // 'totalmapel' => $totalmapel,
             // 'pengujian_cosine' => $pengujian_cosine,
             // 'pengujian_jaccard' => $pengujian_jaccard,
-            'pegawai' => $pegawai, 
+            // 'pegawai' => $pegawai, 
         ]);
     }
 
@@ -134,10 +138,13 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
-            $enddate = date("Y-m-d");
-            $tanggalawal = date('d F Y', strtotime($date));
-            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = $start->format("Y-m-d");
+            $enddate = $end->format("Y-m-d");
+            $tanggalawal = $start->formatLocalized('%d %B %Y');
+            $tanggalakhir = $end->formatLocalized('%d %B %Y');
         }
 
         $persentasepengisian = [];
@@ -221,10 +228,13 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
-            $enddate = date("Y-m-d");
-            $tanggalawal = date('d F Y', strtotime($date));
-            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = $start->format("Y-m-d");
+            $enddate = $end->format("Y-m-d");
+            $tanggalawal = $start->formatLocalized('%d %B %Y');
+            $tanggalakhir = $end->formatLocalized('%d %B %Y');
         }
 
         $persentasepengisian = [];
@@ -310,10 +320,13 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //'2024-11-15'; //
-            $enddate = date("Y-m-d"); // '2024-12-15'; //
-            $tanggalawal = date('d F Y', strtotime($date));
-            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = $start->format("Y-m-d");
+            $enddate = $end->format("Y-m-d");
+            $tanggalawal = $start->formatLocalized('%d %B %Y');
+            $tanggalakhir = $end->formatLocalized('%d %B %Y');
         }
 
         $listsemuaperiksa = DB::table('reg_periksa as rp')->select('rp.no_rawat', 'rp.no_rkm_medis', 'rp.kd_poli', 'p.nm_poli',DB::raw('count(*) as jumlah'))
@@ -473,10 +486,13 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
-            $enddate = date("Y-m-d");
-            $tanggalawal = date('d F Y', strtotime($date));
-            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = $start->format("Y-m-d");
+            $enddate = $end->format("Y-m-d");
+            $tanggalawal = $start->formatLocalized('%d %B %Y');
+            $tanggalakhir = $end->formatLocalized('%d %B %Y');
         }
 
             $date = '2024-01-15'; // date('Y-m-d'); //
@@ -623,10 +639,13 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-30 day")); // date('Y-m-d'); //
-            $enddate = date("Y-m-d");
-            $tanggalawal = date('d F Y', strtotime($date));
-            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = $start->format("Y-m-d");
+            $enddate = $end->format("Y-m-d");
+            $tanggalawal = $start->formatLocalized('%d %B %Y');
+            $tanggalakhir = $end->formatLocalized('%d %B %Y');
         }
 
         // $date = '2023-06-15'; // date('Y-m-d'); //
@@ -923,10 +942,13 @@ class PegawaiController extends Controller
             $tanggalawal = date('d F Y', strtotime($date));
             $tanggalakhir = date('d F Y', strtotime($enddate));
         }else{
-            $date = date("Y-m-d", strtotime("-1 day")); // date('Y-m-d'); //
-            $enddate = date("Y-m-d");
-            $tanggalawal = date('d F Y', strtotime($date));
-            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = $start->format("Y-m-d");
+            $enddate = $end->format("Y-m-d");
+            $tanggalawal = $start->formatLocalized('%d %B %Y');
+            $tanggalakhir = $end->formatLocalized('%d %B %Y');
         }
         
         $detailpasien = DB::table('reg_periksa as c')
