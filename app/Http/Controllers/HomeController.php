@@ -54,8 +54,8 @@ class HomeController extends Controller
     
     public function updateantrean(Request $request)
     {
-        $jarakwaktuakhir = 1000; //20mnt
-        $jarakwaktuawal = 480; //8mnt
+        $jarakwaktuakhir = 720; //12mnt
+        $jarakwaktuawal = 360; //6mnt
         $getdatetime = date('Y-m-d H:i:s');
         
         // $inttime = strtotime($getdatetime);

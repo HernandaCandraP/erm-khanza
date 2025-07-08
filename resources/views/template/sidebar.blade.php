@@ -134,6 +134,7 @@
                 <p>Pembayaran Pasien</p>
               </a>
             </li>
+            @if(Auth::guard('pegawai')->user()->nik == "0108")
             <li class="nav-item">
               <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tasks"></i>
@@ -144,6 +145,14 @@
               <a href="{{route('absensi.rekapadmin')}}" class="nav-link {{ Request::is('absensi*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-user"></i>
                 <p>Pegawai</p>
+              </a>
+            </li>
+            @endif
+            @if(Auth::guard('pegawai')->user()->nik == "D009")
+            <li class="nav-item">
+              <a href="{{route('tambahpasien')}}" class="nav-link {{ Request::is('tambahpasien*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-plus "></i>
+                <p>Tambah Pasien</p>
               </a>
             </li>
             <li class="nav-item">
@@ -158,6 +167,7 @@
                 <p>Cetak Kartu</p>
               </a>
             </li>
+            @endif
           @endif
           @endif
           <!-- End Guru -->

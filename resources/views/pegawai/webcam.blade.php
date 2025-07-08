@@ -6,7 +6,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
     {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" /> --}}
     <style type="text/css">
-        #results { padding:20px; border:1px solid; background:#ccc; }
+        #results { padding:20px; border:1px solid; background:#ccc; 
+          -moz-transform: scaleX(-1);
+          -o-transform: scaleX(-1);
+          -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+          filter: FlipH;
+          -ms-filter: "FlipH";}
+        #results2 { 
+          -moz-transform: scaleX(-1);
+          -o-transform: scaleX(-1);
+          -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+          filter: FlipH;
+          -ms-filter: "FlipH";}
+        #my_camera {
+          -moz-transform: scaleX(-1);
+          -o-transform: scaleX(-1);
+          -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+          filter: FlipH;
+          -ms-filter: "FlipH";
+        } 
     </style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -48,10 +69,14 @@
                             <input type="hidden" name="image" class="image-tag">
                         </div>
                         <div class="col-md-6">
-                            <div id="results">Klik Ambil Foto Terlebih dahulu</div>
+                            <div id="results"></div>
                         </div>
                         <div class="col-sm-12 text-center">
-                          @if ($rekappresensi != null) 
+                          @if ($departemen == 'MAR') 
+                            <input type="text" name="keterangan" class="form-control-sm is-valid" placeholder="Keterangan..." required>
+                            <input type=button class="btn btn-info ml-3" value="Ambil Foto" onClick="take_snapshot()">
+                            <button type="submit" class="btn btn-warning float-right ml-3" onclick="return confirm('Absensi Sekarang ?')" name="action" value="pulang">Absensi</button>
+                          @elseif ($rekappresensi->isNotEmpty()) 
                             <h4 class="text-success">Sudah Melakukan Absensi</h4>
                           @elseif($presensi == null)
                             <input type=button class="btn btn-info ml-3" value="Ambil Foto" onClick="take_snapshot()">
@@ -61,7 +86,8 @@
                               @endforeach
                             </select>
                             <button type="submit" class="btn btn-success float-right ml-3" name="action" value="masuk">Absensi Masuk</button>
-                          @elseif($rekappresensi == null)
+                          @elseif($rekappresensi->isEmpty())
+                            <input type="text" name="keterangan" class="form-control-sm is-valid" placeholder="Keterangan...">
                             <input type=button class="btn btn-info ml-3" value="Ambil Foto" onClick="take_snapshot()">
                             <button type="submit" class="btn btn-warning float-right ml-3" onclick="return confirm('Pulang Sekarang ?')" name="action" value="pulang">Absensi Pulang</button>
                           @endif
@@ -75,17 +101,27 @@
               <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                      @if ($presensi != null) 
-                        <div>Jam Datang : <b>{{$presensi->jam_datang ?? $rekappresensi->jam_datang}}</b></div>
-                        <div>Status : {{$presensi->status ?? null}} - {{$presensi->keterlambatan ?? null}}</div>
-                        <div class="pt-2">Photo Datang : <img src="{{asset('webcam/'.$presensi->photo) ?? null}}" height="200"/></div>
-                      @elseif ($rekappresensi != null) 
-                        <div>Jam Datang : <b>{{$rekappresensi->jam_datang}}</b></div>
-                        <div>Jam Pulang : {{$rekappresensi->jam_pulang}}</div>
-                        <div>Status : {{$rekappresensi->status ?? null}} - {{$rekappresensi->keterlambatan ?? null}}</div>
-                        <div>Durasi : {{$presensi->durasi ?? $rekappresensi->durasi}}</div>
-                        <div class="pt-2">Photo Datang : <img src="{{asset('webcam/'.$rekappresensi->photo) ?? null}}" height="200"/></div>
-                        <div class="pt-2">Photo Pulang : <img src="{{asset('webcam/'.$rekappresensi->photopulang) ?? null}}" height="200"/></div>
+                      @if ($departemen == 'MAR') 
+                        @foreach ($rekappresensi as $key => $value)
+                          <div>Jam : <b>{{$value->jam_datang}}</b></div>
+                          <div>Ket : <b>{{$value->keterangan}}</b></div>
+                          <div class="pt-2">Photo: <img id="results2" src="{{asset('webcam/'.$value->photo) ?? null}}" height="200"/></div>
+                          <hr>
+                        @endforeach
+                      @else
+                        @if ($presensi != null) 
+                          <div>Jam Datang : <b>{{$presensi->jam_datang ?? $rekappresensi[0]->jam_datang}}</b></div>
+                          {{-- <div>Status : {{$presensi->status ?? null}} - {{$presensi->keterlambatan ?? null}}</div> --}}
+                          <div class="pt-2">Photo Datang : <img id="results2" src="{{asset('webcam/'.$presensi->photo) ?? null}}" height="200"/></div>
+                        @elseif ($rekappresensi->isNotEmpty()) 
+                          <div>Jam Datang : <b>{{$rekappresensi[0]->jam_datang}}</b></div>
+                          <div>Jam Pulang : {{$rekappresensi[0]->jam_pulang}}</div>
+                          <div>Ket : <b>{{$rekappresensi[0]->keterangan}}</b></div>
+                          {{-- <div>Status : {{$rekappresensi[0]->status ?? null}} - {{$rekappresensi[0]->keterlambatan ?? null}}</div> --}}
+                          <div>Durasi : {{$presensi->durasi ?? $rekappresensi[0]->durasi}}</div>
+                          <div class="pt-2">Photo Datang : <img id="results2" src="{{asset('webcam/'.$rekappresensi[0]->photo) ?? null}}" height="200"/></div>
+                          <div class="pt-2">Photo Pulang : <img id="results2" src="{{asset('webcam/'.$rekappresensi[0]->photopulang) ?? null}}" height="200"/></div>
+                        @endif
                       @endif
                     </div>
                 </div>
@@ -113,9 +149,9 @@
 <script language="JavaScript">
     Webcam.set({
       width: 250,
-      height: 350,
+      height: 332,
       image_format: 'jpeg',
-      jpeg_quality: 90
+      jpeg_quality: 90,
     });
     Webcam.attach( '#my_camera' );
 

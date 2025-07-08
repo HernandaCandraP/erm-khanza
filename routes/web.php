@@ -31,7 +31,7 @@ Route::get('/404', function () {
 
 // fallback roue when not correct link
 Route::fallback(function () {
-    return view('404');
+    return view('login');
 });
 
 // login
@@ -52,7 +52,8 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::post('/admin/profile/password', 'PegawaiController@gantipassword')->name('homeadmin/profile/password');
 
     Route::get('/admin/kelolalogin', 'LoginController@kelolalogin')->name('kelolalogin');
-    Route::get('/admin/resetpassword', 'LoginController@resetpassword')->name('resetpassword');
+    Route::post('/admin/tambahlogin', 'LoginController@tambahlogin')->name('tambahlogin');
+    Route::post('/admin/aksilogin', 'LoginController@aksilogin')->name('aksilogin');
 
     Route::get('/admin/persentase', 'PegawaiController@persentase')->name('persentase');
     Route::get('/admin/penilaianperawat', 'PegawaiController@penilaianperawat')->name('penilaianperawat');
@@ -70,6 +71,8 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/riwayatperiksa', 'BarcodeController@riwayatperiksa')->name('riwayatperiksa');
     Route::post('/simpanregistrasi', 'BarcodeController@simpanregistrasi')->name('registrasi.simpan');
     Route::get('/cetakkartu', 'BarcodeController@cetakkartu')->name('cetakkartu');
+    Route::match(array('GET','POST'),'/tambahpasien', 'BarcodeController@tambahpasien')->name('tambahpasien');
+    Route::get('/ambil_pasien', 'BarcodeController@ambil_pasien')->name('ambil_pasien');
 });
 
 // login dokter

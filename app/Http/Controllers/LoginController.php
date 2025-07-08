@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Session;
 use DB;
+use Hash;
 
 class LoginController extends Controller
 {
@@ -26,20 +27,57 @@ class LoginController extends Controller
     public function kelolalogin()
     {
         $datalogin = DB::table('login_rsba')->orderby("nik", "ASC")->get();
+        $pegawai = DB::table('pegawai')->orderby("nama", "ASC")
+            ->where('stts_aktif', 'AKTIF')
+            ->where('nama', '!=', '-')->get();
 
         return view('admin/kelolalogin', [
             'datalogin' => $datalogin, 
+            'pegawai' => $pegawai, 
         ]);
     }
 
-    public function resetpassword(Request $request)
+    public function tambahlogin(Request $request)
     {
-        $datalogin = DB::table('login_rsba')->orderby("nik", "ASC")->get();
-
-        dd($request->nik);
-        return view('admin/kelolalogin', [
-            'datalogin' => $datalogin, 
+        $validate = $request->validate([
+            'username' => ['required', 'min:3'],
+            'password' => ['required', 'min:3']
         ]);
+
+        $pegawai = DB::table('pegawai')->where('nik', $request->nik)->first();
+        $password = Hash::make($request->password);
+
+        // simpan login
+        $login_rsba = [
+            'nik' => $pegawai->nik,
+            'nama' => $pegawai->nama,
+            'jk' => $pegawai->jk,
+            'alamat' => $pegawai->alamat,
+            'username' => $request->username,
+            'password' => $password,
+            'level' => $request->level
+        ];
+        DB::table('login_rsba')->updateOrInsert(['nik' => $pegawai->nik], $login_rsba);
+
+        $request->session()->flash('success', 'Berhasil Tambah Login '.$pegawai->nama);
+        return redirect('admin/kelolalogin');
+    }
+
+    public function aksilogin(Request $request)
+    {
+        foreach ($request->action as $id => $value) {
+            // dd($id);
+            if($id == 'reset'){
+                $password = Hash::make($value);
+                $petugas = DB::table('login_rsba')->where('nik', $value)->limit(1)->update(array('password' => $password));
+        
+                $request->session()->flash('warning', 'Berhasil Reset Password '. $value);
+            }elseif($id == 'hapus'){
+                DB::table('login_rsba')->where('nik',$value)->delete();
+                $request->session()->flash('warning', 'Data Berhasil Dihapus '. $value);
+            }
+        }
+        return redirect('admin/kelolalogin');
     }
 
     public function postlogin(Request $request){

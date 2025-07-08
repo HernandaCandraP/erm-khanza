@@ -160,11 +160,12 @@ class FormController extends Controller
             $alergi = '';
             if($riwayatalergi != null){
                 foreach ($riwayatalergi as $key => $value) {
-                    $alergi .= $value->alergi . ', ';
+                    $alergi .= $value->alergi;
                 }
                 $data->alergi = $alergi;
             }
 
+            // dd($alergi, $riwayatalergi);
             $data->nip = $kd_dokter;
             $data->nama = Auth::guard('pegawai')->user()->nama;
         }
@@ -181,7 +182,7 @@ class FormController extends Controller
         }         
         
         // ambil seluruh riwayat resep
-        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.ralan', 'gb.stok')
+        $datalistnorawatlengkap = DB::table('resep_obat as ro')->select('ro.no_resep', 'ro.no_rawat', 'ro.status', 'rd.*', 'db.nama_brng', 'db.letak_barang', 'db.ralan', 'gb.stok')
             ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
             ->leftjoin('databarang as db', 'db.kode_brng', '=', 'rd.kode_brng')
             ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'rd.kode_brng')
@@ -952,13 +953,13 @@ class FormController extends Controller
             $dataresume->kd_dokter = $kd_dokter;
             $dataresume->nama = Auth::guard('pegawai')->user()->nama;
 
-            $keluhanutama = DB::table('pemeriksaan_ralan')->select('keluhan', 'pemeriksaan', 'penilaian')
+            $keluhanutama = DB::table('pemeriksaan_ralan')
                 ->where('no_rawat', $request->no_rawat)
                 ->where('nip', $kd_dokter)
                 ->orderby('jam_rawat', 'DESC')->first();
 
             // Cek apakah awalmedisbedah terisi
-            $cekawalmedisbedah = DB::table('penilaian_medis_ralan_bedah')->select('keluhan_utama', 'rps', 'ket_lokalis', 'diagnosis', 'tindakan')
+            $cekawalmedisbedah = DB::table('penilaian_medis_ralan_bedah')
             ->where('no_rawat', $request->no_rawat)
             ->where('kd_dokter', $kd_dokter)->first();
 
@@ -1014,15 +1015,27 @@ class FormController extends Controller
             // cek jika awalmedis bedah terisi maka keluhan utama ditampilkan dari awal medis bedah
             if($cekawalmedisbedah){
                 $dataresume->keluhan_utama = $cekawalmedisbedah->keluhan_utama ?? '';
-                $dataresume->jalannya_penyakit = $cekawalmedisbedah->rps ."\n". $cekawalmedisbedah->ket_lokalis ?? '';
+                $dataresume->jalannya_penyakit = 
+                "Pemeriksaan: " . $cekawalmedisbedah->rps ." , ". $cekawalmedisbedah->ket_lokalis .
+                        "\r\nSuhu: " . $cekawalmedisbedah->suhu." °C, Tensi: " . $cekawalmedisbedah->td." mmHg, Nadi: " . 
+                        $cekawalmedisbedah->nadi." x/mnt, Respirasi: " . $cekawalmedisbedah->rr." /mnt, GCS: " . 
+                        $cekawalmedisbedah->gcs." x/mnt, \r\nKesadaran: " .  $cekawalmedisbedah->kesadaran;
             }
             elseif($cekawalmedisdalam){
                 $dataresume->keluhan_utama = $cekawalmedisdalam->keluhan_utama ?? '';
                 $dataresume->jalannya_penyakit = $cekawalmedisdalam->rps ."\n". $cekawalmedisdalam->lainnya ?? '';
             }
+            elseif($keluhanutama){
+                $dataresume->keluhan_utama = $keluhanutama->keluhan;
+                $dataresume->jalannya_penyakit = "Pemeriksaan: " . $keluhanutama->pemeriksaan . 
+                        "\r\nSuhu: " . $keluhanutama->suhu_tubuh." °C, Tensi: " . $keluhanutama->tensi." mmHg, Nadi: " . 
+                        $keluhanutama->nadi." x/mnt, Respirasi: " . $keluhanutama->respirasi." /mnt, spO2: " . 
+                        $keluhanutama->spo2." x/mnt, GCS: " . $keluhanutama->gcs." x/mnt, \r\nKesadaran: " . 
+                        $keluhanutama->kesadaran;
+            }
             else{
-                $dataresume->keluhan_utama = $keluhanutama->keluhan ?? '';
-                $dataresume->jalannya_penyakit = $keluhanutama->pemeriksaan ?? '';
+                $dataresume->keluhan_utama = '';
+                $dataresume->jalannya_penyakit = '';
             }
 
             // cek diagnosa 
@@ -2194,9 +2207,26 @@ class FormController extends Controller
                 ->join('pemeriksaan_ralan as c', 'a.no_rawat','=', 'c.no_rawat')
                 ->leftjoin('pegawai as d', 'c.nip','=', 'd.nik')
                 ->orderby('a.no_rawat', 'DESC')
-                ->whereIn('a.no_rawat', $arraylistnorawat);
+                ->whereIn('a.no_rawat', $arraylistnorawat)->get();
 
-            return $this->func_listdata($request, 'form/listkontrol', $data, 'Tidak Ada Riwayat Soap');
+            $datamedis = DB::table('reg_periksa as a')->select('a.no_rawat', 'bd.*', 'd.nama')
+                ->leftjoin('penilaian_medis_ralan_bedah as bd', 'a.no_rawat','=', 'bd.no_rawat')
+                ->leftjoin('pegawai as d', 'bd.kd_dokter','=', 'd.nik')
+                ->orderby('a.no_rawat', 'DESC')
+                ->where('bd.no_rawat', '!=', null)
+                ->whereIn('a.no_rawat', $arraylistnorawat)->get();
+                
+            // dd($datamedis);
+    
+            if($data->isEmpty()){
+                $request->session()->flash('error', 'Tidak Ada Riwayat Soap');
+                return redirect()->back();
+            }else{
+                return view('form/listkontrol', [
+                    'data' => $data,
+                    'datamedis' => $datamedis,
+                ]);
+            }
         }
         elseif($request->tabel == 'DataResumeMedisPasienRawatJalan'){            
             $data = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'c.*', 'd.nama')

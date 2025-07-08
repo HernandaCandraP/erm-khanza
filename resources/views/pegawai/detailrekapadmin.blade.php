@@ -69,6 +69,7 @@
                       <th>Durasi</th>
                       <th>Foto Datang</th>
                       <th>Foto Pulang</th>
+                      <th>Keterangan</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -83,6 +84,7 @@
                           <td>{{$value->durasi}}</td>
                           <td><img src="{{asset('webcam/'.$value->photo) ?? null}}" height="150"/></td>
                           <td><img src="{{asset('webcam/'.$value->photopulang) ?? null}}" height="150"/></td>
+                          <td>{{$value->keterangan}}</td>
                         </tr> 
                       @endforeach
                     </tbody>

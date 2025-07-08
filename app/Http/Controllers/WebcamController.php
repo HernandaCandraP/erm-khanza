@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class WebcamController extends Controller
 {
-    public function index(){
+    public function index(Request $request){ 
         setlocale(LC_ALL, 'IND');
         $date = Carbon::now()->format('Y-m-d');
         $nameday = Carbon::now()->formatLocalized('%A');
@@ -25,13 +25,19 @@ class WebcamController extends Controller
                 $jamjaga = array('Kantor' => '08:00:00');
             }elseif ($getid->departemen == 'MDS') {
                 $jamjaga = array('Kantor' => '08:00:00', 'Magak' => '09:00:00');
+            }elseif ($getid->departemen == 'RJ') {
+                $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '11:00:00');
+            }elseif ($getid->departemen == 'KSR') {
+                $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '10:00:00', 'Siang2' => '14:00:00');
+            }elseif ($getid->departemen == 'MAR') {
+                $jamjaga = array('Marketing' => '-');
             }else{
                 $jamjaga = array('Pagi' => '07:00:00', 'Siang' => '14:00:00', 'Malam' => '21:00:00');
             }
         }
 
         // cek rekap presensi, jika hari ini sudah terisi data maka tidak perlu ditampilkan lagi button ambil foto
-        $rekappresensi = DB::table('rekap_presensi')->where('id', $getid->id)->whereDate('jam_datang', $date)->first();
+        $rekappresensi = DB::table('rekap_presensi')->where('id', $getid->id)->whereDate('jam_datang', $date)->orderby('jam_datang', 'DESC')->get();
 
         // ambil dari temporary_presensi
         $presensi = DB::table('temporary_presensi')->where('id', $getid->id)->first();
@@ -40,12 +46,13 @@ class WebcamController extends Controller
             $photopulang = substr_replace($presensi->photo, 'pulang', -4, 0);
             $presensi->photopulang = $photopulang;
         }
-        if($rekappresensi){
-            $photopulang = substr_replace($rekappresensi->photo, 'pulang', -4, 0);
-            $rekappresensi->photopulang = $photopulang;
+        if($rekappresensi->isNotEmpty()){
+            $photopulang = substr_replace($rekappresensi[0]->photo, 'pulang', -4, 0);
+            $rekappresensi[0]->photopulang = $photopulang;
         }
 
         return view('pegawai/webcam', [
+            'departemen' => $getid->departemen,
             'presensi' => $presensi, 
             'jamjaga' => $jamjaga, 
             'rekappresensi' => $rekappresensi, 
@@ -55,7 +62,7 @@ class WebcamController extends Controller
     public function store(Request $request)
     {
         $nik = Auth::guard('pegawai')->user()->nik;
-        $getid = DB::table('pegawai')->select('id')->where('nik', $nik)->first();
+        $getid = DB::table('pegawai')->select('id', 'departemen')->where('nik', $nik)->first();
         $date = Carbon::now()->format('Y-m-d');
         $datetime = Carbon::now()->format('Y-m-d H:i:s');
 
@@ -71,6 +78,10 @@ class WebcamController extends Controller
         $image_type = $image_type_aux[1];
         $image_base64 = base64_decode($image_parts[1]);
 
+        if($getid->departemen == 'MAR'){
+            $request->action = 'pulangmarketing';
+        }
+
         if($request->action == 'masuk'){
             $shift = $this->daftarshift($request->jamjaga);
 
@@ -83,10 +94,13 @@ class WebcamController extends Controller
             if(Carbon::parse($date_start) >= Carbon::now()){
                 $status = 'Tepat Waktu';
                 $keterlambatan = '';
+            }elseif(Carbon::parse($date_start)->addMinutes(15) >= Carbon::now()){
+                $status = 'Terlambat Toleransi';
+                $keterlambatan = '';
             }else{
                 $status = 'Terlambat I';
                 // cek lamanya
-                $jam_datang = date_create($date_start);
+                $jam_datang = date_create(Carbon::parse($date_start)->addMinutes(15));
                 $jam_pulang = date_create($datetime);
                 $keterlambatan = date_diff($jam_datang, $jam_pulang)->format("%H:%I:%S");
             }
@@ -108,11 +122,19 @@ class WebcamController extends Controller
             $jam_datang = date_create($presensi->jam_datang);
             $jam_pulang = date_create($datetime);
             $durasi = date_diff($jam_datang, $jam_pulang);
+            $durasi = $durasi->format("%H:%I:%S");
             // dd($durasi->format("%H:%I:%S"));
             
             $fileName = $date. $presensi->shift. $getid->id . 'pulang.png';
             $file = $folderPath . $fileName;
             file_put_contents($file, $image_base64);
+
+            // cek tanggal, apakah sudah absensi
+            if($presensi->shift != 'Malam'){
+                if(date('Y-m-d', strtotime($presensi->jam_datang)) !=  $date){
+                    $durasi = '00:00:00';
+                }
+            }
 
             // simpan data di rekap presensi
             $presensipulang = [
@@ -122,13 +144,37 @@ class WebcamController extends Controller
                 'jam_pulang' => $datetime,
                 'status' => $presensi->status,
                 'keterlambatan' => $presensi->keterlambatan,
-                'durasi' => $durasi->format("%H:%I:%S"),
+                'durasi' => $durasi,
                 'photo' => $presensi->photo,
             ];
+
+            if($request->keterangan != null){
+                $presensipulang['keterangan'] = $request->keterangan;
+            }
+
             DB::table('rekap_presensi')->insert($presensipulang);
 
             // hapus temporary jika rekap sudah terisi
             DB::table('temporary_presensi')->where('id', $getid->id)->delete();
+            $request->session()->flash('success', 'Berhasil menyimpan presensi pulang');
+        }elseif($request->action == 'pulangmarketing'){
+            $rand = substr(md5(microtime()),rand(0,26),5);
+            $shift = $this->daftarshift($request->jamjaga);
+            
+            $fileName = $date. $shift. $getid->id . '-' . $rand . '.png';
+            $file = $folderPath . $fileName;
+            file_put_contents($file, $image_base64);
+
+            // simpan data di rekap presensi
+            $presensipulang = [
+                'id' => $getid->id,
+                'shift' => $shift,
+                'jam_datang' => $datetime,
+                'status' => 'Tepat Waktu',
+                'keterangan' => $request->keterangan,
+                'photo' => $fileName,
+            ];
+            DB::table('rekap_presensi')->insert($presensipulang);
             $request->session()->flash('success', 'Berhasil menyimpan presensi pulang');
         }
         return redirect()->back();
@@ -218,7 +264,7 @@ class WebcamController extends Controller
         }elseif($shift == '21:00:00'){
             $namashift = 'Malam';
         }else{
-            $namashift = 'Malam2';
+            $namashift = 'Siang3';
         }
         return $namashift;
     }

@@ -1,75 +1,3 @@
-{{-- <html>
-<head>
-    <title>Html-Qrcode Demo</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<body>
-    <div id="qr-reader" style="width:500px"></div>
-    <div id="qr-reader-results"></div>
-    <input type="text" name="nameOfTheInputElement"/>
-
-    <button>Set text content for all p elements</button>
-
-<p>This is a paragraph.</p>
-<p>This is another paragraph.</p>
-
-<table id="datapasien" class="table table-striped table-bordered table-list-search">
-</table>
-</body>
-
-<script src="{{asset('tampilan/html5-qrcode.min.js')}}"></script>
-<script>
-    function docReady(fn) {
-        // see if DOM is already available
-        if (document.readyState === "complete"
-            || document.readyState === "interactive") {
-            // call on next available tick
-            setTimeout(fn, 1);
-        } else {
-            document.addEventListener("DOMContentLoaded", fn);
-        }
-    }
-
-    docReady(function () {
-        var resultContainer = document.getElementById('qr-reader-results');
-        var lastResult, countResults = 0;
-        function onScanSuccess(decodedText, decodedResult) {
-            if (decodedText !== lastResult) {
-                ++countResults;
-                lastResult = decodedText;
-                // Handle on success condition with the decoded message.
-                console.log(`Scan result ${decodedText}`, decodedResult);
-                $("p").text(`Scan result ${decodedText}`);
-
-                $.ajax({
-                  url: "{{route('getpasien')}}",
-                  type: "GET",
-                  // masukkan request ke data
-                  data:{norm:`${decodedText}`}, 
-                  dataType: "json",
-                  success: function (data) {
-                      var markup = '';
-                      $.each(data, function(key, value) {
-                          markup += '<tr> <td>' + value.no_rkm_medis	 + '</td> <td>' + value.nm_pasien + '</td> <td>' + value.pekerjaan+ ' '  + value.nip + '</td> <tr>';
-                      });
-
-                      $('table[id="datapasien"]').html(markup);
-                  },
-                  error: function (xhr, status, error) {
-                      // Handle errors, if any
-                      console.log(error);
-                  }
-                });
-            }
-        }
-
-        var html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
-    });
-</script>
-</head>
-</html> --}}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,9 +22,13 @@
             <div class="card">
               <div class="card-header">
                 <h5 class="float-left">Data Akses</h5>
+                <br><br><button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#modal-lg"><i class="fas fa-plus"></i> Tambah Data </button> 
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                @include('template.alert')
+                <form action="{{route('aksilogin')}}" method="post" class="form-horizontal">
+                {{ csrf_field() }}
                 <table id="example3" class="table table-bordered table-striped">
                   <thead>
                   <tr>
@@ -120,12 +52,20 @@
                         <td>{{$key->jk}}</td>
                         <td>{{$key->username}}</td>
                         <td>{{$key->level}}</td>
-                        <td><th><a href="{{ route('resetpassword', ['nik' => $key->nik]) }}" class="btn btn-block btn-primary btn-xs">Reset Password</a></th></td>
+                        <th>
+                          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                              <button type="submit" class="btn btn-warning" onclick="return confirm('Apakah yakin ingin mereset password {{$key->nama}}?')"  name="action[reset]" value="{{$key->nik}}">Reset</button>
+                              <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah yakin ingin menghapus {{$key->nama}}?')"  name="action[hapus]" value="{{$key->nik}}">Hapus</button>
+                            </div>
+                          </div>
+                        </th>
                     </tr> 
                     @endforeach
                   
                   </tbody>
                 </table>
+                </form>
               </div>
               <!-- /.card-body -->
             </div>
@@ -143,6 +83,73 @@
   @include('template.footer')
   </footer>
 </div>
+
+<div class="modal fade" id="modal-lg">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Tambah Akses Login</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- form -->
+      <form action="{{route('tambahlogin')}}" method="post" class="form-horizontal">
+      {{ csrf_field() }}
+      <div class="modal-body">
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Nama<b class="text-danger">*</b></label>
+            <div class="col-sm-9">
+              <div class="form-group">
+                <select class="form-control select2" name="nik" id="nik">
+                  @foreach ($pegawai as $key)
+                    <option value="{{ $key->nik }}"> {{$key->nama}} </option>
+                  @endforeach
+                </select>
+              </div>
+              @error('nik')<p class="text-danger">{{$message}}</p>@enderror
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Level<b class="text-danger">*</b></label>
+            <div class="col-sm-9">
+              <div class="form-group">
+                <select class="form-control select2" name="level" id="level">
+                  <option value="Petugas">Petugas</option>
+                  <option value="Dokter">Dokter</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Username</label>
+            <div class="col-sm-9">
+              <input type="text" name="username" class="form-control" autocomplete="off" placeholder="Username..." value="{{ old('username') }}">
+              @error('username')<p class="text-danger">{{$message}}</p>@enderror
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Password</label>
+            <div class="col-sm-9">
+              <input type="text" name="password" class="form-control" autocomplete="off" placeholder="Password..." value="{{ old('password') }}">
+              @error('password')<p class="text-danger">{{$message}}</p>@enderror
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Tambah Data</button>
+      </div>
+      </form>
+      <!-- end form -->
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
@@ -155,6 +162,9 @@
       }
     })
   })
+  @if($errors->any() != null)
+    $('#modal-lg').modal('show');
+  @endif
 </script>
 </body>
 </html>

@@ -44,6 +44,8 @@
                         <div class="col-7">&nbsp; {{$detailpasien[0]->no_rawat}}</div>
                         <div class="col-5 text-right"><b>Umur</b></div>
                         <div class="col-7">&nbsp; {{$detailpasien[0]->umur}}</div>
+                        {{-- <div class="col-5 text-right text-danger"><b>Alergi</b></div>
+                        <div class="col-7 text-danger">&nbsp; test</div> --}}
                       </div>
                     </div>
                     <div class="col-sm-3 pt-3">
@@ -327,7 +329,7 @@
             @if ($valuelengkap->no_resep == $value->no_resep)
             <tr>
               <td>{{$valuelengkap->kode_brng}}</td>
-              <td>{{$valuelengkap->nama_brng}}</td>
+              <td>{{$valuelengkap->letak_barang}} / {{$valuelengkap->nama_brng}}</td>
               <td>{{$valuelengkap->jml}}</td>
               <td>{{$valuelengkap->aturan_pakai}}</td>
             </tr>
@@ -357,7 +359,7 @@
       document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
     }
 
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td style="color: white; font-size: 90%;"><select style="min-width: 70%; max-width: 70%; font-size: 90%;" class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->letak_barang}} / {{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input style="width: 80px;" id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><textarea  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text" cols="25"></textarea></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
     $('.select2').select2();
 
@@ -383,7 +385,7 @@
         if(i == 1){
           document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
         }
-        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["letak_barang"] +' / '+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
         $('.select2').select2();
 
