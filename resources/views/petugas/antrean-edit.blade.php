@@ -103,7 +103,16 @@
       draw: function () {
       }
     })
+    startRefresh();
   })
+
+  function startRefresh() {
+    setTimeout(startRefresh,600000);
+    $.get("{{route('home')}}", function(data) {
+        console.log('Refresh Mutasi: ',new Date().toLocaleString());
+        $('#content_div_id').html(data);    
+    });
+}
 </script>
 </body>
 </html>

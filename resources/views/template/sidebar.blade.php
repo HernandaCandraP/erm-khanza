@@ -134,6 +134,12 @@
                 <p>Pembayaran Pasien</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{route('tutupbilling')}}" class="nav-link {{ Request::is('admin/tutupbilling') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-money-bill"></i>
+                <p>Tutup Billing</p>
+              </a>
+            </li>
             @if(Auth::guard('pegawai')->user()->nik == "0108")
             <li class="nav-item">
               <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">

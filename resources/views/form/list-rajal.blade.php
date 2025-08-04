@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     @include('template.head')
+    <link rel="stylesheet" href="{{asset('tampilan/plugins/daterangepicker/daterangepicker.css')}}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -22,7 +23,33 @@
           <div class="col-md-12 col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Antrian {{Session::get('nmpoli')}}</h5>
+                <h5 class="float-left">Pencarian Berdasarkan Tanggal</h5>
+              </div>
+              <!-- /.card-header -->
+              <form action="{{route('menu-rajal')}}" method="post" class="form-horizontal">
+              {{ csrf_field() }}
+              <div class="card-body row">
+                <div class="input-group col-lg-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="far fa-calendar-alt"></i>
+                    </span>
+                  </div>
+                  <input type="text" name="tanggal" class="form-control float-right" id="reservation">
+                </div>
+                <button type="submit" class="btn btn-success float-right ml-3" name="action" value="simpan">Cari Data</button>
+              </div>
+              </form>
+              
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+
+          <div class="col-md-12 col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Antrian {{Session::get('nmpoli')}} <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -129,12 +156,19 @@
 <!-- REQUIRED SCRIPTS -->
 @include('template.script_table')
 <script src="{{asset('tampilan/plugins/jquery-knob/jquery.knob.min.js')}}"></script>
+<!-- InputMask -->
+<script src="{{asset('tampilan/plugins/moment/moment.min.js')}}"></script>
+<script src="{{asset('tampilan/plugins/inputmask/jquery.inputmask.min.js')}}"></script>
+<!-- date-range-picker -->
+<script src="{{asset('tampilan/plugins/daterangepicker/daterangepicker.js')}}"></script>
+
 <script>
   $(function () {
     $('.knob').knob({
       draw: function () {
       }
     })
+    $('#reservation').daterangepicker()
   })
 </script>
 </body>

@@ -6,13 +6,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Session;
 use Auth;
+use Carbon\Carbon;
 
 class FormController extends Controller
 {
     public function menurajal(Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{            
+            $date = date('Y-m-d');
+            $enddate = date('Y-m-d');
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
         $username = Session::get('username');
-        $month =  date('Y-m'); //'2023-06'; //
-        $date = date('Y-m-d'); //'2023-06-15'; // 
         
         $kdpoli = Session::get('getpoli');
 
@@ -21,26 +32,26 @@ class FormController extends Controller
         $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts', 'c.nm_dokter')
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
-        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')->orderby('a.jam_reg', 'desc')->get();
+        ->where('a.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')->orderby('a.no_rawat', 'asc')->get();
 
         $ceksoapdokter = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.nip as petugasrs')->distinct()
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
-        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+        ->where('a.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')
         ->where('pr.nip', '=', $username)
         ->orderby('a.jam_reg', 'desc')->get();
 
         $awalmedisbedah = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.kd_dokter as petugasrs')->distinct()
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('penilaian_medis_ralan_bedah as pr', 'a.no_rawat','=', 'pr.no_rawat')
-        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+        ->where('a.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')
         ->where('pr.kd_dokter', '=', $username)
         ->orderby('a.jam_reg', 'desc')->get();
 
         $awalmedisdalam = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.kd_dokter as petugasrs')->distinct()
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('penilaian_medis_ralan_penyakit_dalam as pr', 'a.no_rawat','=', 'pr.no_rawat')
-        ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+        ->where('a.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')
         ->where('pr.kd_dokter', '=', $username)
         ->orderby('a.jam_reg', 'desc')->get();
 
@@ -73,12 +84,14 @@ class FormController extends Controller
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('rujukan_internal_poli as int', 'int.no_rawat', '=', 'a.no_rawat')
         ->leftjoin('poliklinik as p', 'p.kd_poli', '=', 'a.kd_poli')
-        ->where('int.kd_dokter', $username)->where('a.tgl_registrasi', $date)
+        ->where('int.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])
         ->orderby('a.jam_reg', 'desc')->get();
 
         return view('form/list-rajal', [
             'rujukaninternal' => $rujukaninternal, 
             'pasienterakhir' => $pasienterakhir, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
         ]);
     }
 

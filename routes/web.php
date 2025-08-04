@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/admin/selisihobat', 'PegawaiController@selisihobat')->name('selisihobat');
     // Route::get('/admin/updatehargaobat', 'PegawaiController@updatehargaobat')->name('updatehargaobat');
     Route::match(array('GET','POST'), '/admin/biayarajal', 'PegawaiController@biayarajal')->name('admin-biayarajal');
+    Route::match(array('GET','POST'),'/admin/tutupbilling', 'PegawaiController@tutupbilling')->name('tutupbilling');
 
     Route::get('/absensi/rekapadmin', 'WebcamController@rekapadmin')->name('absensi.rekapadmin');
     Route::match(array('GET','POST'),'/absensi/detailrekapadmin', 'WebcamController@detailrekapadmin')->name('absensi.detailrekapadmin');
@@ -90,7 +91,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/resepracikan', 'FormController@resepracikan')->name('resepracikan');
     Route::get('/form/hapus', 'FormController@delete')->name('form/hapus');
 
-    Route::get('/form', 'FormController@menurajal')->name('menu-rajal');
+    Route::match(array('GET','POST'),'/form', 'FormController@menurajal')->name('menu-rajal');
     Route::get('/form/awalmedisparu', 'FormController@rjawalmedisparu')->name('form-awalmedisparu');
     Route::get('/form/awalmedisbedah', 'FormController@rjawalmedisbedah')->name('form-awalmedisbedah');
     Route::get('/form/awalmedissyaraf', 'FormController@rjawalmedissyaraf')->name('form-awalmedissyaraf');

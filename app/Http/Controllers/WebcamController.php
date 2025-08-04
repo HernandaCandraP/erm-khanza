@@ -29,9 +29,18 @@ class WebcamController extends Controller
                 $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '11:00:00');
             }elseif ($getid->departemen == 'KSR') {
                 $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '10:00:00', 'Siang2' => '14:00:00');
+            }elseif ($getid->departemen == 'DPUR') {
+                $jamjaga = array('Pagi' => '05:30:00', 'Siang' => '12:00:00');
             }elseif ($getid->departemen == 'MAR') {
                 $jamjaga = array('Marketing' => '-');
-            }else{
+            }elseif ($getid->departemen == 'PDT') {
+                $jamjaga = array('Pagi' => '08:00:00', 'Magak' => '11:00:00');
+            }elseif ($getid->departemen == 'APT') {
+                $jamjaga = array('Pagi' => '07:00:00', 'Magak' => '11:00:00');
+            }elseif ($getid->departemen == 'LAB') {
+                $jamjaga = array('Pagi' => '07:00:00', 'Magak' => '10:00:00', 'Siang' => '14:00:00', 'Malam' => '21:00:00');
+            }
+            else{
                 $jamjaga = array('Pagi' => '07:00:00', 'Siang' => '14:00:00', 'Malam' => '21:00:00');
             }
         }

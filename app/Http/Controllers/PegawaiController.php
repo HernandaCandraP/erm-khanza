@@ -456,17 +456,17 @@ class PegawaiController extends Controller
                                     'totalsoap' =>$totalpemeriksaanvip,
                                     'nm_poli' =>"VIP"];
 
-        $persentaseinputranap[1] = ['hasil' =>$lamavip > 0 ? round(($totalpemeriksaan1 / ($lama1 *3)) * 100, 1) : 0,
+        $persentaseinputranap[1] = ['hasil' =>$lama1 > 0 ? round(($totalpemeriksaan1 / ($lama1 *3)) * 100, 1) : 0,
                                     'lamaperawatan' =>$lama1, 
                                     'totalsoap' =>$totalpemeriksaan1,
                                     'nm_poli' =>"Kelas 1"];
 
-        $persentaseinputranap[2] = ['hasil' =>$lamavip > 0 ? round(($totalpemeriksaan2 / ($lama2 *3)) * 100, 1) : 0,
+        $persentaseinputranap[2] = ['hasil' =>$lama2 > 0 ? round(($totalpemeriksaan2 / ($lama2 *3)) * 100, 1) : 0,
                                     'lamaperawatan' =>$lama2, 
                                     'totalsoap' =>$totalpemeriksaan2,
                                     'nm_poli' =>"Kelas 2"];
 
-        $persentaseinputranap[3] = ['hasil' =>$lamavip > 0 ? round(($totalpemeriksaan3 / ($lama3 *3)) * 100, 1) : 0,
+        $persentaseinputranap[3] = ['hasil' =>$lama3 > 0 ? round(($totalpemeriksaan3 / ($lama3 *3)) * 100, 1) : 0,
                                     'lamaperawatan' =>$lama3, 
                                     'totalsoap' =>$totalpemeriksaan3,
                                     'nm_poli' =>"Kelas 3"];
@@ -1021,6 +1021,23 @@ class PegawaiController extends Controller
             }
         }
         return response()->json(array('msg'=> $msg, 'idinput'=>$request->idinput, 'stok'=>$stokobat->stok), 200);
+    }
+
+    public function tutupbilling(Request $request){
+        // dd($request->all());
+        if($request->nik != null && $request->detail != null){
+            DB::table('user as u')->where('u.id_user',DB::raw("AES_ENCRYPT($request->nik, 'nur')") )->update(array('hapus_nota_salah'=>$request->detail ));
+        }
+
+        $user = DB::table('user as u')->select("p.nama", "u.hapus_nota_salah", \DB::raw("AES_DECRYPT(u.id_user, 'nur') as id_user") )
+            ->join('pegawai as p', function ($join) {
+                    $join->on('p.nik', '=', DB::raw("AES_DECRYPT(u.id_user, 'nur')"));
+                })
+            ->orderby('u.hapus_nota_salah', 'asc')
+            ->get();
+        // dd($user);
+
+        return view('pegawai/tutupbilling', ['user' => $user]);
     }
 
     public function tampilguru(){
