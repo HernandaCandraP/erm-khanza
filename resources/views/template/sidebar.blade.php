@@ -153,6 +153,102 @@
                 <p>Pegawai</p>
               </a>
             </li>
+            <li class="nav-item has-treeview {{ Request::is('indikatormutu*') ? 'menu-open' : '' }}">
+              <a href="{{route('indikatormutu')}}" class="nav-link {{ Request::is('indikatormutu*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-chart-bar"></i>
+                <p>Indikator Mutu</p>
+                {{--<i class="fas fa-angle-left right"></i>--}}
+              </a>
+            </li>
+            <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>
+                Mutu
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.kebersihan_tangan') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan Kebersihan Tangan</p>
+                </a>
+              </li> 
+              <li class="nav-item">
+                <a href="{{  route('indikatormutu.apd') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan Penggunaan alat Pelindung diri (APD)</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{  route('indikatormutu.identifikasi_pasien') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan Identifikasi Pasien</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.seksio_emergensi') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Waktu Tanggap Operasi Seksio Seksarea Emergensi</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.waktu_tunggu_rajal') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Waktu Tunggu Rawat Jalan</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.penundaan_operasi') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Penundaan Operasi Elektif</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.visite_dokter') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan Waktu Visite Dokter</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.hasil_kritis_lab') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pelaporan Hasil Kritis Laboratorium</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{  route('indikatormutu.formularium') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan Penggunaan Formularium Nasional</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.clinical_pathway') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan terhadap Alur Klinis (Clinical Pathway)</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.pencegahan_jatuh') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepatuhan Upaya Pencegahan Resiko Pasien Jatuh</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.tanggap_komplain') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kecepatan Waktu Tanggap Komplain</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('indikatormutu.kepuasan_pasien') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kepuasan Pasien</p>
+                </a>
+              </li>
+            </ul>
+          </li>
             @endif
             @if(Auth::guard('pegawai')->user()->nik == "D009")
             <li class="nav-item">

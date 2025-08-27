@@ -57,6 +57,47 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
 
     Route::get('/admin/persentase', 'PegawaiController@persentase')->name('persentase');
     Route::get('/admin/penilaianperawat', 'PegawaiController@penilaianperawat')->name('penilaianperawat');
+    Route::get('/admin/indikatormutu', 'IndikatorMutuController@indikatormutu')->name('indikatormutu');
+    // Route::get('/indikatormutu/kebersihan-tangan', 'IndikatorMutuController@indikatormutu')->name('indikatormutu.kebersihan_tangan');
+    Route::get('/admin/indikatormutu/kebersihan-tangan', 'IndikatorMutuController@kebersihanTangan')->name('indikatormutu.kebersihan_tangan');
+    //Route::get('/indikatormutu/kebersihan-tangan/hapus/{id}','IndikatorMutuController@hapus');
+    Route::get('/admin/indikatormutu/hapus/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'hapus'])->name('hapus.mutu');
+    Route::get('/admin/indikatormutu/edit/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'edit'])->name('edit.mutu');
+    Route::post('/admin/indikatormutu/update/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'update'])->name('update.mutu');
+    Route::delete('/admin/indikatormutu/delete/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'destroy'])->name('delete.mutu');
+
+    // Route::get('/mutu/edit/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'edit'])->name('edit.mutu');
+
+
+    // Route::get('/admin/indikatormutu/kebersihan-tangan', function () {return view('indikatormutu.kebersihan_tangan');})->name('indikatormutu.kebersihan_tangan');
+    //  Route::post('/admin/indikatormutu/kebersihan-tangan', function (\Illuminate\Http\Request $request) {return back()->with('hasil', $request->all());})->name('indikatormutu.kebersihan_tangan.store');
+     Route::get('/admin/indikatormutu/apd', 'IndikatorMutuController@apd')->name('indikatormutu.apd');
+    // Route::post('/admin/indikatormutu/apd', [App\Http\Controllers\IndikatorMutuController::class, 'apdStore'])->name('indikatormutu.apd.store');
+     Route::get('/indikatormutu/identifikasi-pasien', 'IndikatorMutuController@identifikasiPasien')->name('indikatormutu.identifikasi_pasien');
+    // Route::post('/indikatormutu/identifikasi-pasien', [App\Http\Controllers\IndikatorMutuController::class, 'identifikasiPasienStore'])->name('indikatormutu.identifikasi_pasien.store');
+     Route::get('/indikatormutu/seksio-emergensi', 'IndikatorMutuController@seksioEmergensi')->name('indikatormutu.seksio_emergensi');
+    // Route::post('/indikatormutu/seksio-emergensi', [App\Http\Controllers\IndikatorMutuController::class, 'seksioEmergensiStore'])->name('indikatormutu.seksio_emergensi.store');
+     Route::get('/indikatormutu/waktu-tunggu-rajal', 'IndikatorMutuController@waktuTungguRajal')->name('indikatormutu.waktu_tunggu_rajal');
+    // Route::post('/indikatormutu/waktu-tunggu-rajal', [App\Http\Controllers\IndikatorMutuController::class, 'waktuTungguRajalStore'])->name('indikatormutu.waktu_tunggu_rajal.store');
+     Route::get('/indikatormutu/penundaan-operasi','IndikatorMutuController@penundaanOperasi')->name('indikatormutu.penundaan_operasi');
+    // Route::post('/indikatormutu/penundaan-operasi', [App\Http\Controllers\IndikatorMutuController::class, 'penundaanOperasiStore'])->name('indikatormutu.penundaan_operasi.store');
+     Route::get('/indikatormutu/visite-dokter', 'IndikatorMutuController@visiteDokter')->name('indikatormutu.visite_dokter');
+    // Route::post('/indikatormutu/visite-dokter', [App\Http\Controllers\IndikatorMutuController::class, 'visiteDokterStore'])->name('indikatormutu.visite_dokter.store');
+     Route::get('/indikatormutu/hasil-kritis-lab', 'IndikatorMutuController@hasilKritisLab')->name('indikatormutu.hasil_kritis_lab');
+    // Route::post('/indikatormutu/hasil-kritis-lab', [App\Http\Controllers\IndikatorMutuController::class, 'hasilKritisLabStore'])->name('indikatormutu.hasil_kritis_lab.store');
+     Route::get('/indikatormutu/formularium', 'IndikatorMutuController@formularium')->name('indikatormutu.formularium');
+    // Route::post('/indikatormutu/formularium', [App\Http\Controllers\IndikatorMutuController::class, 'formulariumStore'])->name('indikatormutu.formularium.store');
+     Route::get('/indikatormutu/clinical-pathway', 'IndikatorMutuController@clinicalPathway')->name('indikatormutu.clinical_pathway');
+    // Route::post('/indikatormutu/clinical-pathway', [App\Http\Controllers\IndikatorMutuController::class, 'clinicalPathwayStore'])->name('indikatormutu.clinical_pathway.store');
+     Route::get('/indikatormutu/pencegahan-jatuh', 'IndikatorMutuController@pencegahanJatuh')->name('indikatormutu.pencegahan_jatuh');
+    // Route::post('/indikatormutu/pencegahan-jatuh', [App\Http\Controllers\IndikatorMutuController::class, 'pencegahanJatuhStore'])->name('indikatormutu.pencegahan_jatuh.store');
+     Route::get('/indikatormutu/tanggap-komplain', 'IndikatorMutuController@tanggapKomplain')->name('indikatormutu.tanggap_komplain');
+    // Route::post('/indikatormutu/tanggap-komplain', [App\Http\Controllers\IndikatorMutuController::class, 'tanggapKomplainStore'])->name('indikatormutu.tanggap_komplain.store');
+     Route::get('/indikatormutu/kepuasan-pasien', 'IndikatorMutuController@kepuasanPasien')->name('indikatormutu.kepuasan_pasien');
+    // Route::post('/indikatormutu/kepuasan-pasien', [App\Http\Controllers\IndikatorMutuController::class, 'kepuasanPasienStore'])->name('indikatormutu.kepuasan_pasien.store');
+     Route::post('/indikatormutu/simpan-mutu', [App\Http\Controllers\IndikatorMutuController::class, 'simpanmutu'])->name('indikatormutu.simpan-mutu');
+
+    // Route::get('/indikatormutu/kebersihan-tangan', function () {return view('admin.kebersihan_tangan');})->name('indikatormutu.kebersihan_tangan');
 
     Route::match(array('GET','POST'),'/admin/pemesananobat', 'PegawaiController@pemesananobat')->name('pemesananobat');
     Route::get('/admin/selisihobat', 'PegawaiController@selisihobat')->name('selisihobat');
