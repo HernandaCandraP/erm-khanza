@@ -3,4 +3,4 @@
       RSBA
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2024 <a href="https://rsbudiasih.rumahsakit.online/">RS BUDI ASIH</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2024 <a href="https://rsbudiasih.rumah-sakit.online/">RS BUDI ASIH</a>.</strong> All rights reserved.

@@ -67,6 +67,43 @@ class PasienController extends Controller
         
     }
 
+    public function kontrol(Request $request)
+    {
+        // dd(1);
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{            
+            $date = date('Y-m-d');
+            $enddate = date('Y-m-d');
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
+        $pasienterakhir = DB::table('reg_periksa as a')->select('a.*', 'p.nm_poli', 'b.nm_pasien', 'c.nm_dokter', 'rk.tgl_kontrol')
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
+            ->leftjoin('poliklinik as p', 'a.kd_poli', '=', 'p.kd_poli')
+            ->leftjoin('rencana_kontrol as rk', 'a.no_rawat', '=', 'rk.no_rawat')
+            ->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.kd_pj', 'BPJ')->orderby('a.no_rawat', 'asc')->get();
+
+        return view('pasien/kontrol', [ 
+            'pasienterakhir' => $pasienterakhir, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+        ]);
+    }
+
+    public function showkontrol(Request $request)
+    {
+        dd($request->all());
+        $user = User::find($id);
+
+        return response()->json($user);
+    }
+
     public function create(Request $request)
     {
         $validate = $request->validate([

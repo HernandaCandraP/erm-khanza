@@ -24,6 +24,11 @@ Route::get('/', 'LoginController@index')->name('welcome');
 // Auth::routes();
 
 Route::get('/mutasi', 'HomeController@mutasi')->name('home');
+
+// kontrol belum selesai
+Route::match(array('GET','POST'),'/kontrol', 'PasienController@kontrol')->name('kontrol');
+Route::get('kontrol-show', 'PasienController@showkontrol')->name('kontrol.show');
+
 Route::get('/updateantrean', 'HomeController@updateantrean')->name('updatetask4');
 Route::get('/404', function () {
     return view('404');
@@ -95,6 +100,14 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/cetakkartu', 'BarcodeController@cetakkartu')->name('cetakkartu');
     Route::match(array('GET','POST'),'/tambahpasien', 'BarcodeController@tambahpasien')->name('tambahpasien');
     Route::get('/ambil_pasien', 'BarcodeController@ambil_pasien')->name('ambil_pasien');
+
+    // penilaian SIMRS
+    Route::match(array('GET','POST'),'erm/pengisian-igd', 'PengisianSimrsController@ermigd')->name('simrs.igd');
+
+    // upload data 
+    Route::match(array('GET','POST'),'/berkasdigital', 'PengisianSimrsController@berkasdigital')->name('simrs.berkasdigital');
+    Route::match(array('GET','POST'),'/berkasdigitalsimpan', 'PengisianSimrsController@berkasdigitalsimpan')->name('simrs.berkasdigitalsimpan');
+
 });
 
 // login dokter

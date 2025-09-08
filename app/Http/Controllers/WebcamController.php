@@ -34,7 +34,7 @@ class WebcamController extends Controller
             }elseif ($getid->departemen == 'MAR') {
                 $jamjaga = array('Marketing' => '-');
             }elseif ($getid->departemen == 'PDT') {
-                $jamjaga = array('Pagi' => '08:00:00', 'Magak' => '11:00:00');
+                $jamjaga = array('Pagi' => '08:00:00', 'Magak' => '11:00:00', 'Siang2' => '14:00:00');
             }elseif ($getid->departemen == 'APT') {
                 $jamjaga = array('Pagi' => '07:00:00', 'Magak' => '11:00:00');
             }elseif ($getid->departemen == 'LAB') {
@@ -134,7 +134,7 @@ class WebcamController extends Controller
             $durasi = $durasi->format("%H:%I:%S");
             // dd($durasi->format("%H:%I:%S"));
             
-            $fileName = $date. $presensi->shift. $getid->id . 'pulang.png';
+            $fileName = substr_replace($presensi->photo, 'pulang', -4, 0);
             $file = $folderPath . $fileName;
             file_put_contents($file, $image_base64);
 
