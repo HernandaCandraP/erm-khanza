@@ -90,7 +90,6 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
      Route::get('/indikatormutu/clinical-pathway', 'IndikatorMutuController@clinicalPathway')->name('indikatormutu.clinical_pathway');
     // Route::post('/indikatormutu/clinical-pathway', [App\Http\Controllers\IndikatorMutuController::class, 'clinicalPathwayStore'])->name('indikatormutu.clinical_pathway.store');
      Route::get('/indikatormutu/pencegahan-jatuh', 'IndikatorMutuController@pencegahanJatuh')->name('indikatormutu.pencegahan_jatuh');
-    // Route::post('/indikatormutu/pencegahan-jatuh', [App\Http\Controllers\IndikatorMutuController::class, 'pencegahanJatuhStore'])->name('indikatormutu.pencegahan_jatuh.store');
      Route::get('/indikatormutu/tanggap-komplain', 'IndikatorMutuController@tanggapKomplain')->name('indikatormutu.tanggap_komplain');
     // Route::post('/indikatormutu/tanggap-komplain', [App\Http\Controllers\IndikatorMutuController::class, 'tanggapKomplainStore'])->name('indikatormutu.tanggap_komplain.store');
      Route::get('/indikatormutu/kepuasan-pasien', 'IndikatorMutuController@kepuasanPasien')->name('indikatormutu.kepuasan_pasien');
