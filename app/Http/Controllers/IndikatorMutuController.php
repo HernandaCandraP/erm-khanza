@@ -22,29 +22,18 @@ class IndikatorMutuController extends Controller
 
         dd();
 
-        // $pengujian_jaccard = $pengujian->pengujian_jaccard($data_jaccard);
-
-        // return view('guru/home', [
-        //     'pegawai' => $pegawai, 
-        // ]);
     }
 
     public function kebersihanTangan()
     {
-        // Untuk testing, tampilkan data pasien terakhir
         $datamutu = DB::table('mutu_nasional')
             ->orderBy('tahun', 'desc')
             ->where('detail_mutu', 'kebersihan-tangan')
             ->get();
 
-            // dd($datamutu);
-        // return view('indikatormutu.kebersihan_tangan', compact('datamutu'));
         return view('indikatormutu.kebersihan_tangan', [
             'datamutu' => $datamutu,
         ]);
-        // Jika ada data yang ingin ditampilkan, bisa ditambahkan di sini
-        //`
-    // return view('indikatormutu.kebersihan_tangan');
     }
 
     public function simpanmutu(Request $request)
@@ -62,21 +51,20 @@ class IndikatorMutuController extends Controller
 
     public function hapus($id): RedirectResponse
     {
-    // hapus data berdasarkan id
-    DB::table('mutu_nasional')->where('id', $id)->delete();
 
-    // kembali ke halaman sebelumnya
-    return redirect()->back();
+        DB::table('mutu_nasional')->where('id', $id)->delete();
+
+            return redirect()->back();
+
     }
 
     public function destroy($id)
     {
 
     DB::table('mutu_nasional')->where('id', $id)->delete();
-    return redirect()->back()->with('success', 'Data berhasil dihapus!');
-
+    return redirect()->back()->with('success', 'Data berhasil dihapus');
+    
     }
-
 
     public function edit($id)
     {
@@ -89,7 +77,6 @@ class IndikatorMutuController extends Controller
 
     public function update(Request $request, $id)
 {
-    // Validasi input
     $request->validate([
         'tahun' => 'required|numeric|min:2020|max:2100',
         'bulan' => 'required|string',
@@ -97,7 +84,6 @@ class IndikatorMutuController extends Controller
         'denumerator' => 'required|numeric',
     ]);
 
-    // Update data
     DB::table('mutu_nasional')
         ->where('id', $id)
         ->update([
@@ -108,7 +94,6 @@ class IndikatorMutuController extends Controller
             'detail_mutu' => $request->detail_mutu,
         ]);
 
-    // Redirect ke halaman sebelumnya
     return redirect($request->redirect_url)
            ->with('success', 'Data berhasil diperbarui!');
 }
@@ -142,13 +127,6 @@ class IndikatorMutuController extends Controller
 
     }
 
-    //public function identifikasiPasienStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
-
     public function seksioEmergensi()
     {
         $datamutu = DB::table('mutu_nasional')
@@ -161,13 +139,6 @@ class IndikatorMutuController extends Controller
     ]);
 
     }
-
-    //public function seksioEmergensiStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-
-    //}
 
     public function waktuTungguRajal()
     {
@@ -182,13 +153,6 @@ class IndikatorMutuController extends Controller
 
     }
 
-    //public function waktuTungguRajalStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
-
     public function penundaanOperasi()
     {
         $datamutu = DB::table('mutu_nasional')
@@ -201,13 +165,6 @@ class IndikatorMutuController extends Controller
         ]);
 
     }
-
-    //public function penundaanOperasiStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
 
     public function visiteDokter()
     {
@@ -222,13 +179,6 @@ class IndikatorMutuController extends Controller
 
     }
 
-    //public function visiteDokterStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
-
     public function hasilKritisLab()
     {
         $datamutu = DB::table('mutu_nasional')
@@ -241,13 +191,6 @@ class IndikatorMutuController extends Controller
         ]);
 
     }
-
-    //public function hasilKritisLabStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
 
     public function formularium()
     {
@@ -262,13 +205,6 @@ class IndikatorMutuController extends Controller
 
     }
 
-    //public function formulariumStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
-
     public function pencegahanJatuh()
     {
     $datamutu = DB::table('mutu_nasional')
@@ -282,13 +218,6 @@ class IndikatorMutuController extends Controller
 
     }
 
-    //public function pencegahanJatuhStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-
-    //}
-
     public function clinicalPathway()
     {
         $datamutu = DB::table('mutu_nasional')
@@ -301,13 +230,6 @@ class IndikatorMutuController extends Controller
         ]);
 
     }
-
-    //public function clinicalPathwayStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-
-    //}
 
     public function tanggapKomplain()
     {
@@ -323,13 +245,6 @@ class IndikatorMutuController extends Controller
 
     }
 
-    //public function tanggapKomplainStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
-
     public function kepuasanPasien()
     {
         $datamutu = DB::table('mutu_nasional')
@@ -342,12 +257,5 @@ class IndikatorMutuController extends Controller
         ]);
 
     }
-
-    //public function kepuasanPasienStore(Request $request)
-    //{
-
-    //return back()->with('hasil', $request->all());
-    
-    //}
 
 }

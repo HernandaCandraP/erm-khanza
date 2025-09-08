@@ -25,12 +25,20 @@
             <!-- Simpan URL halaman sebelumnya -->
             <input type="hidden" name="redirect_url" value="{{ request('redirect', url()->previous()) }}">
 
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="tahun">Tahun</label>
               <input type="number" name="tahun" class="form-control" min="2020" max="2100"
                      value="{{ old('tahun', $editmutu->tahun) }}" required>
-            </div>
+            </div> -->
 
+            <div class="form-group">
+            <label for="tahun">Tahun</label>
+                <input type="number"
+                    class="form-control"
+                    value="{{ date('Y') }}"
+                    disabled>
+                <input type="hidden" name="tahun" value="{{ date('Y') }}">
+        </div>
             <div class="form-group">
               <label for="bulan">Bulan</label>
               <select name="bulan" class="form-control" required>
@@ -43,14 +51,16 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group"> 
               <label for="numerator">Numerator</label>
-              <input type="number" class="form-control" id="numerator" name="numerator" value=" " placeholder="Numerator">
+              <input type="number" class="form-control" id="numerator" name="numerator" 
+              value="{{ old('numerator', $editmutu->numerator ?? '') }}" placeholder="Numerator">
             </div>
 
-            <div class="form-group">
+            <div class="form-group"> 
               <label for="denumerator">Denumerator</label>
-              <input type="number" class="form-control" id="denumerator" name="denumerator" value=" " placeholder="Denumerator">
+              <input type="number" class="form-control" id="denumerator" name="denumerator" 
+              value="{{ old('denumerator', $editmutu->denumerator ?? '') }}" placeholder="Denumerator">
             </div>
 
             <input type="hidden" name="id" value="{{ $editmutu->id }}">
@@ -82,7 +92,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Apakah Anda yakin ingin mengedit data ini? Periksa kembali semua input sebelum menyimpan.
+        Apakah Anda yakin ingin mengedit data ini? Periksa kembali semua input sebelum menyimpannya.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
