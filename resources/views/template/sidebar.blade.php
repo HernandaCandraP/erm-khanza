@@ -153,12 +153,58 @@
                 <p>Pegawai</p>
               </a>
             </li>
-            <li class="nav-item has-treeview {{ Request::is('indikatormutu*') ? 'menu-open' : '' }}">
-              <a href="{{route('indikatormutu')}}" class="nav-link {{ Request::is('indikatormutu*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-chart-bar"></i>
-                <p>Indikator Mutu</p>
-                {{--<i class="fas fa-angle-left right"></i>--}}
+            <li class="nav-item">
+              <a href="{{route('simrs.berkasdigital')}}" class="nav-link {{ Request::is('berkasdigital*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-book"></i>
+                <p>Berkas Digital</p>
               </a>
+            </li>
+            <li class="nav-item {{ Request::is('erm/*') ? 'menu-open' : '' }}">
+              <a href="#" class="nav-link {{ Request::is('erm/*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-table"></i>
+                <p>
+                  Pengisian SIMRS
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{ route('simrs.igd') }}" class="nav-link {{ Request::is('erm/pengisian-igd*') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM IGD</p>
+                  </a>
+                </li> 
+                <li class="nav-item">
+                  <a href="{{  route('indikatormutu.apd') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM Rawat Inap</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{  route('indikatormutu.identifikasi_pasien') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM Farmasi</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('indikatormutu.seksio_emergensi') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM Gizi</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('indikatormutu.waktu_tunggu_rajal') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM Laboratorium</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('indikatormutu.penundaan_operasi') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM Operasi</p>
+                  </a>
+                </li>
+              </ul>
             </li>
             <li class="nav-item">
             <a href="#" class="nav-link">
@@ -248,7 +294,7 @@
                 </a>
               </li>
             </ul>
-          </li>
+            </li>
             @endif
             @if(Auth::guard('pegawai')->user()->nik == "D009")
             <li class="nav-item">
