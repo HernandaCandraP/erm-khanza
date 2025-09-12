@@ -121,11 +121,12 @@
                             </li>
                             <li>
                               {!! $value->resume != null ? "<b class='text-success'>Resume Pasien</b>" : "<b class='text-danger'>Resume Pasien</b>" !!}
-                            </li>                          </ul>
+                            </li>                         
+                          </ul>
                         </td>
                     </tr> 
                     @endforeach
-                  
+      
                   </tbody>
                 </table>
               </div>

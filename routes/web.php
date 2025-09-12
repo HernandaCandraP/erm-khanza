@@ -103,11 +103,14 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
 
     // penilaian SIMRS
     Route::match(array('GET','POST'),'erm/pengisian-igd', 'PengisianSimrsController@ermigd')->name('simrs.igd');
-
+    Route::match(array('GET','POST'),'erm/pengisian-rawatinap', 'PengisianSimrsController@ermrawatinap')->name('simrs.rawatinap');
+    Route::match(array('GET','POST'),'erm/pengisian-farmasi', 'PengisianSimrsController@ermfarmasi')->name('simrs.farmasi');
+    Route::match(array('GET','POST'),'erm/pengisian-gizi', 'PengisianSimrsController@ermgizi')->name('simrs.gizi');
+    Route::match(array('GET','POST'),'erm/pengisian-operasi', 'PengisianSimrsController@ermoperasi')->name('simrs.operasi');
     // upload data 
     Route::match(array('GET','POST'),'/berkasdigital', 'PengisianSimrsController@berkasdigital')->name('simrs.berkasdigital');
     Route::match(array('GET','POST'),'/berkasdigitalsimpan', 'PengisianSimrsController@berkasdigitalsimpan')->name('simrs.berkasdigitalsimpan');
-
+    
 });
 
 // login dokter

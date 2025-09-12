@@ -175,19 +175,19 @@
                   </a>
                 </li> 
                 <li class="nav-item">
-                  <a href="{{  route('indikatormutu.apd') }}" class="nav-link">
+                  <a href="{{  route('simrs.rawatinap') }}" class="nav-link {{ Request::is('erm/pengisian-rawatinap*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>ERM Rawat Inap</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{  route('indikatormutu.identifikasi_pasien') }}" class="nav-link">
+                  <a href="{{  route('simrs.farmasi') }}" class="nav-link {{ Request::is('erm/pengisian-farmasi*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>ERM Farmasi</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ route('indikatormutu.seksio_emergensi') }}" class="nav-link">
+                  <a href="{{ route('simrs.gizi') }}" class="nav-link {{ Request::is('erm/pengisian-gizi*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>ERM Gizi</p>
                   </a>
@@ -199,7 +199,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ route('indikatormutu.penundaan_operasi') }}" class="nav-link">
+                  <a href="{{ route('simrs.operasi') }}" class="nav-link {{ Request::is('erm/pengisian-operasi*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>ERM Operasi</p>
                   </a>
