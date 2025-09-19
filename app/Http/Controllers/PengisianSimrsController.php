@@ -78,15 +78,11 @@ class PengisianSimrsController extends Controller
 
         $listpasien = DB::table('reg_periksa as a')
             ->select('a.*', 'p.nm_poli', 'b.nm_pasien', 'b.no_rkm_medis', 'c.nm_dokter', 
-            // 'dti.no_rawat as triase', 'paki.no_rawat as awalkeperawatanigd', 
-            // 'pmi.no_rawat as awalmedisigd', 'coi.no_rawat as observasiigd', 'ppa.no_rawat as pews', 'ppd.no_rawat as ews', 'ppn.no_rawat as ewsneonatus',
-            // 'hpe.no_rawat as ekg', 'ppt.no_rawat as persetujuanpenolakan', 'jatuhdewasa.no_rawat as jatuhdewasa', 'jatuhanak.no_rawat as jatuhanak',
-            // 'terminal.no_rawat as terminal', 'resep.no_rawat as resep', 'transfer.no_rawat as transfer', 'resume.no_rawat as resume',
             'pak.no_rawat as pak', 'pmu.no_rawat as pmu', 'rjd.no_rawat as rjd', 'rja.no_rawat as rja', 'rjl.no_rawat as rjl', 'rjn.no_rawat as rjn',
             'rjg.no_rawat as rjg', 'rjp.no_rawat as rjp', 'pptl.no_rawat as pptl', 'ckh.no_rawat as ckh', 'ckk.no_rawat as ckk', 'ppa.no_rawat as ppa',
             'ppd.no_rawat as ppd', 'cor.no_rawat as cor', 'ckr.no_rawat as ckr', 'ccg.no_rawat as ccg', 'mrt.no_rawat as mrt', 'hpe.no_rawat as hpe',
             'pun.no_rawat as pun', 'cp.no_rawat as cp', 'tpa.no_rawat as tpa', 'pp.no_rawat as pp', 'rpr.no_rawat as rpr', 'pptn.no_rawat as pptn',
-            'pkk.no_rawat as pkk', 'mrk.no_rawat as mrk'
+            'pkk.no_rawat as pkk', 'mrk.no_rawat as mrk', 'co.no_rawat as co', 'cop.no_rawat as cop'
             )
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
             ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
@@ -118,44 +114,11 @@ class PengisianSimrsController extends Controller
             ->leftJoin('persetujuan_penolakan_tindakan as pptn', 'pptn.no_rawat', '=', 'a.no_rawat')
             ->leftJoin('penilaian_awal_keperawatan_kebidanan_ranap as pkk', 'pkk.no_rawat', '=', 'a.no_rawat')
             ->leftJoin('penilaian_medis_ranap_kandungan as mrk', 'mrk.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('keluar_masuk_hcu as kmh', 'kmh.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('pemantauan_ews_anak_dewasa as pewsa', 'pewsa.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('catatan_observasi_rawat_inap as cori', 'cori.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('catatan_keperawatan as ck', 'ck.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('cek_gds as cg', 'cg.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('monitoring_reaksi_tranfusi as mrt', 'mrt.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('hasil_usg as hu', 'hu.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('hadil_ekg as he', 'he.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('penilaian_ulang_nyeri as pun', 'pun.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('catatan_persalinan as cp', 'cp.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('transfer_antar_ruang as tar', 'tar.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('perencanaaan_pemulangan as pp', 'pp.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('resume_dpjp as rd', 'rd.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('riwayat_perawatan as rp', 'rp.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('persetujuan_penolakan_tindakan as pptn', 'pptn.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('surat_kontrol as sk', 'sk.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('keperawatan_kebidanan_dan_kandungan as kkk', 'kkk.no_rawat', '=', 'a.no_rawat')
-            // ->leftJoin('medis_kebidanan_dan_kandungan as mkk', 'mkk.no_rawat', '=', 'a.no_rawat')
-            // ->groupBy('a.no_rawat')
-
-            // ->leftjoin('data_triase_igd as dti', 'dti.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('penilaian_awal_keperawatan_igd as paki', 'paki.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('penilaian_medis_igd as pmi', 'pmi.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('catatan_observasi_igd as coi', 'coi.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('pemantauan_pews_anak as ppa', 'ppa.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('pemantauan_pews_dewasa as ppd', 'ppd.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('pemantauan_ews_neonatus as ppn', 'ppn.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('hasil_pemeriksaan_ekg as hpe', 'hpe.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('persetujuan_penolakan_tindakan as ppt', 'ppt.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('penilaian_lanjutan_resiko_jatuh_dewasa as jatuhdewasa', 'jatuhdewasa.no_rawat','=', 'a.no_rawat')
-            // ->leftjoin('penilaian_lanjutan_resiko_jatuh_anak as jatuhanak', 'jatuhanak.no_rawat','=', 'a.no_rawat')
-            // // lanjutan neonatus dll belum
-            // ->leftjoin('penilaian_pasien_terminal as terminal', 'terminal.no_rawat','=', 'a.no_rawat')            
-            // ->leftjoin('resep_obat as resep', 'resep.no_rawat','=', 'a.no_rawat')       
-            // ->leftjoin('transfer_pasien_antar_ruang as transfer', 'transfer.no_rawat','=', 'a.no_rawat')            
-            // ->leftjoin('resume_pasien as resume', 'resume.no_rawat','=', 'a.no_rawat')   
+            ->leftJoin('catatan_observasi_ranap_kebidanan as co', 'co.no_rawat', '=', 'a.no_rawat')
+            ->leftJoin('catatan_observasi_ranap_postpartum as cop', 'cop.no_rawat', '=', 'a.no_rawat')
             ->groupBy('a.no_rawat')
             ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->where('status_lanjut', 'Ranap')
             ->where('a.kd_poli', 'IGDK')
             ->get();
 
@@ -183,13 +146,14 @@ class PengisianSimrsController extends Controller
         }
 
         $listpasien = DB::table('reg_periksa as a')
-            ->select('a.*', 'p.nm_poli', 'b.nm_pasien', 'b.no_rkm_medis', 'c.nm_dokter', 'kf.no_rawat as kf'
+            ->select('a.*', 'p.nm_poli', 'b.nm_pasien', 'b.no_rkm_medis', 'c.nm_dokter', 'kf.no_rawat as kf', 'ro.no_rawat as ro'
             )
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
             ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
             ->leftjoin('poliklinik as p', 'a.kd_poli', '=', 'p.kd_poli')
 
             ->leftjoin('konseling_farmasi as kf','kf.no_rawat', '=', 'a.no_rawat')
+            ->leftjoin('rekonsiliasi_obat as ro','ro.no_rawat', '=', 'a.no_rawat')
             ->groupBy('a.no_rawat')
             ->whereBetween('a.tgl_registrasi', [$date, $enddate])
             ->where('a.kd_poli', 'IGDK')
@@ -236,6 +200,7 @@ class PengisianSimrsController extends Controller
             ->leftjoin('catatan_adime_gizi as cag','cag.no_rawat', '=', 'a.no_rawat')
             ->groupBy('a.no_rawat')
             ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->where('status_lanjut', 'Ranap')
             ->where('a.kd_poli', 'IGDK')
             ->get();
 

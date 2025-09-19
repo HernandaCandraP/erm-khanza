@@ -78,8 +78,14 @@
                               {!! $value->pak != null ? "<b class='text-success'>Awal Keperawatan Ranap</b>" : "<b class='text-danger'>Awal Keperawatan Ranap</b>" !!}
                             </li>
                             <li>
+                              {!! $value->pkk != null ? "<b class='text-success'>Keperawatan Kebidanan dan Kandungan</b>" : "<b class='text-danger'>Keperawatan Kebidanan dan Kandungan</b>" !!}
+                            </li>
+                            <li>
                               {!! $value->pmu != null ? "<b class='text-success'>Medis Umum Ranap</b>" : "<b class='text-danger'>Medis Umum Ranap</b>" !!}
-                            </li>    
+                            </li>  
+                            <li>
+                              {!! $value->mrk != null ? "<b class='text-success'>Medis Kebidanan dan Kandungan</b>" : "<b class='text-danger'>Medis Kebidanan dan Kandungan</b>" !!}
+                            </li>  
                             <li>
                               {!! $value->rjd != null ? "<b class='text-success'>Resiko Jatuh Dewasa</b>" : "<b class='text-danger'>Resiko Jatuh Dewasa</b>" !!} 
                             </li>  
@@ -147,10 +153,10 @@
                               {!! $value->pptn != null ? "<b class='text-success'>Persetujuan / Penolakan Tindakan</b>" : "<b class='text-danger'>Persetujuan / Penolakan Tindakan</b>" !!}
                             </li>
                             <li>
-                              {!! $value->pkk != null ? "<b class='text-success'>Keperawatan Kebidanan dan Kandungan</b>" : "<b class='text-danger'>Keperawatan Kebidanan dan Kandungan</b>" !!}
+                              {!! $value->co != null ? "<b class='text-success'>Catatan Observasi Ranap Kebidanan</b>" : "<b class='text-danger'>Catatan Observasi Ranap Kebidanan</b>" !!}  
                             </li>
                             <li>
-                              {!! $value->mrk != null ? "<b class='text-success'>Medis Kebidanan dan Kandungan</b>" : "<b class='text-danger'>Medis Kebidanan dan Kandungan</b>" !!}
+                              {!! $value->cop != null ? "<b class='text-success'>Catatan Observasi Ranap Postpartum</b>" : "<b class='text-danger'>Catatan Observasi Ranap Postpartum</b>" !!}
                             </li>
                           </ul>
                         </td>

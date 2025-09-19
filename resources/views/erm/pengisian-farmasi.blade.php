@@ -77,6 +77,9 @@
                             <li>
                               {!! $value->kf != null ? "<b class='text-success'>Konseling Farmasi</b>" : "<b class='text-danger'>Konseling Farmasi</b>" !!}
                             </li> 
+                            <li>
+                              {!! $value->ro != null ? "<b class='text-success'>Rekonsiliasi Obat</b>" : "<b class='text-danger'>Rekonsiliasi Obat</b>" !!}
+                            </li>
                           </ul>
                         </td>
                     </tr> 
