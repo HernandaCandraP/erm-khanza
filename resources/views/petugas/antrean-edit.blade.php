@@ -36,6 +36,8 @@
                     <th>PDT</th>
                     <th>Poli</th>
                     <th>SOAP</th>
+                    <th>APT Resep</th>
+                    <th>APT Penyerahan</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -70,7 +72,12 @@
                               {{$key->tgl_perawatan." ".  $key->jam_rawat}}
                             @endif
                         </td>
-                          
+                        <td>
+                          {{$key->tgl_kirim_obat." ".  $key->jam}}
+                        </td>
+                        <td>
+                          {{$key->tgl_serah_obat." ".  $key->jam_penyerahan}}
+                        </td>
                     </tr> 
                     @endforeach
                   </tbody>

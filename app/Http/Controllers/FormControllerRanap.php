@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Classes\Sekuel;
 use Session;
 use Auth;
 
@@ -337,17 +338,6 @@ class FormControllerRanap extends Controller
             $data->jam_rawat_lama = $request->jam_rawat;
         }else{
             $data = DB::table('pemeriksaan_ranap')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
-
-            // ambil riwayat alergi
-            $riwayatalergi = DB::table('reg_periksa as a')->select('a.no_rawat', 'pr.alergi')->distinct()
-                ->join('pemeriksaan_ranap as pr', 'pr.no_rawat','=', 'a.no_rawat')
-                ->where('a.no_rkm_medis', $detailpasien[0]->no_rkm_medis)
-                ->where('pr.alergi', '!=', '')
-                ->where('pr.alergi', '!=', '-')
-                ->groupby('pr.alergi')
-                ->limit(1)
-                ->get();
-
             // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
             if($data != null){
                 foreach ($data as $key => $value) {
@@ -376,14 +366,9 @@ class FormControllerRanap extends Controller
                 }
             }
 
-            // tampilkan alergi di soap
-            $alergi = '';
-            if($riwayatalergi != null){
-                foreach ($riwayatalergi as $key => $value) {
-                    $alergi .= $value->alergi . ', ';
-                }
-                $data->alergi = $alergi;
-            }
+            // ambil riwayat alergi
+            $sekuel = new Sekuel();
+            $data->alergi = $sekuel->getAlergi($request->no_rawat);
 
             $data->nip = $kd_dokter;
             $data->nama = Auth::guard('pegawai')->user()->nama;

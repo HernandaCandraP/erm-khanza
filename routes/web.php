@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::get('/admin/indikatormutu/hapus/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'hapus'])->name('hapus.mutu');
     Route::get('/admin/indikatormutu/edit/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'edit'])->name('edit.mutu');
     Route::post('/admin/indikatormutu/update/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'update'])->name('update.mutu');
-    Route::delete('/admin/indikatormutu/delete/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'destroy'])->name('hapus.mutu');
+    Route::get('/admin/indikatormutu/delete/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'destroy'])->name('hapus.mutu');
 
      Route::get('/admin/indikatormutu/apd', 'IndikatorMutuController@apd')->name('indikatormutu.apd');
      Route::get('/indikatormutu/identifikasi-pasien', 'IndikatorMutuController@identifikasiPasien')->name('indikatormutu.identifikasi_pasien');
@@ -104,12 +104,14 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     // penilaian SIMRS
     Route::match(array('GET','POST'),'erm/pengisian-igd', 'PengisianSimrsController@ermigd')->name('simrs.igd');
     Route::match(array('GET','POST'),'erm/pengisian-rawatinap', 'PengisianSimrsController@ermrawatinap')->name('simrs.rawatinap');
+    Route::match(array('GET','POST'),'erm/pengisian-rawatjalan', 'PengisianSimrsController@ermrawatjalan')->name('simrs.rawatjalan');
     Route::match(array('GET','POST'),'erm/pengisian-farmasi', 'PengisianSimrsController@ermfarmasi')->name('simrs.farmasi');
     Route::match(array('GET','POST'),'erm/pengisian-gizi', 'PengisianSimrsController@ermgizi')->name('simrs.gizi');
     Route::match(array('GET','POST'),'erm/pengisian-operasi', 'PengisianSimrsController@ermoperasi')->name('simrs.operasi');
     // upload data 
     Route::match(array('GET','POST'),'/berkasdigital', 'PengisianSimrsController@berkasdigital')->name('simrs.berkasdigital');
     Route::match(array('GET','POST'),'/berkasdigitalsimpan', 'PengisianSimrsController@berkasdigitalsimpan')->name('simrs.berkasdigitalsimpan');
+    Route::delete('/berkasdigitalhapus/{$id}', 'PengisianSimrsController@berkasdigitalhapus')->name('simrs.berkasdigitalhapus');
     
 });
 

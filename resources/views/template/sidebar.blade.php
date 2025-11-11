@@ -134,25 +134,14 @@
                 <p>Pembayaran Pasien</p>
               </a>
             </li>
+            @if(Auth::guard('pegawai')->user()->nik == "0108" || Auth::guard('pegawai')->user()->nik == "02.03.19.285")
             <li class="nav-item">
               <a href="{{route('tutupbilling')}}" class="nav-link {{ Request::is('admin/tutupbilling') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-money-bill"></i>
                 <p>Tutup Billing</p>
               </a>
             </li>
-            @if(Auth::guard('pegawai')->user()->nik == "0108")
-            <li class="nav-item">
-              <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>Kelola Login</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{route('absensi.rekapadmin')}}" class="nav-link {{ Request::is('absensi*') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-user"></i>
-                <p>Pegawai</p>
-              </a>
-            </li>
+            @endif
             <li class="nav-item">
               <a href="{{route('simrs.berkasdigital')}}" class="nav-link {{ Request::is('berkasdigital*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-book"></i>
@@ -178,6 +167,12 @@
                   <a href="{{  route('simrs.rawatinap') }}" class="nav-link {{ Request::is('erm/pengisian-rawatinap*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>ERM Rawat Inap</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{  route('simrs.rawatjalan') }}" class="nav-link {{ Request::is('erm/pengisian-rawatjalan*') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>ERM Rawat Jalan</p>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -294,6 +289,19 @@
                 </a>
               </li>
             </ul>
+            </li>
+            @if(Auth::guard('pegawai')->user()->nik == "0108")
+            <li class="nav-item">
+              <a href="{{route('kelolalogin')}}" class="nav-link {{ Request::is('admin/kelolalogin') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>Kelola Login</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('absensi.rekapadmin')}}" class="nav-link {{ Request::is('absensi*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-user"></i>
+                <p>Pegawai</p>
+              </a>
             </li>
             @endif
             @if(Auth::guard('pegawai')->user()->nik == "D009")

@@ -44,8 +44,6 @@
                         <div class="col-7">&nbsp; {{$detailpasien[0]->no_rawat}}</div>
                         <div class="col-5 text-right"><b>Umur</b></div>
                         <div class="col-7">&nbsp; {{$detailpasien[0]->umur}}</div>
-                        {{-- <div class="col-5 text-right text-danger"><b>Alergi</b></div>
-                        <div class="col-7 text-danger">&nbsp; test</div> --}}
                       </div>
                     </div>
                     <div class="col-sm-3 pt-3">
@@ -197,8 +195,13 @@
                         <textarea class="form-control form-control-sm" rows="4" name="rtl" autocomplete="off" style="width: 100%">{{ old('rtl', $data->rtl) }}</textarea>
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
-                          <div class="col-sm-12">
-                            <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
+                          <div class="row text-sm"> 
+                            <div class="col-sm-10">
+                              <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
+                            </div>
+                            <div class="col-sm-2">
+                              <div type="text" class="form-control btn btn-success btn-sm cekharga">Cek Harga</div>
+                            </div>
                           </div>
                       </div>
 
@@ -315,7 +318,7 @@
         @foreach ($datalistnorawatperresep as $key => $value)
           <tr>
             <th rowspan="{{$value->total +1}}"> {{$key+1}}. </th>
-            <th rowspan="{{$value->total +1}}">{{$value->no_resep}}<br>
+            <th rowspan="{{$value->total +1}}">{{$value->no_resep}}<br><a class="text-danger">{{$value->nm_dokter}}</a><br>
               <button type="button" value="{{$value->no_resep}}#*#{{$datalistnorawatlengkap}}" class="btn btn-success btn-sm copyresep">
                 Copy Resep
               </button>
@@ -359,7 +362,7 @@
       document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
     }
 
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td style="color: white; font-size: 90%;"><select style="min-width: 70%; max-width: 70%; font-size: 90%;" class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->letak_barang}} / {{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input style="width: 80px;" id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><textarea  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text" cols="25"></textarea></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td style="color: white; font-size: 90%;"><select style="min-width: 70%; max-width: 70%; font-size: 90%;" class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->letak_barang}} / {{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input style="width: 80px;" id="'+i+'" class="form-control total jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><textarea  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text" cols="25"></textarea></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
     $('.select2').select2();
 
@@ -371,6 +374,45 @@
 
     myFunction();
   });
+
+  $(".cekharga").on('click',function(){
+    var totalHarga = 0;
+    var cekKelengkapanObat = 1;
+    var notif = "";
+    $('#testing tr').each(function(i) {
+      var customerId = $(this).find(".select2-selection__rendered").text();  
+      var total = $(this).find('.total').val();
+      // cek apakah ada isi pada kolom obat
+      if(customerId){
+        // cek apakah obat & total tidak kosong
+        if(customerId && total && customerId != 'Pilih Obat'){
+          
+          // console.log( customerId ); 
+          // console.log( total ); 
+
+          var bagian = customerId.split("||"); 
+          var bagianHarga = bagian[2].trim(); // Hasil: "Rp. 1100"
+          var harga = bagianHarga.split("Rp.")[1].trim().replace(/,/g, ''); // Hasil: "1100"
+
+          namaobat = bagian[0].split("/"); 
+          notif += namaobat[0].trim() +" ( "+ harga +" X "+ total +" ) = "+ commaSeparateNumber(harga*total) +"\n";
+          totalHarga+= harga*total;
+        }else{
+          alert("Obat Belum Lengkap");
+          cekKelengkapanObat = 0;
+          return false;
+        }        
+      }
+      
+    });
+    if(cekKelengkapanObat == 1){
+      alert(notif+"\nTotal : "+ commaSeparateNumber(totalHarga));
+    }
+
+    myFunction();
+  });
+
+
 
   $(".copyresep").click(function() {
     var str = $(this).val();
@@ -385,7 +427,7 @@
         if(i == 1){
           document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
         }
-        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["letak_barang"] +' / '+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
+        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td class="select2-selection__rendered"><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["letak_barang"] +' / '+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control total jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
 
         $('.select2').select2();
 
@@ -393,6 +435,7 @@
           $(this).parents("tr").remove();
           return false;
         });
+        cekStok(element["jml"], element["kode_brng"], i);
         i++;
       }
     });
@@ -402,18 +445,27 @@
 
   // check obat kosong atau tidak
   $('form').on('keyup change paste', 'input, select, textarea', function(){
-    if (!isNaN(this.id)) {
-      console.log( this.id );
-      console.log( this.value );
+    if (!isNaN(this.id) && this.name == 'jumlah[]') {
+      // console.log( this.id );
+      // console.log( this.value );
       var resepid = "resep" + this.id;
       var resep = document.getElementById(resepid);
-      console.log(resep.value);
-      console.log(resepid);
+      cekStok(this.value, resep.value, this.id);
+    }
+  });
+  
+  $(document).ready(function() {
+    myFunction();
+  });
+
+  function cekStok(jumlah, id, idinput) {
+    console.log(jumlah, id, idinput);
+    if (id.trim()) {
       $.ajax({
         url: "{{route('cekstokobat')}}",
         type: "GET",
         // masukkan request ke data
-        data:{jumlah:$(this).val(), id:$(resep).val(), idinput:$(this).attr('id')}, 
+        data:{jumlah, id, idinput}, 
         dataType: "json",
         success: function (data) {
             // jika jumlah input melebihi stok
@@ -421,7 +473,7 @@
               alert(data.msg);
               var idinput = "#" + data.idinput;
               $(idinput).val(data.stok);
-              console.log(data.stok);
+              // console.log(data.stok);
             }
         },
         error: function (xhr, status, error) {
@@ -429,12 +481,17 @@
             console.log(error);
         }
       });
+    }else{
+      alert("Obat Masih Kosong");
     }
-  });
-  
-  $(document).ready(function() {
-    myFunction();
-  });
+  }
+
+  function commaSeparateNumber(val){
+    while (/(\d+)(\d{3})/.test(val.toString())){
+      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+    return val;
+  }
 
   var myFunction = function(){
     //Initialize Select2 Elements

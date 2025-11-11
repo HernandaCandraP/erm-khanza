@@ -129,6 +129,44 @@ class PengisianSimrsController extends Controller
         ]);
     }
 
+    
+    public function ermrawatjalan(Request $request){
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $start = new Carbon('first day of this month');
+            $end = new Carbon('last day of this month');
+            
+            $date = date('Y-m-d');
+            $enddate = date('Y-m-d');
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
+        $listpasien = DB::table('reg_periksa as a')
+            ->select('a.*', 'p.nm_poli', 'b.nm_pasien', 'b.no_rkm_medis', 'c.nm_dokter', 'soap.no_rawat as soap', 'resume.no_rawat as resume'
+            )
+            ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
+            ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
+            ->leftjoin('poliklinik as p', 'a.kd_poli', '=', 'p.kd_poli')
+
+            ->leftjoin('pemeriksaan_ralan as soap','soap.no_rawat', '=', 'a.no_rawat')
+            ->leftjoin('resume_pasien as resume','resume.no_rawat', '=', 'a.no_rawat')
+            ->groupBy('a.no_rawat')
+            ->whereBetween('a.tgl_registrasi', [$date, $enddate])
+            ->where('a.status_lanjut', 'Ralan')
+            ->get();
+
+        return view('erm/pengisian-rawatjalan', [
+            'listpasien' => $listpasien, 
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+        ]);
+    }
+
      public function ermfarmasi(Request $request){
         if($request->tanggal != null){
             $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
@@ -302,7 +340,8 @@ class PengisianSimrsController extends Controller
         $file = $request->file('image');
         // timestamp.namafile
         $nama_file = date('Y-m-d')."_".$file->getClientOriginalName();
-        $folderPath = "file/";
+        $folderPath = "../file/";
+
         // fungsi simpan file
         $file->move($folderPath,$nama_file);
 

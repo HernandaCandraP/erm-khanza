@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Session;
 use Auth;
 use Carbon\Carbon;
+use App\Classes\Sekuel;
 
 class FormController extends Controller
 {
@@ -32,12 +33,16 @@ class FormController extends Controller
         $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts', 'c.nm_dokter')
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('dokter as c', 'a.kd_dokter', '=', 'c.kd_dokter')
-        ->where('a.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')->orderby('a.no_rawat', 'asc')->get();
+        ->where('a.kd_dokter', $username)
+        ->where('a.kd_poli','!=', 'U0013')
+        ->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')->orderby('a.no_rawat', 'asc')->get();
 
         $ceksoapdokter = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.nip as petugasrs')->distinct()
         ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
         ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
-        ->where('a.kd_dokter', $username)->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')
+        ->where('a.kd_dokter', $username)
+        ->where('a.kd_poli','!=', 'U0013')
+        ->whereBetween('a.tgl_registrasi', [$date, $enddate])->where('a.status_lanjut', 'Ralan')
         ->where('pr.nip', '=', $username)
         ->orderby('a.jam_reg', 'desc')->get();
 
@@ -131,17 +136,6 @@ class FormController extends Controller
             $data->jam_rawat_lama = $request->jam_rawat;
         }else{
             $data = DB::table('pemeriksaan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
-        
-            // ambil riwayat alergi
-            $riwayatalergi = DB::table('reg_periksa as a')->select('a.no_rawat', 'pr.alergi')->distinct()
-            ->join('pemeriksaan_ralan as pr', 'pr.no_rawat','=', 'a.no_rawat')
-            ->where('a.no_rkm_medis', $detailpasien[0]->no_rkm_medis)
-            ->where('pr.alergi', '!=', '')
-            ->where('pr.alergi', '!=', '-')
-            ->groupby('pr.alergi')
-            ->limit(1)
-            ->get();
-            
             // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
             if($data != null){
                 foreach ($data as $key => $value) {
@@ -169,14 +163,9 @@ class FormController extends Controller
                 }
             }
 
-            // tampilkan alergi di soap
-            $alergi = '';
-            if($riwayatalergi != null){
-                foreach ($riwayatalergi as $key => $value) {
-                    $alergi .= $value->alergi;
-                }
-                $data->alergi = $alergi;
-            }
+            // ambil riwayat alergi
+            $sekuel = new Sekuel();
+            $data->alergi = $sekuel->getAlergi($request->no_rawat);            
 
             // dd($alergi, $riwayatalergi);
             $data->nip = $kd_dokter;
@@ -186,7 +175,7 @@ class FormController extends Controller
         // ambil obat terakhir
         $listnorawat = DB::table('reg_periksa')->select('no_rawat')
             ->where('no_rkm_medis', $detailpasien[0]->no_rkm_medis)
-            ->where('kd_poli', $kdpoli)
+            ->where('kd_poli','!=','IGDK')
             ->orderby('tgl_registrasi', 'DESC')->limit(10)->get();
     
         $arraylistnorawat = [];
@@ -205,8 +194,9 @@ class FormController extends Controller
             ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
 
         // ambil total obat per resep untuk menghitung colspan
-        $datalistnorawatperresep = DB::table('resep_obat as ro')->select('ro.no_resep', DB::raw('count(*) as total'))
+        $datalistnorawatperresep = DB::table('resep_obat as ro')->select('ro.no_resep','dr.nm_dokter', DB::raw('count(*) as total'))
             ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
+            ->leftjoin('dokter as dr', 'dr.kd_dokter','=', 'ro.kd_dokter')
             ->orderby('ro.no_resep', 'DESC')
             ->groupby('ro.no_resep')
             ->where('ro.status', 'ralan')
@@ -286,17 +276,6 @@ class FormController extends Controller
             $data->jam_rawat_lama = $request->jam_rawat;
         }else{
             $data = DB::table('pemeriksaan_ralan')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
-        
-            // ambil riwayat alergi
-            $riwayatalergi = DB::table('reg_periksa as a')->select('a.no_rawat', 'pr.alergi')->distinct()
-            ->join('pemeriksaan_ralan as pr', 'pr.no_rawat','=', 'a.no_rawat')
-            ->where('a.no_rkm_medis', $detailpasien[0]->no_rkm_medis)
-            ->where('pr.alergi', '!=', '')
-            ->where('pr.alergi', '!=', '-')
-            ->groupby('pr.alergi')
-            ->limit(1)
-            ->get();
-            
             // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
             if($data != null){
                 foreach ($data as $key => $value) {
@@ -322,15 +301,6 @@ class FormController extends Controller
                 foreach ($data as $key => $value) {
                     $data->$key = "";
                 }
-            }
-
-            // tampilkan alergi di soap
-            $alergi = '';
-            if($riwayatalergi != null){
-                foreach ($riwayatalergi as $key => $value) {
-                    $alergi .= $value->alergi . ', ';
-                }
-                $data->alergi = $alergi;
             }
 
             $data->nip = $kd_dokter;
@@ -1726,8 +1696,12 @@ class FormController extends Controller
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanUmum') {
             $permintaan = $this->permintan($request);
             $request->tata = $permintaan['terapi'];
-            $request->penunjang = $permintaan['lab'] . ", ";
-            $request->penunjang = $permintaan['rad'];
+            // dd($permintaan['lab']);
+            if($permintaan['lab'] == null || $permintaan['rad'] == null){
+                $request->penunjang = '-';
+            }else{
+                $request->penunjang = $permintaan['lab'] . $permintaan['rad'];
+            }
 
             $PenilaianAwalMedisRawatJalanUmum = [
                 'no_rawat' => $request->no_rawat,
@@ -1763,7 +1737,7 @@ class FormController extends Controller
                 'ket_lokalis'=> $request->ket_lokalis,
                 'penunjang'=> $request->penunjang,
                 'diagnosis'=> $request->diagnosis,
-                'tata'=> $request->tata,
+                'tata'=> $request->tata ?? '-',
                 'konsulrujuk'=> $request->konsulrujuk
             ];
             // dd($request->all(), $PenilaianAwalMedisRawatJalanUmum);

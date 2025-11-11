@@ -48,13 +48,16 @@ class PegawaiController extends Controller
 
         $pasienterakhir = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts')
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
-            ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->where('a.kd_dokter', $username)
+            ->where('a.kd_poli','!=', 'U0013')
+            ->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->orderby('a.jam_reg', 'desc')->get();
             
         $ceksoapdokter = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'a.stts','pr.nip as petugasrs')->distinct()
             ->leftjoin('pasien as b', 'a.no_rkm_medis', '=', 'b.no_rkm_medis')
             ->leftjoin('pemeriksaan_ralan as pr', 'a.no_rawat','=', 'pr.no_rawat')
-            ->where('a.kd_dokter', $username)->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
+            ->where('a.kd_dokter', $username)
+            ->where('a.kd_poli','!=', 'U0013')->where('a.tgl_registrasi', $date)->where('a.status_lanjut', 'Ralan')
             ->where('pr.nip', '=', $username)
             ->orderby('a.jam_reg', 'desc')->get();
 
@@ -1012,6 +1015,8 @@ class PegawaiController extends Controller
         $stokobat = DB::table('databarang as db')->select( 'db.nama_brng', 'gb.stok')
         ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'db.kode_brng')
         ->where('db.kode_brng', $request->id)
+        ->where('db.status', '=', '1')
+        ->where('gb.stok', '>', '0')
         ->first();
 
         $msg ="";

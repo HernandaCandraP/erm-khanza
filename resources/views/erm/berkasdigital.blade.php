@@ -119,6 +119,7 @@
                     <th>No.</th>
                     <th>No. Rawat</th>
                     <th>Data</th>
+                    <th>Aksi</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -132,6 +133,18 @@
                                     This browser does not support PDFs. Please download the PDF to view it: <a href="{{asset('file/'.$value->lokasi_file) ?? 0}}">Download PDF</a>
                             </iframe>
                           </div>
+                        </td>
+                        <td>
+                          {{-- <form action="{{ route('simrs.berkasdigitalhapus', 'aa') }}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah yakin ingin menghapus data?')"><i class="fas fa-trash"></i></button>
+                          </form> --}}
+
+                          <form action="{{ route('simrs.berkasdigitalhapus', 'aa') }}" method="POST">
+                            {{ csrf_field() }}
+                            @method('DELETE')
+                          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                         </td>
                     </tr> 
                     @endforeach

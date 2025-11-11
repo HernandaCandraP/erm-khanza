@@ -94,7 +94,7 @@ class WebcamController extends Controller
         if($request->action == 'masuk'){
             $shift = $this->daftarshift($request->jamjaga);
 
-            $fileName = $date. $shift . $getid->id . '.png';
+            $fileName = $date. $shift .'-'. $getid->id . '.png';
             $file = $folderPath . $fileName;
             file_put_contents($file, $image_base64);
 
