@@ -94,7 +94,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">Keluhan Utama : 
-                            <textarea class="form-control form-control-sm" rows="3" name="keluhan_utama" autocomplete="off" style="width: 100%">{{ old('keluhan_utama', $penilaianralanbedah->keluhan_utama) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="keluhan_utama" autocomplete="off" style="width: 100%" required>{{ old('keluhan_utama', $penilaianralanbedah->keluhan_utama) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penggunaan Obat : 
                             <textarea class="form-control form-control-sm" rows="3" name="rpo" autocomplete="off" style="width: 100%">{{ old('rpo', $penilaianralanbedah->rpo) }}</textarea>
@@ -102,7 +102,7 @@
                         </div>
                         <div class="col-sm-6">
                           <div class="form-inline">Riwayat Penyakit Sekarang : 
-                            <textarea class="form-control form-control-sm" rows="3" name="rps" autocomplete="off" style="width: 100%">{{ old('rps', $penilaianralanbedah->rps) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="rps" autocomplete="off" style="width: 100%" required>{{ old('rps', $penilaianralanbedah->rps) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penyakit Dahulu : 
                             <textarea class="form-control form-control-sm" rows="3" name="rpd" autocomplete="off" style="width: 100%">{{ old('rpd', $penilaianralanbedah->rpd) }}</textarea>
@@ -367,7 +367,7 @@
                     <div class="card-body">
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-12 pt-1">
-                            <textarea class="form-control form-control-sm" rows="3" name="diagnosis" autocomplete="off" style="width: 100%">{{ old('diagnosis', $penilaianralanbedah->diagnosis) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="diagnosis" autocomplete="off" style="width: 100%" required>{{ old('diagnosis', $penilaianralanbedah->diagnosis) }}</textarea>
                         </div>
                         <div class="col-sm-6 pt-1" hidden>
                           <div class="form-inline">Asesmen Banding : 
@@ -397,9 +397,14 @@
                           </div>
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
-                          {{-- <div class="col-sm-12"> --}}
-                            <div type="text" class="btn btn-warning addmore form-control">+ Tambah Obat</div>
-                          {{-- </div> --}}
+                          <div class="row text-sm"> 
+                            <div class="col-sm-10">
+                              <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
+                            </div>
+                            <div class="col-sm-2">
+                              <div type="text" class="form-control btn btn-success btn-sm cekharga">Cek Harga</div>
+                            </div>
+                          </div>
                         </div>
                         <div class="col-sm-12 pt-4">
                           <div class="form-inline">Tindakan/Rencana Tindakan : 
@@ -456,55 +461,6 @@
 
 <!-- SCRIPTS -->
 @include('template.script_table')
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2').select2()
-
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-  })
-
-
-  var i=1;
-  $(".addmore").on('click',function(){
-    if(i == 1){
-      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
-    }
-
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td style="color: white; font-size: 90%;"><select style="min-width: 70%; max-width: 70%; font-size: 90%;" class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->letak_barang}} / {{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input style="width: 80px;" id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><textarea  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text" cols="25"></textarea></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $(".addmorerad").on('click',function(){
-    // if(i == 1){
-    //   document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
-    // }
-
-    document.getElementById("permintaanlab").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $("#hapusresep").on('click', function() {
-    $(this).parents("tr").remove();
-    return false;
-  });
-</script>
+@include('template.script_resep')
 </body>
 </html>

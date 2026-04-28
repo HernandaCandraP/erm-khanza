@@ -16,8 +16,8 @@ class HomeController extends Controller
     public function mutasi(Request $request)
     {
         $username = Session::get('username');
-        $month = date('Y-m'); //'2023-06'; // 
-        $date = date('Y-m-d'); //'2023-06-15'; // 
+        $month = date('Y-m'); // '2026-03'; // 
+        $date = date('Y-m-d'); //'2026-03-09'; // 
           
 
         $antrean = DB::table('reg_periksa as a')->select('a.no_rawat', 'b.no_rkm_medis', 'b.nm_pasien', 'mb.status', 'mb.dikirim', 'mb.diterima','pr.jam_rawat', 'pr.tgl_perawatan', 'ro.tgl_perawatan as tgl_kirim_obat', 'ro.tgl_penyerahan as tgl_serah_obat','ro.jam', 'ro.jam_penyerahan', 'ro.jam_peresepan')
@@ -32,7 +32,7 @@ class HomeController extends Controller
 
         // dd($antrean);
         foreach ($antrean as $key => $value) {
-            if ($value->diterima <= $value->dikirim && $value->diterima != '0000-00-00 00:00:00'){
+            if ($value->diterima <= $value->dikirim || $value->diterima == '0000-00-00 00:00:00'){
                 $request->merge(['status' => 'taskid4', 
                     'no_rawat' => $value->no_rawat, 
                     'jam_awal' => $value->diterima, 
@@ -41,9 +41,11 @@ class HomeController extends Controller
                 $this->updateantrean($request);
             }
             else if ($value->jam_rawat == null ){
+                // dd( $value->no_rawat, $value->jam_rawat, $value->dikirim ,'jam rawat null', $antrean);
+                
                 // tidak menjalankan fungsi karena pemeriksaan soap masih kosong
             }
-            else if($value->tgl_perawatan." ". $value->jam_rawat <= $value->diterima && $value->jam_rawat != 'null'){
+            else if($value->tgl_perawatan." ". $value->jam_rawat <= $value->diterima){
                 $request->merge(['status' => "taskid5",
                     'no_rawat' => $value->no_rawat, 
                     'jam_awal' => $value->tgl_perawatan." ". $value->jam_rawat, 
@@ -51,22 +53,22 @@ class HomeController extends Controller
                 ]);
                 $this->updateantrean($request);
             }
-            // else if($value->tgl_kirim_obat." ". $value->jam <= $value->tgl_perawatan." ". $value->jam_rawat && $value->jam != '00:00:00'){
-                // $request->merge(['status' => "taskid6",
-                //     'no_rawat' => $value->no_rawat, 
-                //     'jam_awal' => $value->tgl_kirim_obat." ". $value->jam, 
-                //     'jam_pembanding' => $value->tgl_perawatan." ". $value->jam_rawat
-                // ]);
-                // $this->updateantrean($request);
-            // }
-            // else if($value->tgl_serah_obat." ". $value->jam_penyerahan <= $value->tgl_kirim_obat." ". $value->jam && $value->jam_penyerahan != '00:00:00'){
-                // $request->merge(['status' => "taskid7",
-                //     'no_rawat' => $value->no_rawat, 
-                //     'jam_awal' => $value->tgl_serah_obat." ". $value->jam_penyerahan, 
-                //     'jam_pembanding' => $value->tgl_kirim_obat." ". $value->jam
-                // ]);
-                // $this->updateantrean($request);
-            // }
+            else if($value->tgl_kirim_obat." ". $value->jam <= $value->tgl_perawatan." ". $value->jam_rawat && $value->jam != '00:00:00'){
+                $request->merge(['status' => "taskid6",
+                    'no_rawat' => $value->no_rawat, 
+                    'jam_awal' => $value->tgl_kirim_obat." ". $value->jam, 
+                    'jam_pembanding' => $value->tgl_perawatan." ". $value->jam_rawat
+                ]);
+                $this->updateantrean($request);
+            }
+            else if($value->tgl_serah_obat." ". $value->jam_penyerahan <= $value->tgl_kirim_obat." ". $value->jam && $value->jam_penyerahan != '00:00:00'){
+                $request->merge(['status' => "taskid7",
+                    'no_rawat' => $value->no_rawat, 
+                    'jam_awal' => $value->tgl_serah_obat." ". $value->jam_penyerahan, 
+                    'jam_pembanding' => $value->tgl_kirim_obat." ". $value->jam
+                ]);
+                $this->updateantrean($request);
+            }
         }
         // dd($antrean);
 
@@ -115,6 +117,8 @@ class HomeController extends Controller
         }elseif($request->status == 'taskid6'){
             // dd("task id 6");
             DB::table('resep_obat')->where([['no_rawat','=', $request->no_rawat], ['tgl_perawatan', '=',$tglawal], ['jam', '=',$jamawal]])->update(['jam' => $jamakhir]);
+            DB::table('aturan_pakai')->where([['no_rawat','=', $request->no_rawat], ['tgl_perawatan', '=',$tglawal], ['jam', '=',$jamawal]])->update(['jam' => $jamakhir]);
+            DB::table('detail_pemberian_obat')->where([['no_rawat','=', $request->no_rawat], ['tgl_perawatan', '=',$tglawal], ['jam', '=',$jamawal]])->update(['jam' => $jamakhir]);
         }elseif($request->status == 'taskid7'){
             // dd("task id 7");
             DB::table('resep_obat')->where([['no_rawat','=', $request->no_rawat], ['tgl_perawatan', '=',$tglawal], ['jam_penyerahan', '=',$jamawal]])->update(['jam_penyerahan' => $jamakhir]);

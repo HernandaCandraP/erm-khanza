@@ -75,14 +75,16 @@
                         <td>
                           <ul>
                             <li>
-                              {!! $value->snd != null ? "<b class='text-success'>Skrining Nutrisi Pasien Dewasa</b>" : "<b class='text-danger'>Skrining Nutrisi Pasien Dewasa</b>" !!}
+                              @if($value->snd != null)
+                                <b class='text-success'>Skrining Nutrisi Pasien Dewasa</b>
+                              @elseif($value->snl != null)
+                                <b class='text-success'>Skrining Nutrisi Pasien Lansia</b>
+                              @elseif($value->sna != null)
+                                <b class='text-success'>Skrining Nutrisi Pasien Anak</b>
+                              @else
+                                <b class='text-danger'>Skrining Nutrisi Pasien Belum Terisi</b>
+                              @endif
                             </li> 
-                            <li>
-                              {!! $value->snl != null ? "<b class='text-success'>Skrining Nutrisi Pasien Lansia</b>" : "<b class='text-danger'>Skrining Nutrisi Pasien Lansia</b>" !!}
-                            </li>
-                            <li>
-                              {!! $value->sna != null ? "<b class='text-success'>Skrining Nutrisi Pasien Anak</b>" : "<b class='text-danger'>Skrining Nutrisi Pasien Anak</b>" !!}
-                            </li>
                             <li>
                               {!! $value->sg != null ? "<b class='text-success'>Skrining Gizi Lanjut</b>" : "<b class='text-danger'>Skrining Gizi Lanjut</b>" !!}
                             </li>

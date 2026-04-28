@@ -355,7 +355,8 @@
 
 <!-- SCRIPTS -->
 @include('template.script_table')
-<script>
+@include('template.script_resep')
+{{-- <script>
   var i=1;
   $(".addmore").on('click',function(){
     if(i == 1){
@@ -551,6 +552,6 @@
         }
       });
   }
-</script>
+</script> --}}
 </body>
 </html>

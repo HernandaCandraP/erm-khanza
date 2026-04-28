@@ -158,7 +158,11 @@ class PengisianSimrsController extends Controller
             ->groupBy('a.no_rawat')
             ->whereBetween('a.tgl_registrasi', [$date, $enddate])
             ->where('a.status_lanjut', 'Ralan')
+            ->where('a.stts', '!=','Batal')
+            ->where('a.kd_poli', '!=', 'IGDK')
             ->get();
+
+            // dd($listpasien);
 
         return view('erm/pengisian-rawatjalan', [
             'listpasien' => $listpasien, 

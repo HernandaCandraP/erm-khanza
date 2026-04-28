@@ -53,6 +53,7 @@
                 {{ csrf_field() }}
                 <div  class="card-body">
                   <div class="form-group row text-sm">
+                    <label class="col-sm-12 col-form-label-sm text-danger"><h5>{{$adaisipengisianmedisumum == false ? "Awal Medis Belum Tersimpan" :  ""}}</h5><hr></label>
                     <div class="form-inline row">
                       <div class="col-xs-6 pt-1">&emsp;&emsp; Dokter &emsp;: {{$medisumum->nama}}</div>
                       <input type="text" name="no_rawat" class="form-control form-control-sm" value="{{$detailpasien[0]->no_rawat}}" hidden>
@@ -327,7 +328,16 @@
                     <div class="card-body">
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-4 pt-1">
-                          <div class="form-inline">Laboratorium : 
+                          <div class="form-inline">
+                            <div class="form-inline text-primary" data-toggle="modal" data-target=".modal-riwayat-lab">Laboratorium : </div>
+                            
+
+                
+
+
+{{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".modal-riwayat-lab">Riwayat Laboratorium</button> --}}
+
+
                             <textarea class="form-control form-control-sm" rows="2" name="lab" autocomplete="off" style="width: 100%">{{ old('lab', $medisumum->lab) }}</textarea>
                           </div>
                           <div class="form-group">
@@ -360,7 +370,14 @@
                           </div>
                         </div>
                         <div class="col-sm-4 pt-1">
-                          <div class="form-inline">Radiologi : 
+                          <div class="form-inline">
+                            <div class="form-inline text-primary" data-toggle="modal" data-target=".modal-riwayat-rad">Radiologi : </div>
+
+        {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".modal-riwayat-rad">Riwayat Radiologi</button> --}}
+
+
+
+
                             <textarea class="form-control form-control-sm" rows="2" name="rad" autocomplete="off" style="width: 100%">{{ old('rad', $medisumum->rad) }}</textarea>
                           </div>
                           <div class="form-group">
@@ -478,6 +495,9 @@
   <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
+  <!-- Modal -->
+
+  @include('template.riwayat_labrad')
   <footer class="main-footer">
   @include('template.footer')
   </footer>

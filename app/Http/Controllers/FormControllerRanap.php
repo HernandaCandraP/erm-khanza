@@ -337,32 +337,38 @@ class FormControllerRanap extends Controller
             $data->tgl_perawatan_lama = $request->tgl_perawatan;
             $data->jam_rawat_lama = $request->jam_rawat;
         }else{
-            $data = DB::table('pemeriksaan_ranap')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
-            // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
-            if($data != null){
-                foreach ($data as $key => $value) {
-                    // ambil data ttv sebelumnya
+            if(Session::get('kd_sps') == '-'){ // dr umum
+                $data = DB::table('pemeriksaan_ranap')->where('no_rawat', $request->no_rawat)->orderBy('tgl_perawatan', 'DESC')->orderBy('jam_rawat', 'DESC')->first();
 
-                    // dokter yang meminta data soap diambil semua dari riwayat petugas
-                    if($kd_dokter == '0058' || $kd_dokter == '0087' || $kd_dokter == 'dokteragus' || $kd_dokter == '0060'){
-                        if($key == 'penilaian' || $key == 'rtl'){
-                            $data->$key = "";
-                        }else{
-                            $data->$key = $value;
-                        }
+                // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
+                if($data != null){
+                    foreach ($data as $key => $value) {
+                        $data->$key = $value;
                     }
-                    else{
-                        if($key == 'suhu_tubuh' || $key == 'tensi' || $key == 'nadi' || $key == 'respirasi' || $key == 'tinggi' || $key == 'berat' || $key == 'spo2' || $key == 'gcs' || $key == 'alergi'){
-                            $data->$key = $value;
-                        }else{
-                            $data->$key = "";
-                        }
+                }else{
+                    $data = $data = DB::table('pemeriksaan_ranap')->first();
+                    foreach ($data as $key => $value) {
+                        $data->$key = "";
                     }
                 }
-            }else{
-                $data = $data = DB::table('pemeriksaan_ranap')->first();
-                foreach ($data as $key => $value) {
-                    $data->$key = "";
+            }else{ // dr spesialis
+                $data = DB::table('pemeriksaan_ranap')
+                    ->select('pemeriksaan_ranap.*')
+                    ->join('dokter', 'dokter.kd_dokter','=', 'pemeriksaan_ranap.nip')
+                    ->where('no_rawat', $request->no_rawat)
+                    ->orderBy('tgl_perawatan', 'DESC')
+                    ->orderBy('jam_rawat', 'DESC')->first();
+                            
+                // cek apakah ada data di pemeriksaan ralan, jika tidak maka ambil data pemeriksaan lain
+                if($data != null){
+                    foreach ($data as $key => $value) {
+                        $data->$key = $value;
+                    }
+                }else{
+                    $data = $data = DB::table('pemeriksaan_ranap')->first();
+                    foreach ($data as $key => $value) {
+                        $data->$key = "";
+                    }
                 }
             }
 
@@ -464,38 +470,38 @@ class FormControllerRanap extends Controller
             ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
             ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
 
+        $adaisipengisianmedisumum = true;
         if (DB::table('penilaian_medis_ranap')->where('no_rawat', '=', $no_rawat)->exists()) {
             $medisumum = DB::table('penilaian_medis_ranap')->select('penilaian_medis_ranap.*', 'pegawai.nama')->where('no_rawat', '=',$no_rawat)->leftjoin('pegawai', 'pegawai.nik', 'penilaian_medis_ranap.kd_dokter')->first();
         }else{
+            $adaisipengisianmedisumum = false;
             $medisumum = DB::table('penilaian_medis_ranap')->first();
-            foreach ($medisumum as $key => $value) {
-                $medisumum->$key = "";
-            }
+            // foreach ($medisumum as $key => $value) {
+            //     $medisumum->$key = "";
+            // }
             $medisumum->kd_dokter = $kd_dokter;
             $medisumum->nama = Auth::guard('pegawai')->user()->nama;
 
-            $ambilttv = DB::table('penilaian_awal_keperawatan_ranap')->where('no_rawat', $request->no_rawat)->orderBy('tanggal', 'DESC')->first();
-            // dd($ambilttv);
+            $ambilttv = DB::table('penilaian_medis_igd')->where('no_rawat', $request->no_rawat)->orderBy('tanggal', 'DESC')->first();
+// dd($ambilttv,$medisumum);
             if($ambilttv != null){
-                $medisumum->suhu = $ambilttv->pemeriksaan_suhu;
-                $medisumum->td = $ambilttv->pemeriksaan_td;
-                $medisumum->nadi = $ambilttv->pemeriksaan_nadi;
-                $medisumum->rr = $ambilttv->pemeriksaan_rr;
-                $medisumum->tb = $ambilttv->pemeriksaan_tb;
-                $medisumum->bb = $ambilttv->pemeriksaan_bb;
-                $medisumum->spo = $ambilttv->pemeriksaan_spo2;
-                $medisumum->gcs = $ambilttv->pemeriksaan_gcs;
+                foreach ($medisumum as $key => $value) {
+                    $medisumum->$key = $ambilttv->$key ?? 'Normal';
+                }
+            }else{
+                foreach ($medisumum as $key => $value) {
+                    $medisumum->$key = "";
+                }
             }
+            $medisumum->kd_dokter = $kd_dokter;
+            $medisumum->nama = Auth::guard('pegawai')->user()->nama;
+            $medisumum->edukasi = $medisumum->penunjang = '-';
+            // dd($ambilttv,$medisumum);
             // dd($medisumum,$ambilttv);
         }
 
         $jnsperawatanlab = DB::table('jns_perawatan_lab as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr', 'b.Pemeriksaan', 'b.id_template')->leftjoin('template_laboratorium as b', 'b.kd_jenis_prw', '=', 'a.kd_jenis_prw')->where('status', '1')->get();
         $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr')->where('status', '1')->get();
-        // $resepdokter = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok')
-        // ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
-        // ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
-        // ->where('db.status', '=', '1')->where('gudangbarang.stok', '>', '0')
-        // ->groupby('gudangbarang.kode_brng')->orderby('db.nama_brng')->get();
 
         $getsps = Session::get('nm_sps');
         $getimage = '';
@@ -510,9 +516,15 @@ class FormControllerRanap extends Controller
         }elseif($getsps == 'Jantung' ){
             $getimage = 'image/jantung.jpg';
         }else{
-            dd('gambar belum ada');
+            $getimage = 'image/semua.png';
         }
+        
+        // Ambil riwayat laborat dan radiologi
+        $sekuel = new Sekuel();
+        list($riwayatlab, $riwayatdelatillab) = $sekuel->riwayatlab($request->no_rawat);
+        list($pasienrad, $hasilrad, $getgambar, $grouprad) = $sekuel->riwayatrad($request->no_rawat);
 
+        // dd($pasienrad, $hasilrad, $getgambar, $grouprad, $riwayatlabcoba, $riwayatlab);
         return view('formranap/formri-medisumum', [
             'detailpasien' => $detailpasien,
             'medisumum' => $medisumum,
@@ -520,7 +532,14 @@ class FormControllerRanap extends Controller
             'jnsperawatanrad' => $jnsperawatanrad,
             'resepdokter' => $resepdokter,
             'getimage' => $getimage,
-            'no_rawat' => $no_rawat
+            'no_rawat' => $no_rawat,
+            'riwayatlab' => $riwayatlab,
+            'riwayatdelatillab' => $riwayatdelatillab,
+            'pasienrad' => $pasienrad,
+            'getgambar' => $getgambar,
+            'hasilrad' => $hasilrad,
+            'grouprad' => $grouprad,
+            'adaisipengisianmedisumum' => $adaisipengisianmedisumum,
         ]);
     }
 

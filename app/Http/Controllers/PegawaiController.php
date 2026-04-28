@@ -1045,6 +1045,23 @@ class PegawaiController extends Controller
         return view('pegawai/tutupbilling', ['user' => $user]);
     }
 
+    public function hargaobat(){
+        $dasar = $beli = $jual = 0;
+        $hargaobat = DB::table('databarang as db')->select('db.kode_brng', 'db.nama_brng', 'db.h_beli', 'db.dasar', 'db.ralan', 'db.letak_barang','jenis.nama', 'db.kode_sat', 'gudangbarang.stok', 
+            DB::raw('db.h_beli * gudangbarang.stok as ttl_beli'), DB::raw('db.ralan * gudangbarang.stok as ttl_jual'),  DB::raw('db.dasar * gudangbarang.stok as ttl_dasar'))
+            ->join('jenis', 'jenis.kdjns','=', 'db.kdjns')
+            ->join('gudangbarang', 'gudangbarang.kode_brng','=', 'db.kode_brng')
+            ->where('db.status', '=', '1')->where('gudangbarang.kd_bangsal', '=', 'AP')
+            ->groupby('gudangbarang.kode_brng')->orderby('db.kode_brng')->get();
+
+        return view('pegawai/hargaobat', [
+            'hargaobat' => $hargaobat,
+            'dasar' => $dasar,
+            'jual' => $jual,
+            'beli' => $beli
+        ]);
+    }
+
     public function tampilguru(){
         $guru = Guru::orderBy('nip')->get();
         return view('admin/guru', ['guru' => $guru]);

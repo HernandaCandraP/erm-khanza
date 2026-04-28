@@ -1,6 +1,13 @@
 
 <div class="col-sm-2 pt-2">
-  <a href="{{ route('form-awalmedis'. strtolower(Session::get('nm_sps')), ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('form/awalmedis'. strtolower(Session::get('nm_sps'))) ? 'active' : '' }}">Penilaian Awal Medis {{ Session::get('nm_sps')}}</a>
+  <a href="{{ route('form-awalmedis'. strtolower(Session::get('nm_sps')), ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('form/awalmedis'. strtolower(Session::get('nm_sps'))) ? 'active' : '' }}">
+    Penilaian Awal Medis 
+    @if(Session::get('nm_sps') == "-")
+      IGD
+    @else
+      {{ Session::get('nm_sps')}}
+    @endif
+  </a>
 </div>
 <div class="col-sm-2 pt-2">
   <a href="{{ route('form-soap', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('form/soap') ? 'active' : '' }}">SOAP</a>

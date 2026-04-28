@@ -141,6 +141,12 @@
                 <p>Tutup Billing</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{route('hargaobat')}}" class="nav-link {{ Request::is('hargaobat*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-mortar-pestle"></i>
+                <p>Harga Obat</p>
+              </a>
+            </li>
             @endif
             <li class="nav-item">
               <a href="{{route('simrs.berkasdigital')}}" class="nav-link {{ Request::is('berkasdigital*') ? 'active' : '' }}">

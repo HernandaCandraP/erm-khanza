@@ -69,7 +69,7 @@
                     <tr>
                         <th scope="row"> {{$no+1}}. </th>
                         <td>{{$value->no_rawat}}</td>
-                        <td>{{$value->nm_pasien}} {{$value->no_rkm_medis}}</td>
+                        <td>{{$value->nm_pasien}} {{$value->no_rkm_medis}} <span style="color: blue;">({{$value->status_poli}})</span></td>
                         <td>{{$value->nm_dokter}}</td>
                         <td>{{$value->nm_poli}}</td>
                         <td>

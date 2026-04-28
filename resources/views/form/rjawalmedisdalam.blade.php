@@ -92,7 +92,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">Keluhan Utama : 
-                            <textarea class="form-control form-control-sm" rows="3" name="keluhan_utama" autocomplete="off" style="width: 100%">{{ old('keluhan_utama', $penilaianralandalam->keluhan_utama) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="keluhan_utama" autocomplete="off" style="width: 100%" required>{{ old('keluhan_utama', $penilaianralandalam->keluhan_utama) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penggunaan Obat : 
                             <textarea class="form-control form-control-sm" rows="3" name="rpo" autocomplete="off" style="width: 100%">{{ old('rpo', $penilaianralandalam->rpo) }}</textarea>
@@ -100,7 +100,7 @@
                         </div>
                         <div class="col-sm-6">
                           <div class="form-inline">Riwayat Penyakit Sekarang : 
-                            <textarea class="form-control form-control-sm" rows="3" name="rps" autocomplete="off" style="width: 100%">{{ old('rps', $penilaianralandalam->rps) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="3" name="rps" autocomplete="off" style="width: 100%" required>{{ old('rps', $penilaianralandalam->rps) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penyakit Dahulu : 
                             <textarea class="form-control form-control-sm" rows="3" name="rpd" autocomplete="off" style="width: 100%">{{ old('rpd', $penilaianralandalam->rpd) }}</textarea>
@@ -331,7 +331,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-12 pt-1">
                           <div class="form-inline">
-                            <textarea class="form-control form-control-sm" rows="4" name="diagnosis" autocomplete="off" style="width: 100%">{{ old('diagnosis', $penilaianralandalam->diagnosis) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="4" name="diagnosis" autocomplete="off" style="width: 100%" required>{{ old('diagnosis', $penilaianralandalam->diagnosis) }}</textarea>
                           </div>
                         </div>
                         <div class="col-sm-6 pt-1" hidden>
@@ -362,9 +362,14 @@
                           </div>
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
-                          {{-- <div class="col-sm-12"> --}}
-                            <div type="text" class="btn btn-warning addmore form-control">+ Tambah Obat</div>
-                          {{-- </div> --}}
+                          <div class="row text-sm"> 
+                            <div class="col-sm-10">
+                              <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
+                            </div>
+                            <div class="col-sm-2">
+                              <div type="text" class="form-control btn btn-success btn-sm cekharga">Cek Harga</div>
+                            </div>
+                          </div>
                         </div>
                         <div class="col-sm-12 pt-4">
                           <div class="form-inline">Tindakan/Rencana Tindakan
@@ -419,148 +424,6 @@
 
 <!-- SCRIPTS -->
 @include('template.script_table')
-<script>
-  var i=1;
-  $(".addmore").on('click',function(){
-    if(i == 1){
-      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
-    }
-
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resep'+i+'" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+i+'" class="form-control jumlah'+i+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-
-    myFunction();
-  });
-
-  $(".copyresep").click(function() {
-    var str = $(this).val();
-    var index = str.substring(0, str.indexOf("#*#"));
-    var collectdata = str.split("#*#")[1];
-    collectdata= JSON.parse(collectdata)
-    
-    collectdata.forEach(function(element){
-      // console.log(element)
-      if(element['no_resep'] == index){
-        var $kode_brng = element["kode_brng"];
-        if(i == 1){
-          document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
-        }
-        document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resep'+i+'" name="resep[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+i+'" class="form-control jumlah'+i+'" value="'+element["jml"]+'" name="jumlah[]" value="" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" value="'+element["aturan_pakai"]+'" type="text"  size="8"/></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-        $('.select2').select2();
-
-        $('#hapusresep'+i).on('click', function() {
-          $(this).parents("tr").remove();
-          return false;
-        });
-        i++;
-      }
-    });
-    myFunction();
-    $('#modal-lg').modal('hide');
-  });
-
-  // check obat kosong atau tidak
-  $('form').on('keyup change paste', 'input, select, textarea', function(){
-    if (!isNaN(this.id)) {
-      console.log( this.id );
-      console.log( this.value );
-      var resepid = "resep" + this.id;
-      var resep = document.getElementById(resepid);
-      console.log(resep.value);
-      console.log(resepid);
-      $.ajax({
-        url: "{{route('cekstokobat')}}",
-        type: "GET",
-        // masukkan request ke data
-        data:{jumlah:$(this).val(), id:$(resep).val(), idinput:$(this).attr('id')}, 
-        dataType: "json",
-        success: function (data) {
-            // jika jumlah input melebihi stok
-            if(data.msg != ""){
-              alert(data.msg);
-              var idinput = "#" + data.idinput;
-              $(idinput).val(data.stok);
-              console.log(data.stok);
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle errors, if any
-            console.log(error);
-        }
-      });
-    }
-  });
-  
-  $(document).ready(function() {
-    myFunction();
-  });
-
-  var myFunction = function(){
-    //Initialize Select2 Elements
-    $('.select2').select2()
-
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-    $('#diagnosa_utama').select2({
-        minimumInputLength: 3,  // bebas semau kita, tapi w saranin 3 angka lebih biar lebih cepat
-        maximumSelectionLength: 4,
-        allowClear: true,
-        placeholder: 'Input nama',
-        ajax: {
-          dataType: 'json',
-          url: '{{route("ambil_icd")}}',  // ini data yang akan kita ambil untuk di load
-          delay: 5,  // ini bebas mau di pake atau tidak
-          data: function(params) {
-            return {
-              search: params.term
-            }
-          },
-          processResults: function (data, page) {
-          return {
-            results: data
-          };
-        },
-      }
-      }).on('select2:select', function (evt) {
-          var data = $("#diagnosa_utama option:selected").text();
-        // alert("data yang anda pilih"+data+"");
-        var element = evt.params.data.element;
-        var $element = $(element);
-        
-        window.setTimeout(function () {  
-        if ($("select").find(":selected").length > 1) {
-          var $second = $("select").find(":selected").eq(-2);
-          
-          $element.detach();
-          $second.after($element);
-        } else {
-          $element.detach();
-          $("select").prepend($element);
-        }
-        
-        $("select").trigger("change");
-        }, 1);
-      });
-
-      $("select").on("select2:unselect", function (evt) {
-        if ($("select").find(":selected").length) {
-          var element = evt.params.data.element;
-          var $element = $(element);
-        $
-        ("select").find(":selected").after($element); 
-        }
-      });
-  }
-</script>
+@include('template.script_resep')
 </body>
 </html>

@@ -94,7 +94,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-6"> 
                           <div class="form-inline">Keluhan Utama : 
-                            <textarea class="form-control form-control-sm" rows="1" name="keluhan_utama" autocomplete="off" style="width: 100%">{{ old('keluhan_utama', $penilaianralansyaraf->keluhan_utama) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="1" name="keluhan_utama" autocomplete="off" style="width: 100%" required>{{ old('keluhan_utama', $penilaianralansyaraf->keluhan_utama) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penggunaan Obat : 
                             <textarea class="form-control form-control-sm" rows="1" name="rpo" autocomplete="off" style="width: 100%">{{ old('rpo', $penilaianralansyaraf->rpo) }}</textarea>
@@ -102,7 +102,7 @@
                         </div>
                         <div class="col-sm-6">
                           <div class="form-inline">Riwayat Penyakit Sekarang : 
-                            <textarea class="form-control form-control-sm" rows="1" name="rps" autocomplete="off" style="width: 100%">{{ old('rps', $penilaianralansyaraf->rps) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="1" name="rps" autocomplete="off" style="width: 100%" required>{{ old('rps', $penilaianralansyaraf->rps) }}</textarea>
                           </div>
                           <div class="form-inline pt-2">Riwayat Penyakit Dahulu : 
                             <textarea class="form-control form-control-sm" rows="1" name="rpd" autocomplete="off" style="width: 100%">{{ old('rpd', $penilaianralansyaraf->rpd) }}</textarea>
@@ -355,7 +355,7 @@
                       <div class="form-group row text-sm"> 
                         <div class="col-sm-12 pt-1">
                           <div class="form-inline">
-                            <textarea class="form-control form-control-sm" rows="2" name="diagnosis" autocomplete="off" style="width: 100%">{{ old('diagnosis', $penilaianralansyaraf->diagnosis) }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="2" name="diagnosis" autocomplete="off" style="width: 100%" required>{{ old('diagnosis', $penilaianralansyaraf->diagnosis) }}</textarea>
                           </div>
                         </div>
                         <div class="col-sm-6 pt-1" hidden>
@@ -380,17 +380,22 @@
                             <textarea class="form-control form-control-sm" rows="2" name="permasalahan" autocomplete="off" style="width: 100%">{{ old('permasalahan', $penilaianralansyaraf->permasalahan) }}</textarea>
                           </div>
                         </div>
-                        <div class="col-sm-6 pt-1">
+                        <div class="col-sm-12 pt-1">
                           <div class="form-inline">Terapi/Pengobatan :
                             <textarea class="form-control form-control-sm" rows="2" name="terapi" autocomplete="off" style="width: 100%">{{ old('terapi', $penilaianralansyaraf->terapi) }}</textarea>
                           </div>
                           <table id="testing" class="table table-bordered table-striped text-sm">
                           </table>
-                          <div class="col-sm-12">
-                            <div type="text" class="btn btn-warning addmore float-right">+ Tambah Obat</div>
+                          <div class="row text-sm"> 
+                            <div class="col-sm-10">
+                              <div type="text" class="form-control btn btn-warning btn-sm addmore">+ Tambah Obat Rawat Jalan</div>
+                            </div>
+                            <div class="col-sm-2">
+                              <div type="text" class="form-control btn btn-success btn-sm cekharga">Cek Harga</div>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-sm-6 pt-1">
+                        <div class="col-sm-12 pt-1">
                           <div class="form-inline">Tindakan/Rencana Tindakan
                             <textarea class="form-control form-control-sm" rows="2" name="tindakan" autocomplete="off" style="width: 100%">{{ old('tindakan', $penilaianralansyaraf->tindakan) }}</textarea>
                           </div>
@@ -440,58 +445,8 @@
   </footer>
 </div>
 <!-- ./wrapper -->
-
 <!-- SCRIPTS -->
 @include('template.script_table')
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2').select2()
-
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-  })
-
-
-  var i=1;
-  $(".addmore").on('click',function(){
-    if(i == 1){
-      document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
-    }
-
-    document.getElementById("testing").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $(".addmorerad").on('click',function(){
-    // if(i == 1){
-    //   document.getElementById("testing").insertRow(-1).innerHTML = '<tr><th>Jumlah</th><th>Aturan&emsp; Pakai</th><th>Obat</th><th>Aksi</th></tr>';
-    // }
-
-    document.getElementById("permintaanlab").insertRow(-1).innerHTML = '<tr><td><input id="jumlah'+i+'" class="form-control" name="jumlah[]" type="number"  min="1"  size="6" required/></td><td><input  id="aturan-pakai'+i+'" class="form-control" name="aturan_pakai[]" type="text"  size="8"/></td><td><select class="select2" name="resep[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} </option>@endforeach</select></td><td><text type="text" class="btn btn-danger" id="hapusresep'+i+'">X</text></td></tr>';
-
-    $('.select2').select2();
-
-    $('#hapusresep'+i).on('click', function() {
-      $(this).parents("tr").remove();
-      return false;
-    });
-    i++;
-  });
-
-  $("#hapusresep").on('click', function() {
-    $(this).parents("tr").remove();
-    return false;
-  });
-</script>
+@include('template.script_resep')
 </body>
 </html>

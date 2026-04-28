@@ -54,6 +54,7 @@
                 {{ csrf_field() }}
                 <div  class="card-body">
                   <div class="form-group row ">
+                    <label class="col-sm-12 col-form-label-sm text-danger"><h5>{{$cekriwayatresume == 0 ? "Resume Belum Tersimpan" :  ""}}</h5><hr></label>
                     <label class="col-sm-2 col-form-label-sm">Dokter Penanggung jawab</label>
                     <div class="col-sm-4">
                       : &nbsp; {{ $dataresume->nama }}
@@ -91,7 +92,7 @@
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Pemeriksaan Fisik</label>
                     <div class="col-sm-10">
-                      <textarea class="form-control form-control-sm" rows="3" name="pemeriksaan_fisik" autocomplete="off">{{ old('pemeriksaan_fisik', $dataresume->pemeriksaan_fisik) }}</textarea>
+                      <textarea class="form-control form-control-sm" rows="3" name="pemeriksaan_fisik" autocomplete="off">{{ old('pemeriksaan_fisik', $dataresume->pemeriksaan_fisik) }}, {{ old('ket_keadaan', $dataresume->ket_keadaan) }}</textarea>
                     </div>
                   </div>
                   <div class="form-group row" hidden>
@@ -256,9 +257,6 @@
                         <option value="Keadaan Khusus" {{ old('ket_keadaan', $dataresume->ket_keadaan) == 'Keadaan Khusus' ? 'selected':'' }}>Keadaan Khusus</option>
                         <option value="Meninggal" {{ old('ket_keadaan', $dataresume->ket_keadaan) == 'Meninggal' ? 'selected':'' }}>Meninggal</option>
                       </select>
-                    </div>
-                    <div class="col-sm-4">
-                      <input type="text" name="ket_keadaan" class="form-control form-control-sm" autocomplete="off" value="{{ old('ket_keadaan', $dataresume->ket_keadaan) }}">
                     </div>
                   </div>
                   <div class="form-group row">

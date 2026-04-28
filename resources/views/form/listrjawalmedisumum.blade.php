@@ -65,18 +65,14 @@
                     <th>TB(cm)</th>
                     <th>Kepala</th>
                     <th>Gigi & Mulut</th>
-                    <th>THT</th>
                     <th>Thoraks</th>
                     <th>Abdomen</th>
                     <th>Genital & Anus</th>
                     <th>Ekstremitas</th>
-                    <th>Kulit</th>
                     <th>Ket. Pemeriksaan Fisik</th>
                     <th>Ket. Status Lokalis</th>
-                    <th>Penunjang</th>
                     <th>Diagnosis/Asesmen</th>
                     <th>Tatalaksana</th>
-                    <th>Konsul/Rujuk</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -84,11 +80,7 @@
                   <tr>
                     <th scope="row"> {{$no+1}}. </th> 
                     <td>
-                      @if (Session::get('nmpoli') == 'Poliklinik Jantung')
-                        <a class="btn text-primary" href="{{ route('form-awalmedisjantung', ['no_rawat' => $key->no_rawat]) }}">{{$key->no_rawat}}</a>
-                      @elseif(Session::get('nmpoli') == '-')
-                        <a class="btn text-primary" href="{{ route('form-awalmedis-', ['no_rawat' => $key->no_rawat]) }}">{{$key->no_rawat}}</a>
-                      @endif
+                      <a class="btn text-primary" href="{{ route('form-awalmedis-', ['no_rawat' => $key->no_rawat]) }}">{{$key->no_rawat}}</a>
                     </td>
                     <td>{{$key->tanggal}}</td>
                     <td>{{$key->nama}}</td>
@@ -112,18 +104,14 @@
                     <td>{{$key->tb}}</td>
                     <td>{{$key->kepala}}</td>
                     <td>{{$key->gigi}}</td>
-                    <td>{{$key->tht}}</td>
                     <td>{{$key->thoraks}}</td>
                     <td>{{$key->abdomen}}</td>
                     <td>{{$key->genital}}</td>
                     <td>{{$key->ekstremitas}}</td>
-                    <td>{{$key->kulit}}</td>
                     <td>{{$key->ket_fisik}}</td>
                     <td>{{$key->ket_lokalis}}</td>
-                    <td>{{$key->penunjang}}</td>
                     <td>{{$key->diagnosis}}</td>
                     <td>{{$key->tata}}</td>
-                    <td>{{$key->konsulrujuk}}</td>
                   </tr> 
                   @endforeach
                   

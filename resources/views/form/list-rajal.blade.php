@@ -69,11 +69,19 @@
                     @foreach ($pasienterakhir as $no => $key)
                     <tr>
                         <th scope="row"> {{$no+1}}. </th>
-                        <th><a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a></th>
+                        <th>
+                          @if ($key->status_poli == 'Barudihapus' || Session::get('getpoli') == '-')
+                            <a href="{{ route('form-awalmedis'. strtolower(Session::get('nm_sps')), ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a>
+                          @else
+                            <a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">1{{$key->no_rawat}}</a>
+                          @endif
+                          <div class="text-center">{{$key->no_peserta}}</div>
+                        </th>
                         <td>{{$key->no_rkm_medis}}</td>
                         <td>
                           {{-- <a href="{{ route('pasien/ralan', ['no_rawat' => $key->no_rawat]) }}">{{$key->nm_pasien}}</a> --}}
-                          {{$key->nm_pasien}}
+                          {{$key->nm_pasien}} 
+                          <span style="color: blue; font-size: 13px;">({{$key->status_poli}} , {{$key->png_jawab}}) <br> {{$key->alamat}}, {{$key->nm_kel}}, {{$key->nm_kec}}</span>
                         </td>
                         <td>{{$key->nm_dokter}}</td>
                         <td>{{Session::get('nmpoli')}}</td>

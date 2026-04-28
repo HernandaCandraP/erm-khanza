@@ -6,13 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 
 use DB;
-use App\Guru;
-use App\Siswa;
-use App\Kelas;
-use App\Mapel;
-use App\DetailMapel;
-use App\Rules\MatchOldPasswordGuru;
-use App\Classes\Pengujian;
+use Carbon\Carbon;
+
 
 use Auth;
 
@@ -22,6 +17,40 @@ class IndikatorMutuController extends Controller
 
         dd();
 
+    }
+
+    public function formmpp(Request $request){
+        // dd($request->all());
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }else{
+            $date = new Carbon('first day of this month');
+            $enddate = new Carbon('last day of this month');
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+        }
+
+        $pasienranap = DB::table('kamar_inap as ki')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'rg.no_rawat2', 'p2.no_rkm_medis as no_rkm_medis2', 'p2.nm_pasien as nm_pasien2')
+            ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
+            ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
+            ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
+            ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('ranap_gabung as rg', 'rg.no_rawat', '=', 'ki.no_rawat')
+            ->leftjoin('reg_periksa as rp2', 'rp2.no_rawat', '=', 'rg.no_rawat2')
+            ->leftjoin('pasien as p2', 'p2.no_rkm_medis', '=', 'rp2.no_rkm_medis')
+            ->whereBetween('ki.tgl_masuk', [$date, $enddate])
+            ->orderby('ki.tgl_masuk', 'DESC')
+            ->get();
+
+        return view('erm/list-mpp', [
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
+            'pasienranap' => $pasienranap, 
+        ]);
     }
 
     public function kebersihanTangan()

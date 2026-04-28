@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
 
     Route::get('/admin/persentase', 'PegawaiController@persentase')->name('persentase');
     Route::get('/admin/penilaianperawat', 'PegawaiController@penilaianperawat')->name('penilaianperawat');
+    Route::get('/admin/hargaobat', 'PegawaiController@hargaobat')->name('hargaobat');
     Route::get('/admin/indikatormutu', 'IndikatorMutuController@indikatormutu')->name('indikatormutu');
     Route::get('/admin/indikatormutu/kebersihan-tangan', 'IndikatorMutuController@kebersihanTangan')->name('indikatormutu.kebersihan_tangan');
     Route::get('/admin/indikatormutu/hapus/{id}', [App\Http\Controllers\IndikatorMutuController::class, 'hapus'])->name('hapus.mutu');
@@ -138,7 +139,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/awalmedisanak', 'FormController@rjawalmedisanak')->name('form-awalmedisanak');
     Route::get('/form/awalmedismata', 'FormController@rjawalmedismata')->name('form-awalmedismata');
     Route::get('/form/awalmedisdalam', 'FormController@rjawalmedisdalam')->name('form-awalmedisdalam');
-    Route::get('/form/awalmedisjantung', 'FormController@rjawalmedisumum')->name('form-awalmedisjantung');
+    Route::get('/form/awalmedisjantung', 'FormController@rjawalmedisjantung')->name('form-awalmedisjantung');
     Route::get('/form/awalmedis-', 'FormController@rjawalmedisumum')->name('form-awalmedis-');
     Route::get('/form/penanganandokter', 'FormController@rjpenanganandokter')->name('form-penanganandokter');
     Route::get('/form/diagnosa', 'FormController@rjdiagnosa')->name('form-diagnosa');

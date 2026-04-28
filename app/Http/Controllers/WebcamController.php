@@ -28,7 +28,7 @@ class WebcamController extends Controller
             }elseif ($getid->departemen == 'RJ') {
                 $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '11:00:00');
             }elseif ($getid->departemen == 'KSR') {
-                $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '10:00:00', 'Siang2' => '14:00:00');
+                $jamjaga = array('Pagi' => '07:00:00', 'Pagi2' => '08:00:00', 'Siang' => '11:00:00', 'Siang2' => '14:00:00');
             }elseif ($getid->departemen == 'DPUR') {
                 $jamjaga = array('Pagi' => '05:30:00', 'Siang' => '12:00:00');
             }elseif ($getid->departemen == 'MAR') {
@@ -241,7 +241,7 @@ class WebcamController extends Controller
             ->select('p.id', 'p.nama', 'p.jbtn', 'rp.*')
             ->join('pegawai as p', 'p.id','=', 'rp.id')
             ->where('rp.id', $request->id)
-            ->whereBetween('rp.jam_datang', [$date, $enddate])
+            ->whereBetween('rp.jam_datang', [$date. ' 00:00:00', $enddate .' 23:59:59'])
             ->get();
         
         if($pegawai){
