@@ -47,6 +47,13 @@
         <div class="row">
           <div class="col-md-12">
             <!-- Horizontal Form -->
+            @if ($aksesdata === true)
+              @if ($kerusakan_all)
+              <a href="{{ route('kerusakan') }}">
+                <button class="form-control btn btn-sm btn-warning">Informasi Kerusakan !!</button><br><br>
+              </a>
+              @endif
+            @endif
             <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">Presensi Pegawai</h3>

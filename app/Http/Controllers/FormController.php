@@ -1472,7 +1472,6 @@ class FormController extends Controller
                 'kd_prosedur_sekunder3' => $request->kd_prosedur_sekunder3,
                 'obat_pulang' => $request->obat_pulang
             ];
-            dd(111);
             return $this->func_create($request, $DataResumeMedisPasienRawatJalan, 'resume_pasien', 'form/resume');
         }
         elseif($request->tabel == 'DataResumeMedisPasienRawatJalanInternal'){
@@ -1503,7 +1502,6 @@ class FormController extends Controller
                 'kd_prosedur_sekunder3' => $request->kd_prosedur_sekunder3,
                 'obat_pulang' => $request->obat_pulang
             ];
-            dd(2);
             return $this->func_create($request, $DataResumeMedisPasienRawatJalan, 'resume_pasien', 'form/resume');
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatJalanParu') {
@@ -1820,7 +1818,6 @@ class FormController extends Controller
                 'tindakan' => $request->tindakan,
                 'edukasi' => $request->edukasi
             ];
-            dd(8);
             // dd($request->all(), $PenilaianAwalMedisRawatJalanMata);
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanMata, 'penilaian_medis_ralan_mata', 'form/awalmedismata');
         }
@@ -2026,10 +2023,10 @@ class FormController extends Controller
                 $request->tgl_peresepan =  $request->tgl_perawatan2;
                 $this->create($request);
                 // Menambahkan obat ke plan
-                $listResep = " Resep : \r\n";
+                $listResep = " \r\n";
                 foreach ($request->jumlah as $key => $value) {
                     $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
-                    $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlah[$key] . " Aturan Pakai " . $request->aturan_pakai[$key] . "\r\n";
+                    $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
                 }
                 $request->rtl = $request->rtl . $listResep;
             }
@@ -2341,10 +2338,10 @@ class FormController extends Controller
             $this->create($request);
             
             // Menambahkan obat ke terapi
-            $listResep = " Resep : \r\n";
+            $listResep = " \r\n";
             foreach ($request->jumlah as $key => $value) {
                 $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
-                $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlah[$key] . " Aturan Pakai " . $request->aturan_pakai[$key] . "\r\n";
+                $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
             }
             $request->terapi = $request->terapi . $listResep;
         }

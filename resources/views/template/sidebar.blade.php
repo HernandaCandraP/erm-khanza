@@ -27,6 +27,12 @@
               <p>Riwayat Absensi</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{route('kerusakan')}}" class="nav-link {{ Request::is('kerusakan*') ? 'active' : '' }}">
+              <i class="nav-icon  fas fa-laptop-house"></i>
+              <p>Kerusakan</p>
+            </a>
+          </li>
           {{-- <li class="nav-item">
             <a href="{{route('antrean')}}" class="nav-link {{ Request::is('antrean*') ? 'active' : '' }}">
               <i class="nav-icon  fas fa-laptop-house"></i>
@@ -98,10 +104,16 @@
               <i class="nav-icon fas fa-home"></i>
               <p>Admin</p>
             </a>
-            <li class="nav-item">
+            {{-- <li class="nav-item">
               <a href="{{route('penilaianperawat')}}" class="nav-link {{ Request::is('admin/penilaianperawat') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-user-nurse"></i>
                 <p>Penilaian Perawat</p>
+              </a>
+            </li> --}}
+            <li class="nav-item">
+              <a href="{{route('kerusakan.all')}}" class="nav-link {{ Request::is('admin/kerusakan-all') ? 'active' : '' }}">
+                <i class="nav-icon fa fa-check"></i>
+                <p>Kerusakan</p>
               </a>
             </li>
             <li class="nav-item">

@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Classes\Sekuel;
 use Session;
+use Carbon\Carbon;
 use Auth;
 
 class FormControllerRanap extends Controller
 {
     public function menuranap (Request $request){
-        $pasienranap = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'rg.no_rawat2', 'p2.no_rkm_medis as no_rkm_medis2', 'p2.nm_pasien as nm_pasien2')
+        $pasienranap = DB::table('kamar_inap as ki')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'rg.no_rawat2', 'p2.no_rkm_medis as no_rkm_medis2', 'p2.nm_pasien as nm_pasien2')
             ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
             ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
             ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
@@ -21,19 +22,30 @@ class FormControllerRanap extends Controller
             ->leftjoin('reg_periksa as rp2', 'rp2.no_rawat', '=', 'rg.no_rawat2')
             ->leftjoin('pasien as p2', 'p2.no_rkm_medis', '=', 'rp2.no_rkm_medis');
 
+        if($request->tanggal != null){
+            $date = date("Y-m-d", strtotime(substr($request->tanggal, 0, 10))); // date('Y-m-d'); //
+            $enddate = date("Y-m-d", strtotime(substr($request->tanggal, -10)));
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $pasienranap = $pasienranap->whereBetween('ki.tgl_masuk', [$date, $enddate]);
+        }else{            
+            $date = date('Y-m-d');
+            $enddate = date('Y-m-d');
+            $tanggalawal = date('d F Y', strtotime($date));
+            $tanggalakhir = date('d F Y', strtotime($enddate));
+            $pasienranap = $pasienranap->where('ki.stts_pulang', '-');
+        }
+
         if(Session::get('kd_sps') == '-'){
             $pasienranap = $pasienranap->get();
         }else{
             $pasienranap = $pasienranap->where('dr.kd_dokter', Session::get('username'))->get();
         }
         
-        // $username = Session::get('username');
-        $month = date('Y-m'); //'2023-06'; //
-        $pasienbulan = DB::table('kamar_inap')->select('no_rawat')->where('tgl_masuk', 'like', '%'.$month.'%')->count();
-        
         return view('formranap/list-ranap', [
             'pasienranap' => $pasienranap,
-            'pasienbulan' => $pasienbulan
+            'tanggalawal' => $tanggalawal, 
+            'tanggalakhir' => $tanggalakhir, 
         ]);
     }
 
@@ -42,14 +54,14 @@ class FormControllerRanap extends Controller
         $kd_dokter = Session::get('username');
         $nmpoli = Session::get('nmpoli');
 
-        $detailpasien = DB::table('kamar_inap as ki')->where('ki.stts_pulang', '-')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'k.kd_kamar', 'rp.no_rawat', 'p.umur')
+        $detailpasien = DB::table('kamar_inap as ki')->select('ki.*', 'p.no_rkm_medis', 'p.nm_pasien', 'b.nm_bangsal', 'k.kd_kamar', 'rp.no_rawat', 'p.umur')
         ->leftjoin('reg_periksa as rp', 'rp.no_rawat', '=', 'ki.no_rawat')
         ->leftjoin('pasien as p', 'p.no_rkm_medis', '=', 'rp.no_rkm_medis')
         ->leftjoin('kamar as k', 'k.kd_kamar', '=', 'ki.kd_kamar')
         ->leftjoin('bangsal as b', 'b.kd_bangsal', '=', 'k.kd_bangsal')
         ->leftjoin('dpjp_ranap as dr', 'dr.no_rawat', '=', 'ki.no_rawat')
         ->where('ki.no_rawat', $request->no_rawat )
-        ->where('dr.kd_dokter',  Session::get('username'))
+        // ->where('dr.kd_dokter',  Session::get('username'))
         ->get();
         // dd($detailpasien);
         // $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
@@ -63,12 +75,14 @@ class FormControllerRanap extends Controller
 
        if (DB::table('resume_pasien_ranap')->where('no_rawat', '=', $no_rawat)->exists()) {
            $dataresume = DB::table('resume_pasien_ranap')->select('resume_pasien_ranap.*', 'pegawai.nama')->where('no_rawat', '=',$no_rawat)->leftjoin('pegawai', 'pegawai.nik', 'resume_pasien_ranap.kd_dokter')->first();
+           $dataresume->kontrol = Carbon::parse($dataresume->kontrol)->format('Y-m-d');
        }else{
            $dataresume = DB::table('resume_pasien_ranap')->first();
            foreach ($dataresume as $key => $value) {
                $dataresume->$key = "";
            }
            $dataresume->kd_dokter = $kd_dokter;
+           $dataresume->kontrol = date('Y-m-d');
            $dataresume->nama = Auth::guard('pegawai')->user()->nama;
 
            $keluhanutama = DB::table('pemeriksaan_ranap')->select('keluhan', 'pemeriksaan', 'suhu_tubuh', 'tensi', 'nadi', 'respirasi', 'alergi', 'penilaian')
@@ -190,11 +204,34 @@ class FormControllerRanap extends Controller
             }
         }
         // dd($dataresume);
+        $obatterakhir = DB::table('resep_obat as ro')
+            ->orderby('ro.no_resep', 'DESC')
+            ->where('ro.status', 'ranap')
+            ->where('ro.no_rawat', $request->no_rawat)->first();
+
+        $listobatterakhir = [];
+        $listResep = "";
+        if($obatterakhir){
+            $listobatterakhir = DB::table('resep_dokter as rd')
+                ->select('rd.aturan_pakai', 'db.nama_brng' , 'db.kode_brng')
+                ->leftjoin('databarang as db', 'db.kode_brng', '=', 'rd.kode_brng')
+                ->orderby('rd.kode_brng', 'DESC')
+                ->where('rd.no_resep', $obatterakhir->no_resep)->get();      
+            
+            if($listobatterakhir->isNotEmpty()){
+                foreach ($listobatterakhir as $key => $value) {
+                    $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->reseppulang[$key])->first();
+                    $listResep .= $value->nama_brng . " " . $value->aturan_pakai . "\r\n";
+                }
+            }
+        }    
+
         return view('formranap/resume', [
             'detailpasien' => $detailpasien, 
             'dataresume' => $dataresume,
             'cekriwayatresume' => $cekriwayatresume,
-            'no_rawat' => $no_rawat
+            'no_rawat' => $no_rawat,
+            'listResep' => $listResep,
         ]);
    }
 
@@ -414,6 +451,11 @@ class FormControllerRanap extends Controller
         
         $jnspenyakit = DB::table('penyakit as p')->select('p.kd_penyakit', 'p.nm_penyakit')->orderby('kd_penyakit', 'ASC')->get();
 
+
+        $sekuel = new Sekuel();
+        list($riwayatlab, $riwayatdelatillab) = $sekuel->riwayatlab($request->no_rawat);
+        list($pasienrad, $hasilrad, $getgambar, $grouprad) = $sekuel->riwayatrad($request->no_rawat);
+
         return view('formranap/formri-soap', [
             'detailpasien' => $detailpasien,
             'data' => $data,
@@ -424,7 +466,13 @@ class FormControllerRanap extends Controller
             'getimage' => $getimage,
             'no_rawat' => $no_rawat,
             'datalistnorawatperresep' => $datalistnorawatperresep,
-            'datalistnorawatlengkap' => $datalistnorawatlengkap
+            'datalistnorawatlengkap' => $datalistnorawatlengkap,
+            'riwayatlab' => $riwayatlab,
+            'riwayatdelatillab' => $riwayatdelatillab,
+            'pasienrad' => $pasienrad,
+            'getgambar' => $getgambar,
+            'hasilrad' => $hasilrad,
+            'grouprad' => $grouprad,
         ]);
     }
 
@@ -736,10 +784,10 @@ class FormControllerRanap extends Controller
                 }
                 
                 // Menambahkan obat ke plan
-                $listResep = " Resep : \r\n";
+                $listResep = " \r\n";
                 foreach ($request->jumlah as $key => $value) {
                     $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
-                    $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlah[$key] . " Aturan Pakai " . $request->aturan_pakai[$key] . "\r\n";
+                    $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
                 }
                 $request->rtl = $request->rtl . $listResep;
 
@@ -757,7 +805,7 @@ class FormControllerRanap extends Controller
                 $listResep = " Resep Pulang: \r\n";
                 foreach ($request->jumlahpulang as $key => $value) {
                     $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->reseppulang[$key])->first();
-                    $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlahpulang[$key] . " Aturan Pakai " . $request->aturan_pakai_pulang[$key] . "\r\n";
+                    $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai_pulang[$key] . "\r\n";
                 }
                 $request->rtl = $request->rtl . $listResep;
             }
@@ -926,6 +974,7 @@ class FormControllerRanap extends Controller
                 'tata'=> $request->tata,
                 'edukasi'=> $request->edukasi
             ];
+            $this->simpanawalmediskesoap($request);
             return $this->func_create($request, $PenilaianAwalMedisRawatInap, 'penilaian_medis_ranap', 'formri-medisumum');
         }
         elseif ($request->tabel == 'PenilaianAwalMedisKebidananRawatInap') {
@@ -1169,10 +1218,10 @@ class FormControllerRanap extends Controller
             $this->create($request);
             
             // Menambahkan obat ke terapi
-            $listResep = " Resep : \r\n";
+            $listResep = " \r\n";
             foreach ($request->jumlah as $key => $value) {
                 $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
-                $listResep .= $namaObat->nama_brng . " Jumlah " . $request->jumlah[$key] . " Aturan Pakai " . $request->aturan_pakai[$key] . "\r\n";
+                $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
             }
             $request->terapi = $request->terapi . $listResep;
         }
@@ -1296,6 +1345,34 @@ class FormControllerRanap extends Controller
         else{
             dd("kosong");
         }
+    }
+
+
+    public function simpanawalmediskesoap(Request $request)
+    {
+        // dd($request->all());
+        DB::table('pemeriksaan_ranap')->insert([
+            'tgl_perawatan' => $request->tanggal,
+            'jam_rawat' => $request->jam_permintaan,
+            'no_rawat' => $request->no_rawat,
+            'nip' => $request->nip,
+            'keluhan' => $request->keluhan_utama,
+            'pemeriksaan' => $request->rps .", ". $request->ket_lokalis ?? $request->lainnya,
+            'suhu_tubuh' => $request->suhu,
+            'tensi' => $request->td,
+            'berat' => $request->bb,
+            'tinggi' => $request->tb,
+            'respirasi' => $request->rr,
+            'nadi' => $request->nadi,
+            'spo2' => $request->spo ?? '-',
+            'gcs' => $request->gcs,
+            'kesadaran' => $request->kesadaran ?? '-',
+            'alergi' => $request->alergi,
+            'penilaian' => $request->diagnosis,
+            'rtl' => $request->tata ?? $request->terapi,
+            'instruksi' => $request->edukasi ?? $request->konsul ?? '-',
+            'evaluasi' => '-'
+        ]);
     }
 
     private function func_listdata(Request $request, $redirect, $data, $pesan)

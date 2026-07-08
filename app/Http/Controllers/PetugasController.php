@@ -144,6 +144,114 @@ class PetugasController extends Controller
         return redirect()->back();
     }
 
+    public function kerusakan()
+    {
+        $nik = Auth::guard('pegawai')->user()->nik;
+        $kerusakan = DB::table('kerusakan')
+            ->where('nik', $nik)
+            ->orderby('tgl_kerusakan', 'DESC')->get();
+
+        $kerusakan_all = DB::table('kerusakan as k')->select('k.*', 'pg.nama')
+            ->leftjoin('pegawai as pg', 'pg.nik','=', 'k.nik')
+            ->orderby('k.tgl_kerusakan', 'DESC')->get();
+
+        $aksesdata = false;
+        if($nik == '02.03.23.389' || $nik == '19995' || $nik == '306'){
+            $aksesdata = true;
+        }
+
+        return view('petugas/kerusakan', [
+            'kerusakan' => $kerusakan, 
+            'aksesdata' => $aksesdata,
+            'kerusakan_all' => $kerusakan_all, 
+        ]);
+    }
+
+    public function kerusakan_all()
+    {
+        $kerusakan_all = DB::table('kerusakan as k')->select('k.*', 'pg.nama')
+            ->leftjoin('pegawai as pg', 'pg.nik','=', 'k.nik')
+            ->orderby('k.tgl_kerusakan', 'DESC')->get();
+
+        $total = [];
+        $totalkerusakan = $belum = $ditindaklanjuti = $selesai = 0;
+        foreach($kerusakan_all as $key => $value) {
+            $totalkerusakan += 1;
+            if($value->ditindaklanjuti == null){
+                $belum += 1;
+            }else if($value->selesai == null){
+                $ditindaklanjuti += 1;
+            }else{
+                $selesai += 1;
+            }
+        }
+        $total["total"] = $totalkerusakan;
+        $total["ditindaklanjuti"] = $ditindaklanjuti;
+        $total["selesai"] = $selesai;
+        $total["belum"] = $belum;
+
+        return view('petugas/kerusakan-all', [
+            'kerusakan_all' => $kerusakan_all, 
+            'total' => $total, 
+        ]);
+    }
+
+
+    public function create(Request $request){
+        $this->validate($request, [
+            'ruangan'     => 'required',
+            'deskripsi'     => 'required',
+            'tgl_kerusakan'   => 'required'
+        ]);
+
+        $nik = Auth::guard('pegawai')->user()->nik;
+        $tgl_input = date('Y-m-d H:i:s');
+
+        DB::table('kerusakan')->insert([
+            'ruangan' => $request->ruangan,
+            'deskripsi' => $request->deskripsi,
+            'tgl_kerusakan' => $request->tgl_kerusakan,
+            'detail' => $request->detail,
+            'nik' => $nik,
+            'tgl_input' => $tgl_input,
+        ]);
+        return redirect()->back();
+    }
+
+    public function update(Request $request, $id){
+        $datetime = date('Y-m-d H:i:s');
+        if($request->action == 'ditindaklanjuti'){
+            DB::table('kerusakan')->where('id', $id)
+                ->update(['ditindaklanjuti' => $datetime]);
+        }elseif($request->action == 'selesai'){
+            DB::table('kerusakan')->where('id', $id)
+                ->update(['selesai' => $datetime]);
+        }elseif($request->action == 'poby'){
+            DB::table('kerusakan')->where('id', $id)
+                ->update(['saran' => 'poby']);
+        }elseif($request->action == 'hernanda'){
+            DB::table('kerusakan')->where('id', $id)
+                ->update(['saran' => 'hernanda']);
+        }elseif($request->action == 'dicky'){
+            DB::table('kerusakan')->where('id', $id)
+                ->update(['saran' => 'dicky']);
+        }
+        $request->session()->flash('warning', 'Data Berhasil Diupdate');
+        return redirect()->back();
+    }
+
+    public function hapus(Request $request, $id){
+        try{
+            DB::table('kerusakan')->where('id',$id)->delete();
+            $request->session()->flash('warning', 'Data Berhasil Dihapus');
+            return redirect()->back();
+        } catch (\Exception $e){
+            $request->session()->flash('error', 'Data Gagal Dihapus');
+            return redirect()->back();
+        }
+    }
+    
+
     public function profile(){ 
         $pegawai = Auth::guard('pegawai')->user();
         return view('admin/profile_detail', ['pegawai' => $pegawai]);

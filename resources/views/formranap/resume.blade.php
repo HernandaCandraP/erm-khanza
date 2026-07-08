@@ -116,7 +116,7 @@
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Terapi / Tindakan Selama Perawatan</label>
                     <div class="col-sm-10">
-                      <textarea class="form-control form-control-sm" rows="3" name="tindakan_dan_operasi" autocomplete="off">{{ old('tindakan_dan_operasi', $dataresume->tindakan_dan_operasi) }}</textarea>
+                      <textarea class="form-control form-control-sm" rows="3" name="tindakan_dan_operasi" autocomplete="off"></textarea>
                     </div>
                   </div>
                   <div class="form-group row" hidden>
@@ -135,13 +135,6 @@
                     <div class="col-sm-8">
                       <input type="text" name="diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('diagnosa_utama', $dataresume->diagnosa_utama) }}">
                     </div>
-                    {{-- <div class="col-sm-8 select2-purple">
-                      <select class="form-control form-control-sm select2" id="tags" name="diagnosa_utama" >
-                        @foreach ($jnspenyakit as $key)
-                          <option value="{{ $key->kd_penyakit }}">{{ $key->kd_penyakit }} - {{ $key->nm_penyakit }}</option>
-                        @endforeach
-                      </select>
-                    </div> --}}
                     <div class="col-sm-2">
                       <input type="text" name="kd_diagnosa_utama" class="form-control form-control-sm" autocomplete="off" value="{{ old('kd_diagnosa_utama', $dataresume->kd_diagnosa_utama) }}">
                     </div>
@@ -245,7 +238,7 @@
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Obat Pulang</label>
                     <div class="col-sm-10">
-                      <textarea class="form-control form-control-sm" rows="2" name="obat_pulang" autocomplete="off">{{ old('obat_pulang', $dataresume->obat_pulang) }}</textarea>
+                      <textarea class="form-control form-control-sm" rows="2" name="obat_pulang" autocomplete="off">{{ old('listResep', $listResep) }}</textarea>
                     </div>
                   </div>
                   <div class="form-group row">
@@ -291,7 +284,7 @@
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Tanggal & Jam Kontrol &emsp;</label>
                     <div class="col-sm-3">
-                      <input type="datetime-local" name="kontrol" class="form-control form-control-sm" placeholder="Waktu Selesai" value="{{Carbon\Carbon::now()->format('Y-m-d H:i:s')}}">
+                      <input type="date" name="kontrol" class="form-control form-control-sm" placeholder="Waktu Selesai" value="{{ old('kontrol', $dataresume->kontrol) }}">
                     </div>
                   </div>
                 </div>

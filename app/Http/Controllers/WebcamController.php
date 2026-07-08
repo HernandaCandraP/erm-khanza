@@ -18,6 +18,16 @@ class WebcamController extends Controller
         $nik = Auth::guard('pegawai')->user()->nik;
         $getid = DB::table('pegawai')->select('id', 'departemen')->where('nik', $nik)->first();
 
+        $kerusakan_all = [];
+        $aksesdata = false;
+        if($nik == '02.03.23.389' || $nik == '19995' || $nik == '306'){
+            $aksesdata = true;
+            $kerusakan_all = DB::table('kerusakan')
+                ->whereNull('ditindaklanjuti')
+                ->orwhereNull('selesai')
+                ->orderby('tgl_kerusakan', 'DESC')->first();
+        }
+
         // list jam jaga
         $jamjaga = [];
         if($getid){
@@ -65,6 +75,8 @@ class WebcamController extends Controller
             'presensi' => $presensi, 
             'jamjaga' => $jamjaga, 
             'rekappresensi' => $rekappresensi, 
+            'kerusakan_all' => $kerusakan_all, 
+            'aksesdata' => $aksesdata, 
         ]);
     }
 

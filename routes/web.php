@@ -84,7 +84,9 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
      Route::get('/indikatormutu/kepuasan-pasien', 'IndikatorMutuController@kepuasanPasien')->name('indikatormutu.kepuasan_pasien');
      Route::post('/indikatormutu/simpan-mutu', [App\Http\Controllers\IndikatorMutuController::class, 'simpanmutu'])->name('indikatormutu.simpan-mutu');
 
-
+    Route::get('/admin/kerusakan-all', 'PetugasController@kerusakan_all')->name('kerusakan.all');
+    Route::post('/admin/kerusakan-all/{id}', 'PetugasController@update')->name('kerusakan-update-admin');
+    
     Route::match(array('GET','POST'),'/admin/pemesananobat', 'PegawaiController@pemesananobat')->name('pemesananobat');
     Route::get('/admin/selisihobat', 'PegawaiController@selisihobat')->name('selisihobat');
     // Route::get('/admin/updatehargaobat', 'PegawaiController@updatehargaobat')->name('updatehargaobat');
@@ -151,7 +153,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/rincianbiaya', 'FormController@rincianbiaya')->name('form-rincianbiaya');
 
     // Menu Rawat Inap
-    Route::get('/menu-ranap', 'FormControllerRanap@menuranap')->name('menu-ranap');
+    Route::match(array('GET','POST'),'/menu-ranap', 'FormControllerRanap@menuranap')->name('menu-ranap');
     Route::get('/menu-ranap/resume', 'FormControllerRanap@riresume')->name('formri-resume');
     Route::get('/menu-ranap/soap', 'FormControllerRanap@risoap')->name('formri-soap');
     Route::get('/menu-ranap/penanganandokter', 'FormControllerRanap@ripenanganandokter')->name('formri-penanganandokter');
@@ -181,5 +183,9 @@ Route::group(['middleware' => ['auth:pegawai', 'is_petugas']], function () {
     Route::get('/absensi/rekap', 'WebcamController@rekap')->name('absensi.rekap');
 
     Route::get('/antrean', 'PetugasController@antrean')->name('antrean');
+    Route::get('/kerusakan', 'PetugasController@kerusakan')->name('kerusakan');
+    Route::post('/kerusakan/tambah', 'PetugasController@create')->name('kerusakan-tambah');
+    Route::post('/kerusakan/update/{id}', 'PetugasController@update')->name('kerusakan-update');
+    Route::post('/kerusakan/hapus/{id}', 'PetugasController@hapus')->name('kerusakan-hapus');
     Route::get('/antrean/updateantrean', 'PetugasController@updateantrean')->name('updateantrean');
 });

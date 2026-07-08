@@ -164,6 +164,18 @@
                           <input type="text" name="alergi" class="form-control form-control-sm" autocomplete="off" value="{{ old('alergi', $data->alergi) }}">
                         </div>
                       </div>
+
+                      <div class="form-group row">
+                        <div class="col-sm-6">
+                          <button type="button" class="form-control btn btn-sm btn-primary" data-toggle="modal" data-target=".modal-riwayat-lab">Riwayat Laboratorium</button>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <div class="col-sm-6">
+                          <button type="button" class="form-control btn btn-primary btn-sm" data-toggle="modal" data-target=".modal-riwayat-rad">Riwayat Radiologi</button>
+                        </div>
+                      </div>
                     </div>
                     <div class="col-sm-12">
                       <hr>
@@ -284,6 +296,7 @@
   <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
+  @include('template.riwayat_labrad')
   <footer class="main-footer">
   @include('template.footer')
   </footer>

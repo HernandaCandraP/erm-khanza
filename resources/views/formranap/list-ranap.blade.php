@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     @include('template.head')
+    <link rel="stylesheet" href="{{asset('tampilan/plugins/daterangepicker/daterangepicker.css')}}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -17,17 +18,31 @@
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
-      <div class="row" hidden>
-          <div class="col-md-4 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-warning"><i class="fa fa-users"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">PASIEN RAWAT INAP BULAN INI</span>
-                {{-- <span class="info-box-number">{{$pasienbulan}}</span> --}}
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="float-left">Pencarian Berdasarkan Tanggal</h5>
               </div>
+              <!-- /.card-header -->
+              <form action="{{route('menu-ranap')}}" method="post" class="form-horizontal">
+              {{ csrf_field() }}
+              <div class="card-body row">
+                <div class="input-group col-lg-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="far fa-calendar-alt"></i>
+                    </span>
+                  </div>
+                  <input type="text" name="tanggal" class="form-control float-right" id="reservation">
+                </div>
+                <button type="submit" class="btn btn-success float-right ml-3" name="action" value="simpan">Cari Data</button>
+              </div>
+              </form>
+              <!-- /.card-body -->
             </div>
+            <!-- /.card -->
           </div>
-          <!-- /.col -->
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -37,7 +52,7 @@
           <div class="col-md-12 col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="float-left">Pasien Belum Pulang</h5>
+                <h5 class="float-left">Pasien Rawat Inap <b>{{$tanggalawal ?? null}} - {{$tanggalakhir ?? null}}</b></h5>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -124,12 +139,18 @@
 <!-- REQUIRED SCRIPTS -->
 @include('template.script_table')
 <script src="{{asset('tampilan/plugins/jquery-knob/jquery.knob.min.js')}}"></script>
+<!-- InputMask -->
+<script src="{{asset('tampilan/plugins/moment/moment.min.js')}}"></script>
+<script src="{{asset('tampilan/plugins/inputmask/jquery.inputmask.min.js')}}"></script>
+<!-- date-range-picker -->
+<script src="{{asset('tampilan/plugins/daterangepicker/daterangepicker.js')}}"></script>
 <script>
   $(function () {
     $('.knob').knob({
       draw: function () {
       }
     })
+    $('#reservation').daterangepicker()
   })
 </script>
 </body>
