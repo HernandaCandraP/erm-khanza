@@ -86,6 +86,56 @@
     $('#modal-lg').modal('hide');
   });
 
+  // obat racikan
+  var r=1;
+  $(".addmore-racikan").on('click',function(){
+    if(r == 1){
+      document.getElementById("racikan").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Dosis (ex: 0.5)</th><th hidden>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
+    }
+
+    document.getElementById("racikan").insertRow(-1).innerHTML = '<tr><td><select class="select2" id="resepracik'+r+'" name="resepracik[]" required><option value="" disabled selected>Pilih Obat</option> @foreach ($resepdokter as $key)<option value="{{ $key->kode_brng }}">{{$key->nama_brng}} || stok: {{$key->stok}} || @money($key->ralan)</option>@endforeach</select></td><td><input id="'+r+'" type="number" min="0" step="any" class="form-control jumlahracik'+r+'" name="jumlahracik[]" value="" size="6" required/></td><td><text type="text" class="btn btn-danger" id="hapusresepracikan'+r+'">X</text></td></tr>';
+
+    $('.select2').select2();
+
+    $('#hapusresepracikan'+r).on('click', function() {
+      $(this).parents("tr").remove();
+      return false;
+    });
+    r++;
+
+    myFunction();
+  });
+
+  // copy resep racikan
+  $(".copyresep-racikan").click(function() {
+    var str = $(this).val();
+    var index = str.substring(0, str.indexOf("#*#"));
+    var collectdata = str.split("#*#")[1];
+    collectdata= JSON.parse(collectdata)
+    // console.log(collectdata);
+    
+    collectdata.forEach(function(element){
+      console.log(element, index)
+      if(element['kode_formula'] == index){
+        var $kode_brng = element["kode_brng"];
+        if(r == 1){
+          document.getElementById("racikan").insertRow(-1).innerHTML = '<tr><th>Nama Obat</th><th>Dosis (ex: 0.5)</th><th hidden>Aturan&emsp; Pakai</th><th>Aksi</th></tr>';
+        }
+        document.getElementById("racikan").insertRow(-1).innerHTML = '<tr><td><input class="form-control" id="resepracik'+r+'" name="resepracik[]" value='+element["kode_brng"]+' type="text" hidden />'+element["nama_brng"]+' || stok: '+element["stok"]+' || Rp. '+element["ralan"]+' </td><td><input id="'+r+'" class="form-control jumlahracik'+r+'" value="'+element["kandungan"]+'" name="jumlahracik[]" value="" type="number" min="0" step="any" size="6" required/></td><td><text type="text" class="btn btn-danger" id="hapusresepracikan'+r+'">X</text></td></tr>';
+
+        $('.select2').select2();
+
+        $('#hapusresepracikan'+r).on('click', function() {
+          $(this).parents("tr").remove();
+          return false;
+        });
+        r++;
+      }
+    });
+    myFunction();
+    $('#modal-racikan').modal('hide');
+  });
+
   // check obat kosong atau tidak
   $('form').on('keyup change paste', 'input, select, textarea', function(){
     if (!isNaN(this.id) && this.name == 'jumlah[]') {

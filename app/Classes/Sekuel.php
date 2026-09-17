@@ -63,7 +63,7 @@ class Sekuel{
             ->get();
 
         $riwayatdelatillab = DB::table('detail_periksa_lab')
-            ->select('template_laboratorium.pemeriksaan','detail_periksa_lab.nilai','template_laboratorium.satuan','detail_periksa_lab.nilai_rujukan','detail_periksa_lab.kd_jenis_prw')
+            ->select('template_laboratorium.pemeriksaan','detail_periksa_lab.nilai','template_laboratorium.satuan','detail_periksa_lab.nilai_rujukan','detail_periksa_lab.kd_jenis_prw', 'detail_periksa_lab.keterangan', 'detail_periksa_lab.tgl_periksa',  'detail_periksa_lab.jam')
             ->join('template_laboratorium', 'detail_periksa_lab.id_template', '=', 'template_laboratorium.id_template')
             ->where('detail_periksa_lab.no_rawat', $no_rawat)
             ->get();
@@ -102,6 +102,14 @@ class Sekuel{
             ->get();
 
         return array($pasienrad, $hasilrad, $getgambar, $grouprad);
+    }
+
+    public function riwayatekg($no_rawat){
+        $riwayatekg = DB::table('hasil_pemeriksaan_ekg')->select('hasil_pemeriksaan_ekg.*', 'pegawai.nama')
+            ->leftjoin('pegawai', 'pegawai.nik', 'hasil_pemeriksaan_ekg.kd_dokter')
+            ->where('no_rawat', '=',$no_rawat)->first();
+
+        return array($riwayatekg);
     }
 }
 

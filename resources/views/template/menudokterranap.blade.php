@@ -13,6 +13,12 @@
 <div class="col-sm-2 pt-2">
   <a href="{{ route('formri-resume', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('menu-ranap/resume') ? 'active' : '' }}">Resume</a>
 </div>
+<div class="col-sm-2 pt-2">
+  <a href="{{ route('ekgranap', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('menu-ranap/ekg') ? 'active' : '' }}">EKG</a>
+</div>
+<div class="col-sm-2 pt-2">
+  <a href="{{ route('edukasi', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('menu-ranap/edukasi') ? 'active' : '' }}">Edukasi</a>
+</div>
 {{-- <div class="col-sm-2 pt-2">
   <a href="{{ route('formri-penanganandokter', ['no_rawat' => $no_rawat]) }}" class="btn btn-sm btn-block btn-outline-info {{ Request::is('menu-ranap/penanganandokter') ? 'active' : '' }}">Penanganan Dokter</a>
 </div> --}}

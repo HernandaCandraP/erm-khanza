@@ -88,6 +88,9 @@ Route::group(['middleware' => ['auth:pegawai', 'is_admin']], function () {
     Route::post('/admin/kerusakan-all/{id}', 'PetugasController@update')->name('kerusakan-update-admin');
     
     Route::match(array('GET','POST'),'/admin/pemesananobat', 'PegawaiController@pemesananobat')->name('pemesananobat');
+    Route::match(array('GET','POST'),'/admin/formularacikan', 'PegawaiController@formularacikan')->name('formularacikan');
+    // Route::post('/admin/hapusformula', 'LoginController@hapusformula')->name('hapusformula');
+
     Route::get('/admin/selisihobat', 'PegawaiController@selisihobat')->name('selisihobat');
     // Route::get('/admin/updatehargaobat', 'PegawaiController@updatehargaobat')->name('updatehargaobat');
     Route::match(array('GET','POST'), '/admin/biayarajal', 'PegawaiController@biayarajal')->name('admin-biayarajal');
@@ -146,6 +149,7 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::get('/form/penanganandokter', 'FormController@rjpenanganandokter')->name('form-penanganandokter');
     Route::get('/form/diagnosa', 'FormController@rjdiagnosa')->name('form-diagnosa');
     Route::get('/form/resume', 'FormController@rjresume')->name('form-resume');
+    Route::get('/form/ekg', 'FormController@ekg')->name('ekg');
     Route::get('/form/resumegabung', 'FormController@rjresumegabung')->name('form-resumegabung');
     Route::get('/form/permintaanlab', 'FormController@permintaanlab')->name('form-permintaanlab');
     Route::get('/form/permintaanrad', 'FormController@permintaanrad')->name('form-permintaanrad');
@@ -166,6 +170,9 @@ Route::group(['middleware' => ['auth:pegawai', 'is_dokter']], function () {
     Route::post('/menu-ranap/tambah', 'FormControllerRanap@create')->name('formri-tambah');
     Route::get('/menu-ranap/hapus', 'FormControllerRanap@delete')->name('formri-hapus');
     Route::get('/menu-ranap/rincianbiaya', 'FormControllerRanap@rincianbiaya')->name('formri-rincianbiaya');
+    Route::get('/menu-ranap/ekg', 'FormControllerRanap@ekg')->name('ekgranap');
+    Route::get('/menu-ranap/edukasi', 'FormControllerRanap@edukasi')->name('edukasi');
+    Route::post('/menu-ranap/edukasihapus', 'FormControllerRanap@edukasihapus')->name('edukasi.hapus');
 
     // Menu Radologi
     Route::match(array('GET','POST'),'/menu-radiologi', 'FormControllerRad@menuradiologi')->name('menu-radiologi');

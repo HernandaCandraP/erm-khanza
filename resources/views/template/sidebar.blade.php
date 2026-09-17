@@ -141,6 +141,12 @@
               </a>
             </li>
             <li class="nav-item">
+              <a href="{{route('formularacikan')}}" class="nav-link {{ Request::is('admin/formularacikan') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-tablets"></i>
+                <p>Formula Racikan</p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="{{route('admin-biayarajal')}}" class="nav-link {{ Request::is('admin/biayarajal') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-hourglass-half"></i>
                 <p>Pembayaran Pasien</p>

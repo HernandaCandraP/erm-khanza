@@ -176,6 +176,12 @@
                           <button type="button" class="form-control btn btn-primary btn-sm" data-toggle="modal" data-target=".modal-riwayat-rad">Riwayat Radiologi</button>
                         </div>
                       </div>
+
+                      <div class="form-group row">
+                        <div class="col-sm-6">
+                          <button type="button" class="form-control btn btn-primary btn-sm" data-toggle="modal" data-target=".modal-riwayat-ekg">Riwayat EKG</button>
+                        </div>
+                      </div>
                     </div>
                     <div class="col-sm-12">
                       <hr>
@@ -187,7 +193,7 @@
                           </select>
                         </div>
                       </div>
-                      <div class="pt-3"><b>Plan : </b> &emsp;<button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modal-lg">Riwayat Obat &nbsp;<i class="fas fa-exclamation"></i> </button>
+                      <div class="pt-3"><b>Plan / Terapi: </b> &emsp;<button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modal-lg">Riwayat Obat &nbsp;<i class="fas fa-exclamation"></i> </button>
                         <textarea class="form-control form-control-sm" rows="4" name="rtl" autocomplete="off" style="width: 100%">{{ old('rtl', $data->rtl) }}</textarea>
                         <table id="testing" class="table table-bordered table-striped text-sm">
                             

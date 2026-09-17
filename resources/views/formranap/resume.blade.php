@@ -119,7 +119,7 @@
                       <textarea class="form-control form-control-sm" rows="3" name="tindakan_dan_operasi" autocomplete="off"></textarea>
                     </div>
                   </div>
-                  <div class="form-group row" hidden>
+                  <div class="form-group row">
                     <label class="col-sm-2 col-form-label-sm">Obat-obatan Selama Perawatan</label>
                     <div class="col-sm-10">
                       <textarea class="form-control form-control-sm" rows="3" name="obat_di_rs" autocomplete="off">{{ old('obat_di_rs', $dataresume->obat_di_rs) }}</textarea>

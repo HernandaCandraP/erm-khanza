@@ -834,6 +834,60 @@ class PegawaiController extends Controller
         ]);
     }
 
+    function formularacikan(Request $request){
+        // dd($request->all());
+        $dataperformula = DB::table('formula_obat as fo')->select('fo.kode_formula', 'poli.nm_poli', 'poli.kd_poli', DB::raw('count(*) as total'))
+            ->leftjoin('poliklinik as poli', 'poli.kd_poli','=', 'fo.kd_poli')
+            ->orderby('fo.kode_formula', 'ASC')
+            ->groupby('fo.kode_formula')->get();
+
+        $formula = DB::table('formula_obat as fo')->select('fo.*', 'db.nama_brng', 'db.letak_barang', 'db.ralan', 'gb.stok')
+            ->leftjoin('databarang as db', 'db.kode_brng', '=', 'fo.kode_brng')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'fo.kode_brng')
+            ->where('gb.kd_bangsal', 'AP')->get();
+
+        $poli = DB::table('poliklinik')
+            ->where('status', '1')->get();
+        
+        $databarang = DB::table('databarang as db')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'db.kode_brng')
+            ->where('gb.kd_bangsal', 'AP')
+            ->where('gb.stok', '>', '0')
+            ->orderby('db.nama_brng')->get();
+
+        if($request->action){
+            foreach ($request->action as $id => $value) {
+                if($id == 'hapus'){
+                    $hasil = explode("***", $value);
+                    DB::table('formula_obat')
+                        ->where('kode_brng',$hasil[0])
+                        ->where('kode_formula',$hasil[1])
+                        ->where('kd_poli',$hasil[2])
+                        ->delete();
+
+                    return redirect('admin/formularacikan');
+                }
+                else if($id == 'tambah'){
+                    DB::table('formula_obat')->insert([
+                        'kd_poli' => $request->kd_poli,
+                        'kode_formula' => $request->kode_formula,
+                        'kode_brng' => $request->kode_brng,
+                        'kandungan' => $request->kandungan,
+                    ]);
+
+                    return redirect('admin/formularacikan');
+                }
+            }
+        }
+
+        return view('admin/formularacikan', [
+            'dataperformula' => $dataperformula, 
+            'formula' => $formula, 
+            'poli' => $poli, 
+            'databarang' => $databarang, 
+        ]);
+    }
+
     function selisihobat(Request $request){
         // $date = date("Y-m-d", strtotime("-1 year")); 
         // $date = date("Y-m-d", strtotime("-4 MONTH")); 

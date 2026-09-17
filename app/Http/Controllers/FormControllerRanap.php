@@ -455,6 +455,7 @@ class FormControllerRanap extends Controller
         $sekuel = new Sekuel();
         list($riwayatlab, $riwayatdelatillab) = $sekuel->riwayatlab($request->no_rawat);
         list($pasienrad, $hasilrad, $getgambar, $grouprad) = $sekuel->riwayatrad($request->no_rawat);
+        list($riwayatekg) = $sekuel->riwayatekg($request->no_rawat);
 
         return view('formranap/formri-soap', [
             'detailpasien' => $detailpasien,
@@ -473,6 +474,7 @@ class FormControllerRanap extends Controller
             'getgambar' => $getgambar,
             'hasilrad' => $hasilrad,
             'grouprad' => $grouprad,
+            'riwayatekg' => $riwayatekg,
         ]);
     }
 
@@ -679,6 +681,84 @@ class FormControllerRanap extends Controller
         ]);
     }
 
+    public function ekg(Request $request){
+        // get session nama & kode poli
+        $kd_dokter = Session::get('username');
+        $nmpoli = Session::get('nmpoli');
+        $cekriwayatekg = 0;
+
+        $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
+        $no_rawat = $request->no_rawat;
+
+        if (DB::table('hasil_pemeriksaan_ekg')->where('no_rawat', '=', $no_rawat)->exists()) {
+            $cekriwayatekg = 1;
+            $pem_ekg = DB::table('hasil_pemeriksaan_ekg')->select('hasil_pemeriksaan_ekg.*', 'pegawai.nama')->where('no_rawat', '=',$no_rawat)->leftjoin('pegawai', 'pegawai.nik', 'hasil_pemeriksaan_ekg.kd_dokter')->first();
+        }else{
+            $pem_ekg = DB::table('hasil_pemeriksaan_ekg')->first();
+            foreach ($pem_ekg as $key => $value) {
+                $pem_ekg->$key = "";
+            }
+            $pem_ekg->kd_dokter = $kd_dokter;
+            $pem_ekg->nama = Auth::guard('pegawai')->user()->nama;
+        }
+        return view('formranap/pemeriksaanekg', [
+            'detailpasien' => $detailpasien, 
+            'pem_ekg' => $pem_ekg,
+            'cekriwayatekg' => $cekriwayatekg,
+            'no_rawat' => $no_rawat
+        ]);
+    }
+
+    public function edukasi(Request $request){
+        // get session nama & kode poli
+        $kd_dokter = Session::get('username');
+        $nmpoli = Session::get('nmpoli');
+        $cekriwayatedukasi = 0;
+
+        $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
+        $no_rawat = $request->no_rawat;
+
+        // if (DB::table('pelaksanaan_informasi_edukasi')->where('no_rawat', '=', $no_rawat)->exists()) {
+        //     $cekriwayatedukasi = 1;
+        //     $edukasi = DB::table('pelaksanaan_informasi_edukasi')->select('pelaksanaan_informasi_edukasi.*', 'pegawai.nama')->where('no_rawat', '=',$no_rawat)->leftjoin('pegawai', 'pegawai.nik', 'pelaksanaan_informasi_edukasi.nik')->first();
+        // }else{
+            $edukasi = DB::table('pelaksanaan_informasi_edukasi')->first();
+            foreach ($edukasi as $key => $value) {
+                $edukasi->$key = "";
+            }
+            $edukasi->kd_dokter = $kd_dokter;
+            $edukasi->nama = Auth::guard('pegawai')->user()->nama;
+        // }
+
+        $list_pelaksanaan_edu = DB::table('pelaksanaan_informasi_edukasi')
+            ->select('pelaksanaan_informasi_edukasi.*','pegawai.nama')
+            ->where('pelaksanaan_informasi_edukasi.no_rawat', '=', $no_rawat)
+            ->leftjoin('pegawai', 'pegawai.nik', 'pelaksanaan_informasi_edukasi.nik')
+            ->orderby('pelaksanaan_informasi_edukasi.tanggal', 'DESC')->get();
+
+        // dd($edukasi);
+        return view('form/edukasi', [
+            'detailpasien' => $detailpasien, 
+            'edukasi' => $edukasi,
+            'cekriwayatedukasi' => $cekriwayatedukasi,
+            'list_pelaksanaan_edu' => $list_pelaksanaan_edu,
+            'no_rawat' => $no_rawat
+        ]);
+    }
+
+    public function edukasihapus(Request $request){
+        try{
+            DB::table('pelaksanaan_informasi_edukasi')
+             ->where('no_rawat',$request->no_rawat)
+             ->where('tanggal',$request->tanggal)
+             ->delete();
+             $request->session()->flash('warning', 'Data Berhasil Dihapus');
+        } catch (\Exception $e){
+            $request->session()->flash('error', 'Data Gagal Dihapus');
+        }
+        return redirect()->back();
+    }
+
     public function riresep(Request $request){
         // get session nama & kode poli
         $kd_dokter = Session::get('username');
@@ -787,7 +867,9 @@ class FormControllerRanap extends Controller
                 $listResep = " \r\n";
                 foreach ($request->jumlah as $key => $value) {
                     $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
-                    $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
+                    if (!str_contains($namaObat->nama_brng, "Handsco") && !str_contains($namaObat->nama_brng, "Spuit")) {
+                        $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
+                    }
                 }
                 $request->rtl = $request->rtl . $listResep;
 
@@ -928,7 +1010,7 @@ class FormControllerRanap extends Controller
         }
         elseif ($request->tabel == 'PenilaianAwalMedisRawatInap') {
             $permintaan = $this->permintan($request);
-            $request->tata = "-". $permintaan['terapi'];
+            $request->tata = $request->tata. " ". $permintaan['terapi'];
             $request->lab = $permintaan['lab'];
             $request->rad = $permintaan['rad'];
 
@@ -1196,6 +1278,25 @@ class FormControllerRanap extends Controller
             $request->session()->flash('success', 'Berhasil menyimpan Resep');
             return redirect()->back();
         }
+        elseif ($request->tabel == 'HasilPemeriksaanEKG') {
+            $HasilPemeriksaanEKG = [
+                'no_rawat' => $request->no_rawat,
+                'tanggal' => $request->tanggal,
+                'kd_dokter' => $request->nip,
+                'diagnosa_klinis' => $request->diagnosa_klinis,
+                'kiriman_dari' => $request->kiriman_dari,
+                'irama' => $request->irama,
+                'laju_jantung' => $request->laju_jantung,
+                'gelombangp' => $request->gelombangp,
+                'intervalpr' => $request->intervalpr,
+                'axis' => $request->axis,
+                'kompleksqrs' => $request->kompleksqrs,
+                'segmenst' => $request->segmenst,
+                'gelombangt' => $request->gelombangt,
+                'kesimpulan' => $request->kesimpulan
+            ];
+            return $this->func_create($request, $HasilPemeriksaanEKG, 'hasil_pemeriksaan_ekg', 'ekgranap');
+        }
         else{
             dd("nama tabel kosong");
         }
@@ -1342,6 +1443,15 @@ class FormControllerRanap extends Controller
             // dd($data->get());
             return $this->func_listdata($request, 'formranap/list-medisumumkebidanan', $data, 'Tidak Ada Riwayat Resume');
         }
+        elseif($request->tabel == 'PemeriksaanEKG'){            
+            $data = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'c.*', 'd.nama')
+                ->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')
+                ->join('hasil_pemeriksaan_ekg as c', 'a.no_rawat','=', 'c.no_rawat')
+                ->leftjoin('pegawai as d', 'c.kd_dokter','=', 'd.nik')
+                ->orderby('c.no_rawat', 'DESC')
+                ->where('a.no_rawat', $request->no_rawat);
+            return $this->func_listdata($request, 'formranap/listpemeriksaanekg', $data, 'Tidak Ada EKG');
+        }
         else{
             dd("kosong");
         }
@@ -1409,6 +1519,9 @@ class FormControllerRanap extends Controller
         }
         elseif($request->tabel == 'PenilaianAwalMedisKebidananRawatInap'){
             return $this->func_delete($request, 'penilaian_medis_ranap_kandungan', "false");
+        }
+        elseif($request->tabel == 'HasilPemeriksaanEKG'){
+            return $this->func_delete($request, 'hasil_pemeriksaan_ekg', "false");
         }
         elseif($request->tabel == 'PenangananDokterRawatInap'){
             // return $this->func_delete($request, 'rawat_jl_dr', "form-penanganandokter");

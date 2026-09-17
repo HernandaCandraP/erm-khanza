@@ -270,6 +270,17 @@ class FormController extends Controller
         $jnsperawatanrad = DB::table('jns_perawatan_radiologi as a')->select('a.kd_jenis_prw', 'a.nm_perawatan', 'a.total_byr')->where('status', '1')->get();
                 
         // $jnspenyakit = DB::table('penyakit as p')->select('p.kd_penyakit', 'p.nm_penyakit')->orderby('kd_penyakit', 'ASC')->get();
+        $metoderacik = DB::table('metode_racik as mr')->select('mr.*')->get();
+        $dataperformula = DB::table('formula_obat as fo')->select('fo.kode_formula', DB::raw('count(*) as total'))
+            ->orderby('fo.kode_formula', 'ASC')
+            ->groupby('fo.kode_formula')
+            ->where('fo.kd_poli', $kdpoli)->get();
+
+        $formula = DB::table('formula_obat as fo')->select('fo.*', 'db.nama_brng', 'db.letak_barang', 'db.ralan', 'gb.stok')
+            ->leftjoin('databarang as db', 'db.kode_brng', '=', 'fo.kode_brng')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'fo.kode_brng')
+            ->where('gb.kd_bangsal', 'AP')
+            ->where('fo.kd_poli', $kdpoli)->get();
 
         return view('form/soap', [
             'detailpasien' => $detailpasien,
@@ -281,7 +292,10 @@ class FormController extends Controller
             'jnsperawatanrad' => $jnsperawatanrad,
             'no_rawat' => $no_rawat,
             'datalistnorawatperresep' => $datalistnorawatperresep,
-            'datalistnorawatlengkap' => $datalistnorawatlengkap
+            'datalistnorawatlengkap' => $datalistnorawatlengkap,
+            'metoderacik' => $metoderacik,
+            'dataperformula' => $dataperformula,
+            'formula' => $formula
         ]);
     }
 
@@ -377,12 +391,17 @@ class FormController extends Controller
             ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
 
         // ambil total obat per resep untuk menghitung colspan
-        $datalistnorawatperresep = DB::table('resep_obat as ro')->select('ro.no_resep', DB::raw('count(*) as total'))
-            ->join('resep_dokter as rd', 'rd.no_resep','=', 'ro.no_resep')
-            ->orderby('ro.no_resep', 'DESC')
-            ->groupby('ro.no_resep')
-            ->where('ro.status', 'ralan')
-            ->whereIn('ro.no_rawat', $arraylistnorawat)->get();
+        $dataperformula = DB::table('formula_obat as fo')->select('fo.kode_formula', DB::raw('count(*) as total'))
+            ->orderby('fo.kode_formula', 'ASC')
+            ->groupby('fo.kode_formula')
+            ->where('fo.kd_poli', $kdpoli)->get();
+
+        $formula = DB::table('formula_obat as fo')->select('fo.*', 'db.nama_brng', 'db.letak_barang', 'db.ralan', 'gb.stok')
+            ->leftjoin('databarang as db', 'db.kode_brng', '=', 'fo.kode_brng')
+            ->leftjoin('gudangbarang as gb', 'gb.kode_brng','=', 'fo.kode_brng')
+            ->where('gb.kd_bangsal', 'AP')
+            ->where('fo.kd_poli', $kdpoli)->get();
+        // dd($dataperformula);
 
         return view('form/resepracikan', [
             'metoderacik' => $metoderacik,
@@ -391,8 +410,9 @@ class FormController extends Controller
             'resepdokter' => $resepdokter,
             'status' => $request->status,
             'no_rawat' => $no_rawat,
-            'datalistnorawatperresep' => $datalistnorawatperresep,
-            'datalistnorawatlengkap' => $datalistnorawatlengkap
+            // 'datalistnorawatperresep' => $datalistnorawatperresep,
+            'dataperformula' => $dataperformula,
+            'formula' => $formula
         ]);
     }
 
@@ -1257,6 +1277,34 @@ class FormController extends Controller
          ]);
     }
 
+    public function ekg(Request $request){
+        // get session nama & kode poli
+        $kd_dokter = Session::get('username');
+        $nmpoli = Session::get('nmpoli');
+        $cekriwayatekg = 0;
+
+        $detailpasien = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur')->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')->where('no_rawat', $request->no_rawat)->get();
+        $no_rawat = $request->no_rawat;
+
+        if (DB::table('hasil_pemeriksaan_ekg')->where('no_rawat', '=', $no_rawat)->exists()) {
+            $cekriwayatekg = 1;
+            $pem_ekg = DB::table('hasil_pemeriksaan_ekg')->select('hasil_pemeriksaan_ekg.*', 'pegawai.nama')->where('no_rawat', '=',$no_rawat)->leftjoin('pegawai', 'pegawai.nik', 'hasil_pemeriksaan_ekg.kd_dokter')->first();
+        }else{
+            $pem_ekg = DB::table('hasil_pemeriksaan_ekg')->first();
+            foreach ($pem_ekg as $key => $value) {
+                $pem_ekg->$key = "";
+            }
+            $pem_ekg->kd_dokter = $kd_dokter;
+            $pem_ekg->nama = Auth::guard('pegawai')->user()->nama;
+        }
+        return view('form/pemeriksaanekg', [
+            'detailpasien' => $detailpasien, 
+            'pem_ekg' => $pem_ekg,
+            'cekriwayatekg' => $cekriwayatekg,
+            'no_rawat' => $no_rawat
+        ]);
+    }
+
     public function rjresumegabung(Request $request){
         // dd($request->all());
         // get session nama & kode poli
@@ -1972,6 +2020,25 @@ class FormController extends Controller
             $this->simpanawalmediskesoap($request);
             return $this->func_create($request, $PenilaianAwalMedisRawatJalanJantung, 'penilaian_medis_ralan_jantung', 'form/awalmedisjantung');
         }
+        elseif ($request->tabel == 'HasilPemeriksaanEKG') {
+            $HasilPemeriksaanEKG = [
+                'no_rawat' => $request->no_rawat,
+                'tanggal' => $request->tanggal,
+                'kd_dokter' => $request->nip,
+                'diagnosa_klinis' => $request->diagnosa_klinis,
+                'kiriman_dari' => $request->kiriman_dari,
+                'irama' => $request->irama,
+                'laju_jantung' => $request->laju_jantung,
+                'gelombangp' => $request->gelombangp,
+                'intervalpr' => $request->intervalpr,
+                'axis' => $request->axis,
+                'kompleksqrs' => $request->kompleksqrs,
+                'segmenst' => $request->segmenst,
+                'gelombangt' => $request->gelombangt,
+                'kesimpulan' => $request->kesimpulan
+            ];
+            return $this->func_create($request, $HasilPemeriksaanEKG, 'hasil_pemeriksaan_ekg', 'ekg');
+        }
         elseif ($request->tabel == 'DataPemeriksaanRawatJalan') {
             // jika diagnosa terisi, cek no rawat sebelumnya apakah sudah ada diagnosa yang sama dengan diagnosa no rawat baru
             $status_penyakit = "Baru";
@@ -2017,19 +2084,47 @@ class FormController extends Controller
                 $request->penilaian .= $isipenilaian ;
             }
 
-            if($request->jumlah != null || $request->resep){
-                $request->tabel = 'ResepDokter';
-                $request->jam_peresepan = $request->jam_rawat;
-                $request->tgl_peresepan =  $request->tgl_perawatan2;
-                $this->create($request);
-                // Menambahkan obat ke plan
-                $listResep = " \r\n";
-                foreach ($request->jumlah as $key => $value) {
-                    $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
-                    $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
+            if($request->jumlah != null || $request->resep || $request->jumlahracik != null || $request->resepracik){
+                $peresepan2 = 0;
+                $noorderResep = $this->ambilorderobatterakhir($request->tgl_perawatan2);
+                $request->request->add(['noorderResep' => $noorderResep]);
+                $request->request->add(['peresepan2' => $peresepan2]);
+                if($request->jumlah != null || $request->resep){
+                    // jika peresapan total 2 (biasa & racik) maka tidak perlu jalankan 2x resep_obat
+                    $peresepan2++;
+                    $request->peresepan2 = $peresepan2;
+
+                    $request->tabel = 'ResepDokter';
+                    $request->jam_peresepan = $request->jam_rawat;
+                    $request->tgl_peresepan =  $request->tgl_perawatan2;
+                    $this->create($request);
+                    // Menambahkan obat ke plan
+                    $listResep = " \r\n";
+                    foreach ($request->jumlah as $key => $value) {
+                        $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resep[$key])->first();
+                        $listResep .= $namaObat->nama_brng . " " . $request->aturan_pakai[$key] . "\r\n";
+                    }
+                    $request->rtl = $request->rtl . $listResep;
                 }
-                $request->rtl = $request->rtl . $listResep;
+                if($request->jumlahracik != null || $request->resepracik){
+                    // jika peresapan total 2 (biasa & racik) maka tidak perlu jalankan 2x resep_obat
+                    $peresepan2++;
+                    $request->peresepan2 = $peresepan2;
+
+                    $request->tabel = 'ResepRacikanDokter';
+                    $request->jam_peresepan = $request->jam_rawat;
+                    $request->tgl_peresepan =  $request->tgl_perawatan2;
+                    $this->create($request);
+                    // Menambahkan obat ke plan
+                    $listResep = " \r\n";
+                    foreach ($request->jumlahracik as $key => $value) {
+                        $namaObat = DB::table('databarang')->select('nama_brng')->where('kode_brng', $request->resepracik[$key])->first();
+                        $listResep .= $namaObat->nama_brng . " dosis:" . $request->jumlahracik[$key] . "\r\n";
+                    }
+                    $request->rtl = $request->rtl . $listResep;
+                }
             }
+
             if($request->pemeriksaanrad != null){
                 $request->tabel = 'PermintaanRadiologi';
                 $request->tgl_permintaan = $request->tgl_perawatan2;
@@ -2066,6 +2161,23 @@ class FormController extends Controller
                 'evaluasi' => $request->evaluasi
             ];
             return $this->func_create($request, $DataPemeriksaanRawatJalan, 'pemeriksaan_ralan', 'form-soap');
+        }
+        elseif ($request->tabel == 'HasilEdukasi') {
+            // dd($request->all());
+            $HasilEdukasi = [
+                'tanggal' => $request->tanggal,
+                'no_rawat' => $request->no_rawat,
+                'nik' => $request->nip,
+                'materi_edukasi' => $request->materi_edukasi,
+                'keterangan' => $request->keterangan,
+                'diberikan_pada' => $request->diberikan_pada,
+                'keterangan_diberikan_pada' => $request->keterangan_diberikan_pada,
+                'lama_edukasi' => $request->lama_edukasi,
+                'metode_edukasi' => $request->metode_edukasi,
+                'hasil_verifikasi' => $request->hasil_verifikasi,
+                'status' => $request->status
+            ];
+            return $this->func_create($request, $HasilEdukasi, 'pelaksanaan_informasi_edukasi', 'edukasi');
         }
         elseif ($request->tabel == 'PermintaanLab') {
             // dd($request->all());
@@ -2154,14 +2266,10 @@ class FormController extends Controller
                 return redirect()->back();
             }
 
-            $data = date('Ymd', strtotime($request->tgl_perawatan2));
-            // dd($data);
-            $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
-            
-            if($noorder->count() == 0){
-                $noorderResep = $data . sprintf("%04s", 1);
+            if($request->noorderResep){
+                $noorderResep = $request->noorderResep;
             }else{
-                $noorderResep = $noorder->first()->no_resep+1;
+                $noorderResep = $this->ambilorderobatterakhir($request->tgl_perawatan2);
             }
             // dd($noorderResep);
             $resepdokter = [];
@@ -2203,22 +2311,18 @@ class FormController extends Controller
                 return redirect()->back();
             }
 
-            $data = date('Ymd', strtotime($request->tgl_perawatan2));
-            // dd($data);
-            $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
-            
-            if($noorder->count() == 0){
-                $noorderResep = $data . sprintf("%04s", 1);
+            if($request->noorderResep){
+                $noorderResep = $request->noorderResep;
             }else{
-                $noorderResep = $noorder->first()->no_resep+1;
+                $noorderResep = $this->ambilorderobatterakhir($request->tgl_perawatan2);
             }
             // dd($noorderResep);
             $resepdokter = [];
-            if($request->jumlah){
-                foreach ($request->jumlah as $key => $value) {
-                    $kps = DB::table('databarang')->select('kapasitas')->where('kode_brng',  $request->resep[$key])->first();
-                    $totalkps = ($request->jumlah[$key] * $request->jml_dr) / $kps->kapasitas;
-                    $dtresepdokter = ['no_resep'=>$noorderResep, 'no_racik'=>$request->no_racik, 'kode_brng'=> $request->resep[$key], 'p1' => '1', 'p2' => '1', 'kandungan'=> $request->jumlah[$key], 'jml' => $totalkps];
+            if($request->jumlahracik){
+                foreach ($request->jumlahracik as $key => $value) {
+                    $kps = DB::table('databarang')->select('kapasitas')->where('kode_brng',  $request->resepracik[$key])->first();
+                    $totalkps = ($request->jumlahracik[$key] * $request->jml_dr) / $kps->kapasitas;
+                    $dtresepdokter = ['no_resep'=>$noorderResep, 'no_racik'=>$request->no_racik, 'kode_brng'=> $request->resepracik[$key], 'p1' => '1', 'p2' => '1', 'kandungan'=> $request->jumlahracik[$key], 'jml' => $totalkps];
                     array_push($resepdokter, $dtresepdokter);
                 }
             }
@@ -2243,10 +2347,14 @@ class FormController extends Controller
                 'nama_racik' => $request->nama_racik,
                 'kd_racik' => $request->kd_racik,
                 'jml_dr' => $request->jml_dr,
-                'aturan_pakai' => $request->aturan_pakai,
+                'aturan_pakai' => $request->aturan_pakai_racikan,
                 'keterangan' => $request->keterangan,
             ];
-            DB::table('resep_obat')->insert($resep_obat);
+
+            // jika total ada 2 peresepan maka dtidak perlu dilankan tambah tabel resep_obat
+            if($request->peresepan2 < 2){
+                DB::table('resep_obat')->insert($resep_obat);
+            }
             DB::table('resep_dokter_racikan')->insert($resep_dokter_racikan);
             DB::table('resep_dokter_racikan_detail')->insert($resepdokter);
             $request->session()->flash('success', 'Berhasil menyimpan Resep Racikan');
@@ -2373,6 +2481,20 @@ class FormController extends Controller
             $uniquelab = implode(", ",$uniquelab);
         }
         return['terapi'=> $request->terapi, 'lab'=>$uniquelab, 'rad'=>$request->rad];
+    }
+
+    private function ambilorderobatterakhir($tanggal){
+        $data = date('Ymd', strtotime($tanggal));
+        // dd($data);
+        $noorder = DB::table('resep_obat')->where('no_resep',  'like', '%' . $data . '%')->orderby('no_resep', 'DESC');
+        
+        if($noorder->count() == 0){
+            $noorderResep = $data . sprintf("%04s", 1);
+        }else{
+            $noorderResep = $noorder->first()->no_resep+1;
+        }
+
+        return $noorderResep;
     }
     
     private function func_create(Request $request, $data, $namatabel, $route){
@@ -2569,6 +2691,15 @@ class FormController extends Controller
                 ->where('a.no_rawat', $request->no_rawat);
             return $this->func_listdata($request, 'form/listrjawalmedisjantung', $data, 'Tidak Ada Riwayat Resume');
         }
+        elseif($request->tabel == 'PemeriksaanEKG'){            
+            $data = DB::table('reg_periksa as a')->select('b.nm_pasien', 'b.no_rkm_medis','a.no_rawat', 'b.umur', 'c.*', 'd.nama')
+                ->join('pasien as b', 'a.no_rkm_medis','=', 'b.no_rkm_medis')
+                ->join('hasil_pemeriksaan_ekg as c', 'a.no_rawat','=', 'c.no_rawat')
+                ->leftjoin('pegawai as d', 'c.kd_dokter','=', 'd.nik')
+                ->orderby('c.no_rawat', 'DESC')
+                ->where('a.no_rawat', $request->no_rawat);
+            return $this->func_listdata($request, 'form/listpemeriksaanekg', $data, 'Tidak Ada EKG');
+        }
         else{
             dd("kosong");
         }
@@ -2628,6 +2759,9 @@ class FormController extends Controller
         }
         elseif($request->tabel == 'PenilaianAwalMedisRawatJalanUmum'){
             return $this->func_delete($request, 'penilaian_medis_igd', "false");
+        }
+        elseif($request->tabel == 'HasilPemeriksaanEKG'){
+            return $this->func_delete($request, 'hasil_pemeriksaan_ekg', "false");
         }
         elseif($request->tabel == 'PenangananDokter'){
             // return $this->func_delete($request, 'rawat_jl_dr', "form-penanganandokter");

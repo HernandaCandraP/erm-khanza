@@ -73,7 +73,7 @@
                           @if ($key->status_poli == 'Barudihapus' || Session::get('getpoli') == '-')
                             <a href="{{ route('form-awalmedis'. strtolower(Session::get('nm_sps')), ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a>
                           @else
-                            <a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">1{{$key->no_rawat}}</a>
+                            <a href="{{ route('form-soap', ['no_rawat' => $key->no_rawat]) }}" class="btn btn-block btn-primary btn-xs">{{$key->no_rawat}}</a>
                           @endif
                           <div class="text-center">{{$key->no_peserta}}</div>
                         </th>
